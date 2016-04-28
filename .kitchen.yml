@@ -1,0 +1,15 @@
+---
+provisioner:
+  name: ansible_playbook
+  hosts: test-kitchen
+  require_ansible_repo: false
+  require_ansible_omnibus: true
+
+driver:
+  name: docker
+
+platforms:
+  - name: debian
+
+suites:
+  - name: default
