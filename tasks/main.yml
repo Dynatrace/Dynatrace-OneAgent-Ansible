@@ -1,0 +1,8 @@
+---
+- name: "Download the Dynatrace Ruxit Agent"
+  get_url:
+    url: "https://{{ dynatrace_ruxit_agent_environment_id }}.live.ruxit.com/installer/agent/unix/latest/{{ dynatrace_ruxit_agent_tenant_token }}"
+    dest: "/tmp/ruxit-Agent-Linux.sh"
+  
+- name: "Install the Dynatrace Ruxit Agent"
+  shell: "sh /tmp/ruxit-Agent-Linux.sh"
