@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Martin Etmajer
+  company: Dynatrace
+  license: MIT
+  min_ansible_version: 1.8
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Debian
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  galaxy_tags:
+  - monitoring
+dependencies: []
