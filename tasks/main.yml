@@ -6,3 +6,4 @@
   
 - name: "Install the Dynatrace Ruxit Agent"
   shell: "sh /tmp/ruxit-Agent-Linux.sh"
+  sudo: yes
