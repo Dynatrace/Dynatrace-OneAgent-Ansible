@@ -1,35 +1,35 @@
-# Ruxit-Agent-Ansible
+# OneAgent-Ansible
 
-This Ansible role installs [Dynatrace Ruxit](http://www.dynatrace.com/en/ruxit/) agent on Linux systems.
+This Ansible role installs [Dynatrace OneAgent](http://www.dynatrace.com) on Linux systems.
 
 ## Download
 
 The role is available via:
 
-- [Ansible Galaxy](https://galaxy.ansible.com/Dynatrace/Ruxit-Agent)
-- [GitHub](https://github.com/dynatrace-innovationlab/Ruxit-Agent-Ansible)
+- [Ansible Galaxy](https://galaxy.ansible.com/Dynatrace/OneAgent)
+- [GitHub](https://github.com/dynatrace/Dynatrace-OneAgent-Ansible)
 
 ## Description
 
-This role downloads and installs the most recent version of the Dynatrace Ruxit agent in your Linux environment. Sign up for a [30-day free Dynatrace Ruxit trial](http://www.dynatrace.com/en/ruxit/try-now/) now!
+This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment. Sign up for a [30-day free Dynatrace trial](http://www.dynatrace.com) now!
 
 ## Role Variables
 
 As defined in ```defaults/main.yml```:
 
-| Name                                   | Default | Description
-|----------------------------------------|---------|------------
-| *dynatrace_ruxit_agent_environment_id* |         | Your Dynatrace Ruxit environment id.
-| *dynatrace_ruxit_agent_tenant_token*   |         | Your Your Ruxit tenant token.
+| Name                                | Default | Description
+|-------------------------------------|---------|------------
+| *dynatrace_oneagent_environment_id* |         | Your Dynatrace environment id.
+| *dynatrace_oneagent_tenant_token*   |         | Your Dynatrace tenant token.
 
 ## Example Playbook
 
 ```
 - hosts: all
   roles:
-    - role: Dynatrace.Ruxit-Agent
-      dynatrace_ruxit_agent_environment_id: 123
-      dynatrace_ruxit_agent_tenant_token: abc
+    - role: Dynatrace.OneAgent
+      dynatrace_oneagent_environment_id: 123
+      dynatrace_oneagent_tenant_token: abc
 ```
 
 ## Testing
@@ -53,4 +53,4 @@ By default, we run our tests inside [Docker](https://www.docker.com/) containers
 
 ## License
 
-Licensed under the MIT License. See the [LICENSE](https://github.com/dynatrace-innovationlab/Ruxit-Agent-Ansible/blob/master/LICENSE) file for details.
+Licensed under the MIT License. See the [LICENSE](https://github.com/dynatrace/Dynatrace-OneAgent-Ansible/blob/master/LICENSE) file for details.

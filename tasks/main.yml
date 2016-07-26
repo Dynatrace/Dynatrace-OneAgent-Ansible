@@ -1,9 +1,9 @@
 ---
-- name: "Download the Dynatrace Ruxit Agent"
+- name: "Download Dynatrace OneAgent"
   get_url:
-    url: "https://{{ dynatrace_ruxit_agent_environment_id }}.live.ruxit.com/installer/agent/unix/latest/{{ dynatrace_ruxit_agent_tenant_token }}"
+    url: "https://{{ dynatrace_oneagent_environment_id }}.live.ruxit.com/installer/agent/unix/latest/{{ dynatrace_oneagent_tenant_token }}"
     dest: "/tmp/ruxit-Agent-Linux.sh"
   
-- name: "Install the Dynatrace Ruxit Agent"
+- name: "Install Dynatrace OneAgent"
   shell: "sh /tmp/ruxit-Agent-Linux.sh"
   sudo: yes
