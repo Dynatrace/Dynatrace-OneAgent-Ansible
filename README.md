@@ -11,7 +11,7 @@ The role is available via:
 
 ## Description
 
-This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment. Sign up for a [30-day free Dynatrace trial](http://www.dynatrace.com) now!
+This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment. Sign up for a [15-day free Dynatrace trial](https://www.dynatrace.com/trial/?vehicle_name=https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/) now!
 
 ## Role Variables
 
