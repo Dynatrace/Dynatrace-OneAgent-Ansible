@@ -25,4 +25,4 @@
 
 - name: "Install Dynatrace OneAgent"
   shell: "sh /tmp/dynatrace-oneagent.sh"
-  sudo: yes
+  become: yes
