@@ -17,10 +17,11 @@ This role downloads and installs the most recent version of Dynatrace OneAgent i
 
 As defined in ```defaults/main.yml```:
 
-| Name                                | Default | Description
-|-------------------------------------|---------|------------
-| *dynatrace_oneagent_environment_id* |         | Your Dynatrace environment id.
-| *dynatrace_oneagent_tenant_token*   |         | Your Dynatrace tenant token.
+| Name                                   | Default            | Description
+|----------------------------------------|--------------------|------------
+| *dynatrace_oneagent_cluster_subdomain* | live.dynatrace.com | Your Dynatrace cluster subdomain.
+| *dynatrace_oneagent_environment_id*    |                    | Your Dynatrace tenant.
+| *dynatrace_oneagent_tenant_token*      |                    | Your Dynatrace tenant token.
 
 ## Example Playbook
 
