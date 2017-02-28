@@ -1,3 +1,4 @@
 ---
+dynatrace_oneagent_cluster_subdomain: live.dynatrace.com
 dynatrace_oneagent_environment_id: 
 dynatrace_oneagent_tenant_token: 
