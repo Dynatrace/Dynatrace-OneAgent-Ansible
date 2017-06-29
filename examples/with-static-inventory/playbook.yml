@@ -1,0 +1,6 @@
+---
+- hosts: all
+  roles:
+  - role: Dynatrace.OneAgent
+    dynatrace_oneagent_environment_id: 123
+    dynatrace_oneagent_tenant_token: abc

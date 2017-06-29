@@ -33,6 +33,8 @@ As defined in ```defaults/main.yml```:
       dynatrace_oneagent_tenant_token: abc
 ```
 
+More in-depth examples can be found in the [examples](https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/tree/master/examples) folder.
+
 ## Testing
 
 We use [Test Kitchen](http://kitchen.ci) to automatically test our automated deployments with [Serverspec](http://serverspec.org) and [RSpec](http://rspec.info/):
