@@ -2,5 +2,4 @@
 - hosts: tag_clusterid_openshift-oneagent
   roles:
   - role: Dynatrace.OneAgent
-    dynatrace_oneagent_environment_id: 123
-    dynatrace_oneagent_tenant_token: abc
+    oneagent_installer_script_url: 

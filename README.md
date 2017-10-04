@@ -13,15 +13,24 @@ The role is available via:
 
 This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment. Sign up for a [15-day free Dynatrace trial](https://www.dynatrace.com/trial/?vehicle_name=https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/) now!
 
-## Role Variables
+## Configuration
 
-As defined in ```defaults/main.yml```:
+Please edit below role variable(s) defined in ```defaults/main.yml```:
 
 | Name                                   | Default            | Description
 |----------------------------------------|--------------------|------------
-| *dynatrace_oneagent_cluster_subdomain* | live.dynatrace.com | Your Dynatrace cluster subdomain.
-| *dynatrace_oneagent_environment_id*    |                    | Your Dynatrace tenant.
-| *dynatrace_oneagent_tenant_token*      |                    | Your Dynatrace tenant token.
+| *oneagent_installer_script_url*        |                    | Url presented in the command on the Dynatrace OneAgent installation page
+
+You can get your url by following these steps:
+
+1. Select **Deploy Dynatrace** from the navigation menu.
+2. Click the **Start installation** button.
+3.  For **Linux**
+   - Locate your `oneagent_installer_script_url`, as shown below. 
+   ![Alt text](https://user-images.githubusercontent.com/23307837/31117056-a912fb0c-a828-11e7-8020-f065adf65fa9.png)
+4. For **Windows**
+    - Rightclick on "Download agent.exe" button and select "Copy link address"
+5. Paste the url as a value for the *oneagent_installer_script_url* variable in `defaults/main.yml`.
 
 ## Example Playbook
 
@@ -29,8 +38,7 @@ As defined in ```defaults/main.yml```:
 - hosts: all
   roles:
     - role: Dynatrace.OneAgent
-      dynatrace_oneagent_environment_id: 123
-      dynatrace_oneagent_tenant_token: abc
+      oneagent_installer_script_url: YOUR_ONEAGENT_INSTALLER_SCRIPT_URL
 ```
 
 More in-depth examples can be found in the [examples](https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/tree/master/examples) folder.

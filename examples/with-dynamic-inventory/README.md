@@ -4,9 +4,15 @@ These instructions assume that you have basic knowledge of Ansible, a simple yet
 
 ## 1. Create your Dynatrace account
 
-If you are new to Dynatrace, sign up for your free trial at [http://www.dynatrace.com](http://www.dynatrace.com) and take note of your assigned environment ID and token values (shown below):
+If you are new to Dynatrace, sign up for your free trial at [http://www.dynatrace.com](http://www.dynatrace.com) and and take the installer script url:
 
-![Dynatrace Environment](https://github.com/dynatrace-innovationlab/easyTravel-OpenShift/blob/images/dynatrace-environment.png)
+1. Select **Deploy Dynatrace** from the navigation menu.
+2. Click the **Start installation** button.
+3.  For **Linux**
+   - Locate your `oneagent_installer_script_url`, as shown below.
+   ![Alt text](https://user-images.githubusercontent.com/23307837/31117056-a912fb0c-a828-11e7-8020-f065adf65fa9.png)
+4. For **Windows**
+    - Rightclick on "Download agent.exe" button and select "Copy link address"
 
 ## 2. Obtain our Ansible role for Dynatrace OneAgent
 
@@ -39,8 +45,7 @@ With your cluster nodes identified, the only thing left to do is describe the de
 - hosts: tag_clusterid_openshift_dev
   roles:
   - role: Dynatrace.OneAgent
-    dynatrace_oneagent_environment_id: YOUR_ENVIRONMENT_ID
-    dynatrace_oneagent_tenant_token: YOUR_TENANT_TOKEN
+    oneagent_installer_script_url: YOUR_ONEAGENT_INSTALLER_SCRIPT_URL
 ```
 
 # 5. Run OneAgent deployment via Ansible
