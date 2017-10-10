@@ -6,10 +6,13 @@ provisioner:
   require_ansible_omnibus: true
 
 driver:
-  name: docker
+  name: vagrant
 
 platforms:
-  - name: debian
+  - name: debian/jessie64
 
 suites:
   - name: default
+
+transport:
+    max_ssh_sessions: 6

@@ -26,11 +26,15 @@ You can get your url by following these steps:
 1. Select **Deploy Dynatrace** from the navigation menu.
 2. Click the **Start installation** button.
 3.  For **Linux**
-   - Locate your `oneagent_installer_script_url`, as shown below. 
+   - Locate your `oneagent_installer_script_url`, as shown below.
    ![Alt text](https://user-images.githubusercontent.com/23307837/31117056-a912fb0c-a828-11e7-8020-f065adf65fa9.png)
 4. For **Windows**
     - Rightclick on "Download agent.exe" button and select "Copy link address"
 5. Paste the url as a value for the *oneagent_installer_script_url* variable in `defaults/main.yml`.
+
+### Previous versions
+
+If you’ve been using automated scripts or deployment via YAML utilizing the TENANT, SERVER, TENANT_TOKEN command line arguments, you’ll find that the new approach is fully transparent and no changes are required.
 
 ## Example Playbook
 
