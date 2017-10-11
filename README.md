@@ -27,7 +27,7 @@ You can get your url by following these steps:
 2. Click the **Start installation** button.
 3.  For **Linux**
    - Locate your `oneagent_installer_script_url`, as shown below.
-   ![Alt text](https://user-images.githubusercontent.com/23307837/31117056-a912fb0c-a828-11e7-8020-f065adf65fa9.png)
+   ![Alt text](https://raw.githubusercontent.com/Dynatrace/Dynatrace-OneAgent-Ansible/images/url_script_screenshot.png)
 4. For **Windows**
     - Rightclick on "Download agent.exe" button and select "Copy link address"
 5. Paste the url as a value for the *oneagent_installer_script_url* variable in `defaults/main.yml`.
