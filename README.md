@@ -26,11 +26,15 @@ You can get your url by following these steps:
 1. Select **Deploy Dynatrace** from the navigation menu.
 2. Click the **Start installation** button.
 3.  For **Linux**
-   - Locate your `oneagent_installer_script_url`, as shown below. 
-   ![Alt text](https://user-images.githubusercontent.com/23307837/31234263-bf223030-a9ee-11e7-94f8-69945b82e791.png)
+   - Locate your `oneagent_installer_script_url`, as shown below.
+   ![Alt text](https://raw.githubusercontent.com/Dynatrace/Dynatrace-OneAgent-Ansible/images/url_script_screenshot.png)
 4. For **Windows**
     - Rightclick on "Download agent.exe" button and select "Copy link address"
 5. Paste the url as a value for the *oneagent_installer_script_url* variable in `defaults/main.yml`.
+
+### Previous versions
+
+If you’ve been using automated scripts or deployment via YAML utilizing the TENANT, SERVER, TENANT_TOKEN command line arguments, you’ll find that the new approach is fully transparent and no changes are required.
 
 ## Example Playbook
 
@@ -60,7 +64,9 @@ bundle install
 kitchen test
 ```
 
-By default, we run our tests inside [Docker](https://www.docker.com/) containers as this considerably speeds up testing time (see `.kitchen.yml`).
+By default, we run our tests using [Vagrant](https://www.vagrantup.com/) provisioning tool (see `.kitchen.yml`) since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
+
+*Please note, that running tests using Vagrant provisioning on virtual machine or cloud instance may cause serious difficulties since [VT-x](https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) or [AMD-V](https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29) virtualization can't be nested.*
 
 ## License
 

@@ -1,6 +1,5 @@
 ---
 - hosts: test-kitchen
   roles:
-  - role: Dynatrace.OneAgent
-    dynatrace_oneagent_environment_id: 123
-    dynatrace_oneagent_tenant_token: abc
+  - role: Dynatrace-OneAgent-Ansible
+    oneagent_installer_script_url:

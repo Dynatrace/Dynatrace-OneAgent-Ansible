@@ -1,2 +1,6 @@
 ---
 oneagent_installer_script_url:
+# for backward compatibility:
+dynatrace_oneagent_cluster_subdomain:
+dynatrace_oneagent_environment_id:
+dynatrace_oneagent_tenant_token:
