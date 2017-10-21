@@ -1,6 +1,6 @@
 ---
- - name: Download Dynatrace OneAgent using token id
-   block:
+# only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using token id
+ - block:
     - fail:
        msg: "The 'dynatrace_oneagent_cluster_subdomain' variable has not been set, it must point to the subdomain of your Dynatrace cluster. Please consult the documentation."
       when: (dynatrace_oneagent_cluster_subdomain is undefined) or (dynatrace_oneagent_cluster_subdomain is none) or (dynatrace_oneagent_cluster_subdomain | trim == "")
@@ -22,8 +22,8 @@
       when: ("live.dynatrace.com" != dynatrace_oneagent_cluster_subdomain) and ("live.ruxit.com" != dynatrace_oneagent_cluster_subdomain)
    when: (oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == "")
    
- - name: Download Dynatrace OneAgent using installer script url
-   block:
+# only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using installer script url
+ - block:
    - fail:
       msg: "The 'oneagent_installer_script_url' variable has not been set, it must contain the Dynatrace OneAgent Installer Script URL. Please consult the documentation."
      when: (oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == "")
