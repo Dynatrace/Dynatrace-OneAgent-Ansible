@@ -1,5 +1,5 @@
 ---
- - name: Check that the somefile.conf exists
+ - name: Check if Dynatrace OneAgent is already installed
    stat:
      path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
    register: agent_installed
@@ -36,9 +36,9 @@
      get_url:
       url: "{{ oneagent_installer_script_url }}"
       dest: "/tmp/dynatrace-oneagent.sh"    
-   when: agent_installed == False and (oneagent_installer_script_url is defined) and (oneagent_installer_script_url is not none)
+   when: agent_installed.stat.exists == False and (oneagent_installer_script_url is defined) and (oneagent_installer_script_url is not none)
 
  - name: "Install Dynatrace OneAgent"
    shell: "sh /tmp/dynatrace-oneagent.sh"
    become: yes
-   when: ansible_architecture != "armv7l" and agent_installed == False
+   when: ansible_architecture != "armv7l" and agent_installed.stat.exists == False
