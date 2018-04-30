@@ -39,6 +39,6 @@
    when: agent_installed.stat.exists == False and (oneagent_installer_script_url is defined) and (oneagent_installer_script_url is not none)
 
  - name: "Install Dynatrace OneAgent"
-   shell: "sh /tmp/dynatrace-oneagent.sh"
+   shell: "sh /tmp/dynatrace-oneagent.sh APP_LOG_CONTENT_ACCESS={{ dynatrace_app_log_content_access }} INFRA_ONLY={{ dynatrace_infra_only }}"
    become: yes
    when: ansible_architecture != "armv7l" and agent_installed.stat.exists == False

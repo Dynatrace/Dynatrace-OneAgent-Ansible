@@ -1,5 +1,10 @@
 ---
 oneagent_installer_script_url:
+
+# variables passed to the installer script
+dynatrace_app_log_content_access: 1
+dynatrace_infra_only: 0
+
 # for backward compatibility:
 dynatrace_oneagent_cluster_subdomain:
 dynatrace_oneagent_environment_id:
