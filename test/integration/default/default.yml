@@ -2,4 +2,4 @@
 - hosts: test-kitchen
   roles:
   - role: Dynatrace-OneAgent-Ansible
-    oneagent_installer_script_url:
+    oneagent_installer_script_url: "https://dtmanaged.rovca.eu/e/2c7c6d98-2fbe-461f-a15b-fd7a766e6e17/api/v1/deployment/installer/agent/unix/default/latest?Api-Token=uL96LJehQRG2L1HkLhhMm&arch=x86&flavor=default"
