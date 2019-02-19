@@ -3,6 +3,27 @@ Based on original role by Dynatrace
 
 This Ansible role installs [Dynatrace OneAgent](http://www.dynatrace.com) on Linux systems.
 
+## Quick Start
+Requirements:
+- Python 3.7.0
+- ansible 2.7.6
+- molecule 2.19.0
+- docker-py 1.10.6
+
+Steps:
+- install [Python 3](https://www.python.org/downloads/)
+```
+pip install ansible
+pip install molecule
+pip install docker-py
+```
+
+# go to root folder and run:
+```
+$ molecule test
+...test output will follow
+```
+
 ## Download
 
 The role is available via:
