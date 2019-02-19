@@ -1,6 +1,6 @@
 ---
 oneagent_installer_script_url:
-
+  
 # variables passed to the installer script
 dynatrace_app_log_content_access: 1
 
