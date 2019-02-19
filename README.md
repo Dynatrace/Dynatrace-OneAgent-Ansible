@@ -50,19 +50,20 @@ More in-depth examples can be found in the [examples](https://github.com/Dynatra
 
 ## Testing
 
-We use [Test Kitchen](http://kitchen.ci) to automatically test our automated deployments with [Serverspec](http://serverspec.org) and [RSpec](http://rspec.info/):
+We use [Molecule](https://molecule.readthedocs.io/en/latest/) to automatically test our automated deployments with [Test Infra](https://testinfra.readthedocs.io/en/latest/) and [Python3](https://docs.python.org/3/):
 
-1) Install Test Kitchen and its dependencies from within the project's directory:
+1) Install Molecule and its dependencies from within the project's directory:
 
 ```
-gem install bundler
-bundle install
+pip install ansible
+pip install molecule
+pip install docker-py
 ```
 
 2) Run all tests
 
 ```
-kitchen test
+molecule test
 ```
 
 By default, we run our tests using [Vagrant](https://www.vagrantup.com/) provisioning tool (see `.kitchen.yml`) since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
