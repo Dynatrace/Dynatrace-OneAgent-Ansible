@@ -9,6 +9,7 @@ Requirements:
 - ansible 2.7.6
 - molecule 2.19.0
 - docker-py 1.10.6
+- clone the repo
 
 Steps:
 - install [Python 3](https://www.python.org/downloads/)
