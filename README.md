@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible.svg?branch=master)](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible)
+[![Build Status](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible.svg?branch=molecule-tests-fail)](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible)
+
 
 # OneAgent-Ansible
 Based on original role by Dynatrace
