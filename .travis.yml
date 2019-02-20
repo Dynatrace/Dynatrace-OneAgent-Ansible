@@ -12,4 +12,4 @@ script:
   - docker version
   - molecule --version
   - ansible --version
-  - molecule test
+  - molecule test --debug
