@@ -9,9 +9,10 @@ install:
   - pip install ansible
   - pip install molecule
   - pip install docker-py
+  - pip install docker
 
 script:
   - docker version
   - molecule --version
   - ansible --version
-  - molecule test --debug
+  - molecule --debug test
