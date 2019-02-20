@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/anthonyinfinity/Dynatrace-OneAgent-Ansible.svg?branch=master)](https://travis-ci.org/anthonyinfinity/Dynatrace-OneAgent-Ansible)
+[![Build Status](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible.svg?branch=master)](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible)
 
 # OneAgent-Ansible
 Based on original role by Dynatrace
