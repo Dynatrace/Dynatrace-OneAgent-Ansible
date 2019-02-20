@@ -15,12 +15,15 @@ provisioner:
 scenario:
   name: default
   test_sequence:
-    - syntax
+    # - destroy
+    # - syntax
     - create
-    - prepare
+    # - prepare
     - converge
-    - verify
-    - destroy
+    # - side_effect
+    # - verify
+    # - idempotence
+    # - destroy
 verifier:
   name: testinfra
   lint:
