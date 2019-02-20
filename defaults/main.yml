@@ -1,6 +1,6 @@
 ---
 oneagent_installer_script_url:
-  
+
 # variables passed to the installer script
 dynatrace_app_log_content_access: 1
 
@@ -8,3 +8,8 @@ dynatrace_app_log_content_access: 1
 dynatrace_oneagent_cluster_subdomain:
 dynatrace_oneagent_environment_id:
 dynatrace_oneagent_tenant_token:
+
+# Install INSTALL_PATH
+dynatrace_root_dir: "/opt"
+dynatrace_install_path: "/dnb/process"
+dynatrace_path: "{{ dynatrace_root_dir }}/{{ dynatrace_install_path }}"
