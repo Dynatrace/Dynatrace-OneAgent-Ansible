@@ -1,12 +1,13 @@
 ---
+sudo: required
 language: python
-python:
-  - "2.7"
-  - "3.6"
+
 services:
   - docker
+
 install:
   - pip install molecule docker docker-py
+
 script:
   - docker version
   - molecule --version
