@@ -1,4 +1,11 @@
 ---
+molecule:
+  ignore_paths:
+    - .git
+    - .vagrant
+    - .molecule
+
+
 dependency:
   name: galaxy
 driver:
@@ -15,15 +22,15 @@ provisioner:
 scenario:
   name: default
   test_sequence:
-    # - destroy
-    # - syntax
+    - destroy
+    - syntax
     - create
     # - prepare
     - converge
     # - side_effect
     # - verify
     # - idempotence
-    # - destroy
+    - destroy
 verifier:
   name: testinfra
   lint:
