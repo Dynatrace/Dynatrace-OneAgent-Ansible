@@ -15,8 +15,11 @@ provisioner:
 scenario:
   name: default
   test_sequence:
+    - syntax
     - create
+    - prepare
     - converge
+    - verify
     - destroy
 verifier:
   name: testinfra
