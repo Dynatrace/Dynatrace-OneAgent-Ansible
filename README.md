@@ -126,7 +126,7 @@ molecule test
 ```
 
 TODO: Setup [Vagrant](https://www.vagrantup.com/) to use for docker tests.
-Provisioning for docker since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
+Provisioning for docker since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our the Dynatrace blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
 
 *Please note, that running tests using Vagrant provisioning on virtual machine or cloud instance may cause serious difficulties since [VT-x](https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) or [AMD-V](https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29) virtualization can't be nested.*
 
