@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible.svg?branch=molecule-tests-fail)](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible)
+[![Build Status](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible.svg?branch=development)](https://travis-ci.org/redoceantechnology/Dynatrace-OneAgent-Ansible)
 # OneAgent-Ansible
  Fork of https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible
 
