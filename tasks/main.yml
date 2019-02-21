@@ -38,6 +38,7 @@
       dest: "/tmp/dynatrace-oneagent.sh"
    when: agent_installed.stat.exists == False and (oneagent_installer_script_url is defined) and (oneagent_installer_script_url is not none)
 
+# TODO: convert to install vars to facts. Check if facts set before running here?
  - name: "Install Dynatrace OneAgent"
    shell: "sh /tmp/dynatrace-oneagent.sh {% if dynatrace_path is defined %} INSTALL_PATH={{ dynatrace_path }}{% endif %} APP_LOG_CONTENT_ACCESS={{ dynatrace_app_log_content_access }}{% if dynatrace_infra_only is defined %} INFRA_ONLY={{ dynatrace_infra_only }}{% endif %}"
    become: yes

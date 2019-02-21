@@ -2,4 +2,4 @@
 - hosts: all
   roles:
   - role: Dynatrace-OneAgent-Ansible
-    oneagent_installer_script_url: 
+    oneagent_installer_script_url:

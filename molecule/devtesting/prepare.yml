@@ -1,0 +1,24 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      become: true
+      changed_when: false
+
+    - name: install the libselinux-python package
+      package:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - libselinux-python
+        - policycoreutils-python
+      become: true
+
+    - name: disable selinux
+      selinux:
+        state: disabled
+      become: true

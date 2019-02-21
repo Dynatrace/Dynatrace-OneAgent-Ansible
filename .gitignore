@@ -4,3 +4,4 @@
 molecule/defualt/*.
 *.pyc
 *.vagrant
+*.pytest
