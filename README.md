@@ -32,12 +32,12 @@ $ molecule test
 
 The role is available via:
 
-- [Ansible Galaxy](https://galaxy.ansible.com/Dynatrace/OneAgent)
-- [GitHub](https://github.com/dynatrace/Dynatrace-OneAgent-Ansible)
+- TODO: [Ansible Galaxy]()
+- [GitHub](https://github.com/redoceantechnology/Dynatrace-OneAgent-Ansible.git)
 
 ## Description
 
-This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment. Sign up for a [15-day free Dynatrace trial](https://www.dynatrace.com/trial/?vehicle_name=https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/) now!
+This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment.
 
 ## Configuration
 
@@ -62,6 +62,8 @@ You can get your url by following these steps:
 
 If you’ve been using automated scripts or deployment via YAML utilizing the TENANT, SERVER, TENANT_TOKEN command line arguments, you’ll find that the new approach is fully transparent and no changes are required.
 
+You can also edit the installer path although this simply creates a symlink to /opt/dynatrace
+
 ## Example Playbook
 
 ```
@@ -71,7 +73,7 @@ If you’ve been using automated scripts or deployment via YAML utilizing the TE
       oneagent_installer_script_url: YOUR_ONEAGENT_INSTALLER_SCRIPT_URL
 ```
 
-More in-depth examples can be found in the [examples](https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/tree/master/examples) folder.
+More in-depth examples can be found in the [examples](https://github.com/redoceantechnology/Dynatrace-OneAgent-Ansible/tree/master/examples) folder.
 
 ## Testing
 
@@ -91,10 +93,11 @@ pip install docker-py
 molecule test
 ```
 
-By default, we run our tests using [Vagrant](https://www.vagrantup.com/) provisioning tool (see `molecule.yml`) since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
+TODO: Setup [Vagrant](https://www.vagrantup.com/) to use for docker tests.
+Provisioning for docker since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
 
 *Please note, that running tests using Vagrant provisioning on virtual machine or cloud instance may cause serious difficulties since [VT-x](https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) or [AMD-V](https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29) virtualization can't be nested.*
 
 ## License
 
-Licensed under the MIT License. See the [LICENSE](https://github.com/dynatrace/Dynatrace-OneAgent-Ansible/blob/master/LICENSE) file for details.
+Licensed under the MIT License. See the [LICENSE](https://github.com/redoceantechnology/Dynatrace-OneAgent-Ansible/blob/master/LICENSE) file for details.

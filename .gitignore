@@ -1,3 +1,6 @@
 .DS_Store
-.kitchen
-Gemfile.lock
+.vagrant
+*.retry
+molecule/defualt/*.
+*.pyc
+*.vagrant
