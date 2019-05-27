@@ -25,7 +25,7 @@
        url: "https://{{ dynatrace_oneagent_cluster_subdomain }}/e/{{ dynatrace_oneagent_environment_id }}/installer/agent/unix/latest/{{ dynatrace_oneagent_tenant_token }}"
        dest: "/tmp/dynatrace-oneagent.sh"
       when: ("live.dynatrace.com" != dynatrace_oneagent_cluster_subdomain) and ("live.ruxit.com" != dynatrace_oneagent_cluster_subdomain)
-   when: agent_installed == False and ((oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == ""))
+   when: agent_installed.stat.exists == False and ((oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == ""))
    
 # only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using installer script url
  - block:
