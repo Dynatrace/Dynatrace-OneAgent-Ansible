@@ -78,11 +78,14 @@ The role is available via:
 This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment.
 
 ## Configuration
-Please edit below role variable(s) defined in ```defaults/main.yml```:
+All variables are defined in ```defualts/main.yml```
+Playbook vars can override the above.
+And can also be called using tags: ```$ ansible-playbook playbook.yml -vvv --tags "config, uninstall"```
+Important values in  ```defaults/main.yml```:
 
-| Name                                   | Default            | Description
-|----------------------------------------|--------------------|------------
-| *oneagent_installer_script_url*        |                    | Url presented in the command on the Dynatrace OneAgent installation page
+- oneagent_installer_script_url: url to download one agent from. Use inventory vars for environment specific urls.
+- uninstall_dynatrace_oneagent: defualts to False. Set this to true as well the config and uninstall tag to roll back the installation.
+e.g: ```$ ansible-playbook playbook.yml -vvv --tags "config, uninstall```
 
 You can get your url by following these steps:
 
@@ -99,6 +102,7 @@ You can get your url by following these steps:
 If you’ve been using automated scripts or deployment via YAML utilizing the TENANT, SERVER, TENANT_TOKEN command line arguments, you’ll find that the new approach is fully transparent and no changes are required.
 
 You can also edit the installer path although this simply creates a symlink to /opt/dynatrace
+*Installation under custom path or with /opt being a symlink when SELinux is enabled requires semanage to be available for the purpose of assigning persistent security contexts to Dynatrace OneAgent files and directories.*
 
 ## Example Playbook
 ```
@@ -106,6 +110,7 @@ You can also edit the installer path although this simply creates a symlink to /
   roles:
     - role: Dynatrace.OneAgent
       oneagent_installer_script_url: YOUR_ONEAGENT_INSTALLER_SCRIPT_URL
+      uninstall_dynatrace_oneagent: False
 ```
 
 More in-depth examples can be found in the [examples](https://github.com/redoceantechnology/Dynatrace-OneAgent-Ansible/tree/master/examples) folder.

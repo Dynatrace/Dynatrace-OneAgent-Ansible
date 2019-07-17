@@ -3,4 +3,4 @@
   hosts: all
   roles:
     - role: Dynatrace-OneAgent-Ansible
-      oneagent_installer_script_url:
+      oneagent_installer_script_url: "https://dtmanaged.rovca.eu/e/00f2a953-32eb-41f8-9f90-60d144bf685e/api/v1/deployment/installer/agent/unix/default/latest?Api-Token=3BHDR2Z_QgCHYz46HAgOU&arch=x86&flavor=default"

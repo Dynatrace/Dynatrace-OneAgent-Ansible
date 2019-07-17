@@ -8,7 +8,7 @@
       become: true
       changed_when: false
 
-    - name: install the libselinux-python package
+    - name: install semange
       package:
         name: "{{ item }}"
         state: present

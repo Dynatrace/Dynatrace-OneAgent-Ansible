@@ -1,0 +1,23 @@
+---
+all:
+  children:
+    dnb:
+      children:
+        static_envs:
+          children:
+            sandbox:
+              hosts:
+                centos:
+              vars:
+                oneagent_installer_script_url: 
+            preproduction:
+              hosts:
+                host_two:
+                host_three:
+              # vars:
+                # oneagent_installer_script_url:
+            production:
+              hosts:
+                host_one:
+              # vars:
+                # oneagent_installer_script_url:

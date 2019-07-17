@@ -1,0 +1,19 @@
+---
+ - name: "Uninstall Dynatrace OneAgent"
+   shell: "sh {{ dynatrace_oneagent_install_path }}/agent/uninstall.sh"
+   become: yes
+   when: agent_installed.stat.exists == True
+   tags:
+     - uninstall
+
+ - name: Delete remaining dynatrace dirs after uninstall script
+   file:
+     path: "{{ item }}"
+     state: absent
+   become: yes
+   with_items:
+     - "{{ dynatrace_dir_path }}"
+     - "{{ dynatrace_lib_path }}"
+   when: agent_installed.stat.exists == True
+   tags:
+     - uninstall

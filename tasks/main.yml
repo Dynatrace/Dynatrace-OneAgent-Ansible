@@ -1,45 +1,12 @@
 ---
- - name: Check if Dynatrace OneAgent is already installed
-   stat:
-     path: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
-   register: agent_installed
+- name: Run Installer for detected ansible system
+  include: "{{ ansible_system }}-install.yml"
+  tags:
+    - config
+    - install
 
-# only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using token id
- - block:
-    - fail:
-       msg: "The 'dynatrace_oneagent_cluster_subdomain' variable has not been set, it must point to the subdomain of your Dynatrace cluster. Please consult the documentation."
-      when: (dynatrace_oneagent_cluster_subdomain is undefined) or (dynatrace_oneagent_cluster_subdomain is none) or (dynatrace_oneagent_cluster_subdomain | trim == "")
-    - fail:
-       msg: "The 'dynatrace_oneagent_environment_id' variable has not been set, it must contain the Dynatrace tenant id. Please consult the documentation."
-      when: (dynatrace_oneagent_environment_id is undefined) or (dynatrace_oneagent_environment_id is none) or (dynatrace_oneagent_environment_id | trim == "")
-    - fail:
-       msg: "The 'dynatrace_oneagent_tenant_token' variable has not been set, it must contain the Dynatrace tenant token. Please consult the documentation."
-      when: (dynatrace_oneagent_tenant_token is undefined) or (dynatrace_oneagent_tenant_token is none) or (dynatrace_oneagent_tenant_token | trim == "")
-    - name: "[Backward Compatibility Task] Download Dynatrace OneAgent (for Dynatrace SaaS)"
-      get_url:
-       url: "https://{{ dynatrace_oneagent_environment_id }}.{{ dynatrace_oneagent_cluster_subdomain }}/installer/oneagent/unix/latest/{{ dynatrace_oneagent_tenant_token }}"
-       dest: "/tmp/dynatrace-oneagent.sh"
-      when: ("live.dynatrace.com" == dynatrace_oneagent_cluster_subdomain) or ("live.ruxit.com" == dynatrace_oneagent_cluster_subdomain) or ("sprint.dynatracelabs.com" == dynatrace_oneagent_cluster_subdomain)
-    - name: "[Backward Compatibility Task] Download Dynatrace OneAgent (for Dynatrace Managed)"
-      get_url:
-       url: "https://{{ dynatrace_oneagent_cluster_subdomain }}/e/{{ dynatrace_oneagent_environment_id }}/installer/agent/unix/latest/{{ dynatrace_oneagent_tenant_token }}"
-       dest: "/tmp/dynatrace-oneagent.sh"
-      when: ("live.dynatrace.com" != dynatrace_oneagent_cluster_subdomain) and ("live.ruxit.com" != dynatrace_oneagent_cluster_subdomain)
-   when: agent_installed == False and ((oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == ""))
-
-# only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using installer script url
- - block:
-   - fail:
-      msg: "The 'oneagent_installer_script_url' variable has not been set, it must contain the Dynatrace OneAgent Installer Script URL. Please consult the documentation."
-     when: (oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == "")
-   - name: "Download Dynatrace OneAgent"
-     get_url:
-      url: "{{ oneagent_installer_script_url }}"
-      dest: "/tmp/dynatrace-oneagent.sh"
-   when: agent_installed.stat.exists == False and (oneagent_installer_script_url is defined) and (oneagent_installer_script_url is not none)
-
-# TODO: convert to install vars to facts. Check if facts set before running here?
- - name: "Install Dynatrace OneAgent"
-   shell: "sh /tmp/dynatrace-oneagent.sh {% if dynatrace_path is defined %} INSTALL_PATH={{ dynatrace_path }}{% endif %} APP_LOG_CONTENT_ACCESS={{ dynatrace_app_log_content_access }}{% if dynatrace_infra_only is defined %} INFRA_ONLY={{ dynatrace_infra_only }}{% endif %}"
-   become: yes
-   when: ansible_architecture != "armv7l" and agent_installed.stat.exists == False
+- name: Run UNinstaller for detected ansible system
+  include: "{{ ansible_system }}-uninstall.yml"
+  when: uninstall_dynatrace_oneagent == True
+  tags:
+    - uninstall

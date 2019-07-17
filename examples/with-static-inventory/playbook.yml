@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: centos
   roles:
   - role: Dynatrace-OneAgent-Ansible
-    oneagent_installer_script_url:
+    oneagent_installer_script_url: "https://dtmpoc.redoceangroup.eu/e/b9a433cf-bf2a-40c3-9dc6-326b1f1b9faa/api/v1/deployment/installer/agent/unix/default/latest?Api-Token=fpXZQPRkTYiSIt9OHHcKI&arch=x86&flavor=default"

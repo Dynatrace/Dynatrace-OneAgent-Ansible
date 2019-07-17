@@ -1,5 +1,6 @@
 ---
-oneagent_installer_script_url:
+# use var in inventory to keep env urls separate
+# oneagent_installer_script_url:
 
 # variables passed to the installer script
 dynatrace_app_log_content_access: 1
@@ -9,7 +10,20 @@ dynatrace_oneagent_cluster_subdomain:
 dynatrace_oneagent_environment_id:
 dynatrace_oneagent_tenant_token:
 
-# Install INSTALL_PATH
-dynatrace_root_dir: "/opt"
-dynatrace_install_path: "/dnb/process"
-dynatrace_path: "{{ dynatrace_root_dir }}/{{ dynatrace_install_path }}"
+## Installation under custom path or with /opt being a symlink when SELinux is enabled
+## requires semanage to be available for the purpose of assigning persistent security
+## contexts to Dynatrace OneAgent files and directories.
+
+# Name of Directories used in Paths
+dynatrace_root_dir_name: "/opt"
+dynatrace_dir_name: "dynatrace"
+oneagent_dir_name: "oneagent"
+# Paths where stuff is {/opt/dynatrace/oneagent,/opt/dynatrace/,/var/lib/dynatrace}
+dynatrace_oneagent_install_path: "{{ dynatrace_root_dir_name }}/{{ dynatrace_dir_name }}/{{ oneagent_dir_name }}"
+dynatrace_dir_path: "{{ dynatrace_root_dir_name }}/{{ dynatrace_dir_name }}"
+dynatrace_lib_path: "/var/lib/{{ dynatrace_dir_name }}"
+
+# if True rolls back.
+# molecule doesn't sanitze tags, results in inconsistent behaviour
+# when calling multiple tags. Set this for consistent behaviour across molecule and deploys
+uninstall_dynatrace_oneagent: False

@@ -14,15 +14,22 @@ platforms:
   - name: centos7
     image: milcom/centos7-systemd
     privileged: true
+    exposed_ports:
+      - 9999/tcp
+    published_ports:
+      - 0.0.0.0:9999:9999/tcp
 provisioner:
   name: ansible
+  options:
+    vvv: true
+    skip-tags: uninstall
   lint:
     name: ansible-lint
 scenario:
   name: default
   test_sequence:
     # - lint
-    - destroy
+    # - destroy
     - dependency
     - syntax
     - create
@@ -31,7 +38,7 @@ scenario:
     - idempotence
     - side_effect
     - verify
-    - destroy
+    # - destroy
 verifier:
   name: testinfra
   options:
