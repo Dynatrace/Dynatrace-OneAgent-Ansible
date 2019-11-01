@@ -1,3 +1,4 @@
 .DS_Store
 .kitchen
 Gemfile.lock
+.tool-versions
