@@ -1,24 +1,24 @@
 ---
 provisioner:
-  name: ansible_playbook
-  hosts: test-kitchen
-  ansible_verbose: true
-  ansible_version: latest
-  require_ansible_repo: false
-  require_ansible_omnibus: true
-  require_chef_for_busser: false
+  name: ansible_push
+  playbook: test/integration/default/default.yml
+  ansible_config: test/ansible.cfg
+  verbose: vv
+  remote_user: vagrant
+  chef_bootstrap_url: nil
 
 driver:
   name: vagrant
 
 platforms:
   - name: debian/jessie64
-  - name: windows_2012r2
-    driver:
-      box: tas50/windows_2012r2
+#  - name: windows_2012r2
+#    driver:
+#      box: tas50/windows_2012r2
+#      vagrantfile_erb: Ansible4Windows.erb
 
 suites:
   - name: default
 
 transport:
-    max_ssh_sessions: 6
+  max_ssh_sessions: 6
