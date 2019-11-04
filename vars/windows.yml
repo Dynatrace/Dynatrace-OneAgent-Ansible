@@ -1,0 +1,5 @@
+---
+dynatrace_oneagent_install_artifact: C:\Dynatrace-OneAgent-Windows.exe
+dynatrace_oneagent_install_script: C:\Dynatrace-OneAgent-Windows.exe
+dynatrace_oneagent_install_cmd: "{{ dynatace_oneagent_install_script }} --quiet"
+dynatrace_oneagent_install_url_key: windows
