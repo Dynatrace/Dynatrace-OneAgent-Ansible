@@ -3,8 +3,10 @@ oneagent_installer_script_url:
 
 # variables passed to the installer script
 dynatrace_app_log_content_access: 1
+dynatrace_infra_only: 0
+dynatrace_oneagent_install_args: "APP_LOG_CONTENT_ACCESS={{ dynatrace_app_log_content_access }} INFRA_ONLY={{ dynatrace_infra_only }}"
 
-# for backward compatibility:
+# for backward compatibility or multiple platforms:
 dynatrace_oneagent_cluster_subdomain:
 dynatrace_oneagent_environment_id:
 dynatrace_oneagent_tenant_token:
