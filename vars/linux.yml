@@ -1,5 +1,5 @@
 ---
 dynatrace_oneagent_install_artifact: /opt/dynatrace/oneagent/agent/lib64/liboneagentos.so
 dynatrace_oneagent_install_script: /tmp/dynatrace-oneagent.sh
-dynatrace_oneagent_install_cmd: "sh {{ dynatace_oneagent_install_script }}"
+dynatrace_oneagent_install_cmd: "sh {{ dynatrace_oneagent_install_script }}"
 dynatrace_oneagent_install_url_key: unix
