@@ -10,6 +10,9 @@ driver:
 
 platforms:
   - name: debian/jessie64
+  - name: windows_2012r2
+    driver:
+      box: tas50/windows_2012r2
 
 suites:
   - name: default
