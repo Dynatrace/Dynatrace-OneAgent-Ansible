@@ -2,8 +2,11 @@
 provisioner:
   name: ansible_playbook
   hosts: test-kitchen
+  ansible_verbose: true
+  ansible_version: latest
   require_ansible_repo: false
   require_ansible_omnibus: true
+  require_chef_for_busser: false
 
 driver:
   name: vagrant
