@@ -2,3 +2,4 @@
 .kitchen
 Gemfile.lock
 .tool-versions
+*.swp
