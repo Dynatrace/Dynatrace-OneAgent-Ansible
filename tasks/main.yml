@@ -1,47 +1,19 @@
 ---
- - name: Load variables based on OS
-   include_vars: "vars/{{ ansible_system | lower }}.yml"
+- name: Load variables based on OS
+  include_vars: "vars/{{ ansible_system | lower }}.yml"
 
- - name: Check if Dynatrace OneAgent is already installed
-   stat:
-     path: "{{ dynatrace_oneagent_install_artifact }}"
-   register: agent_installed
+- name: Fail if Dynatrace OneAgent is already installed
+  stat:
+    path: "{{ dynatrace_oneagent_install_artifact }}"
+  register: agent_installed
+  failed_when: agent_installed.stat.exists == True
 
-# only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using token id
- - block:
-    - fail:
-       msg: "The 'dynatrace_oneagent_cluster_subdomain' variable has not been set, it must point to the subdomain of your Dynatrace cluster. Please consult the documentation."
-      when: (dynatrace_oneagent_cluster_subdomain is undefined) or (dynatrace_oneagent_cluster_subdomain is none) or (dynatrace_oneagent_cluster_subdomain | trim == "")
-    - fail:
-       msg: "The 'dynatrace_oneagent_environment_id' variable has not been set, it must contain the Dynatrace tenant id. Please consult the documentation."
-      when: (dynatrace_oneagent_environment_id is undefined) or (dynatrace_oneagent_environment_id is none) or (dynatrace_oneagent_environment_id | trim == "")
-    - fail:
-       msg: "The 'dynatrace_oneagent_tenant_token' variable has not been set, it must contain the Dynatrace tenant token. Please consult the documentation."
-      when: (dynatrace_oneagent_tenant_token is undefined) or (dynatrace_oneagent_tenant_token is none) or (dynatrace_oneagent_tenant_token | trim == "")        
-    - name: "[Multi-Platform Task] Download Dynatrace OneAgent (for Dynatrace SaaS)"
-      get_url:
-       url: "https://{{ dynatrace_oneagent_environment_id }}.{{ dynatrace_oneagent_cluster_subdomain }}/installer/oneagent/{{ dynatrace_oneagent_install_url_key }}/latest/{{ dynatrace_oneagent_tenant_token }}"
-       dest: "{{ dynatrace_oneagent_install_script }}"
-      when: ("live.dynatrace.com" == dynatrace_oneagent_cluster_subdomain) or ("live.ruxit.com" == dynatrace_oneagent_cluster_subdomain) or ("sprint.dynatracelabs.com" == dynatrace_oneagent_cluster_subdomain)
-    - name: "[Multi-Platform Task] Download Dynatrace OneAgent (for Dynatrace Managed)"
-      get_url:
-       url: "https://{{ dynatrace_oneagent_cluster_subdomain }}/e/{{ dynatrace_oneagent_environment_id }}/installer/agent/{{ dynatrace_oneagent_install_url_key }}/latest/{{ dynatrace_oneagent_tenant_token }}"
-       dest: "{{ dynatrace_oneagent_install_script }}"
-      when: ("live.dynatrace.com" != dynatrace_oneagent_cluster_subdomain) and ("live.ruxit.com" != dynatrace_oneagent_cluster_subdomain)
-   when: agent_installed == False and ((oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == ""))
-   
-# only in Ansible >= 2.3.0: - name: Download Dynatrace OneAgent using installer script url
- - block:
-   - fail:
-      msg: "The 'oneagent_installer_script_url' variable has not been set, it must contain the Dynatrace OneAgent Installer Script URL. Please consult the documentation."
-     when: (oneagent_installer_script_url is undefined) or (oneagent_installer_script_url is none) or (oneagent_installer_script_url | trim == "")
-   - name: "Download Dynatrace OneAgent"
-     get_url:
-      url: "{{ oneagent_installer_script_url }}"
-      dest: "{{ dynatrace_oneagent_install_script }}"
-   when: agent_installed.stat.exists == False and (oneagent_installer_script_url is defined) and (oneagent_installer_script_url is not none)
+- name: Use multi-platform download
+  import_tasks: multi_platform.yml
+  when:
+    - dynatrace_oneagent_cluster_subdomain is defined
+    - dynatrace_oneagent_environment_id is defined
+    - dynatrace_oneagent_tenant_token is defined
 
- - name: "Install Dynatrace OneAgent"
-   shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
-   become: yes
-   when: ansible_architecture != "armv7l" and agent_installed.stat.exists == False
+- name: Install Dynatrace OneAgent
+  import_tasks: install.yml
