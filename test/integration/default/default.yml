@@ -1,4 +1,0 @@
----
-- hosts: all
-  roles:
-  - role: Dynatrace-OneAgent-Ansible
