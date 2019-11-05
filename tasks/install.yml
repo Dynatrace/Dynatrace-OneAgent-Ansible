@@ -1,0 +1,10 @@
+---
+- name: "Install Dynatrace OneAgent (for Linux)"
+  shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
+  become: yes
+  when: ansible_system|lower == "linux"
+
+- name: "Install Dynatrace OneAgent (for Windows)"
+  win_shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
+  become: yes
+  when: ansible_system|lower == "windows" 
