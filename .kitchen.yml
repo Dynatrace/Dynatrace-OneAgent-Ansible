@@ -9,6 +9,8 @@ provisioner:
   verbose: vv
   remote_user: vagrant
   chef_bootstrap_url: nil
+  environment_vars:
+    OBJC_DISABLE_INITIALIZE_FORK_SAFETY: YES # for Mac OSX compatibility
 
 verifier:
   name: inspec
@@ -18,11 +20,18 @@ transport:
 
 platforms:
   - name: debian/jessie64
-#  - name: windows_2012r2
-#    driver:
-#      box: tas50/windows_2012r2
+  - name: windows_2012r2
+    driver:
+      box: tas50/windows_2012r2
+      gui: false
+    provisioner:
+      ansible_connection: winrm
+      ansible_port: 55986
 
 suites:
   - name: linux
     includes:
       - debian/jessie64
+  - name: windows
+    includes:
+      - windows_2012r2
