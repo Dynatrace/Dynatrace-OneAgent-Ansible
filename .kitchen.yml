@@ -6,7 +6,7 @@ provisioner:
   name: ansible_push
   playbook: test/integration/default/oneagent.yml
   ansible_config: test/ansible.cfg
-  verbose: vvv
+  verbose: vv
   remote_user: vagrant
   chef_bootstrap_url: nil
   environment_vars:
@@ -24,9 +24,11 @@ platforms:
     driver:
       box: tas50/windows_2012r2
       gui: false
+      network:
+        - ["forwarded_port", {guest: 5985, host: 5985}]
     provisioner:
       ansible_connection: winrm
-      ansible_port: 55986
+      ansible_port: 5985
 
 suites:
   - name: linux
