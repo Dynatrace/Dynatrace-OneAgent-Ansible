@@ -6,11 +6,11 @@ provisioner:
   name: ansible_push
   playbook: test/integration/default/oneagent.yml
   ansible_config: test/ansible.cfg
-  verbose: vv
+  verbose: vvv
   remote_user: vagrant
   chef_bootstrap_url: nil
   environment_vars:
-    OBJC_DISABLE_INITIALIZE_FORK_SAFETY: YES # for Mac OSX compatibility
+    OBJC_DISABLE_INITIALIZE_FORK_SAFETY: 'YES' # for Mac OSX compatibility
 
 verifier:
   name: inspec
