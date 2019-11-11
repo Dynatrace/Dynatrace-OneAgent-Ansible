@@ -2,11 +2,19 @@
 - name: Load variables based on OS
   include_vars: "vars/{{ ansible_system | lower }}.yml"
 
-- name: Fail if Dynatrace OneAgent is already installed
+- name: Fail if Dynatrace OneAgent is already installed | Linux
   stat:
     path: "{{ dynatrace_oneagent_install_artifact }}"
   register: agent_installed
   failed_when: agent_installed.stat.exists == True
+  when: ansible_system|lower == "linux"
+
+- name: Fail if Dynatrace OneAgent is already installed | Windows
+  win_stat:
+    path: "{{ dynatrace_oneagent_install_artifact }}"
+  register: agent_installed
+  failed_when: agent_installed.stat.exists == True
+  when: ansible_system|lower == "win32nt"
 
 - name: Use multi-platform download
   import_tasks: multi_platform.yml
