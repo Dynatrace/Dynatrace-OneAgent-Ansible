@@ -1,5 +1,0 @@
----
-- hosts: all
-  roles:
-  - role: Dynatrace.OneAgent
-    oneagent_installer_script_url:
