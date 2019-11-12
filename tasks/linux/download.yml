@@ -1,0 +1,16 @@
+---
+- name: Download Dynatrace OneAgent | Dynatrace SaaS
+  get_url:
+    url: "{{ dynatrace_oneagent_saas_url }}"
+    dest: "{{ dynatrace_oneagent_install_script }}"
+    force: yes
+  when: dynatrace_oneagent_cluster_subdomain == "live.dynatrace.com" or
+        dynatrace_oneagent_cluster_subdomain == "sprint.dynatracelabs.com" or
+        dynatrace_oneagent_cluster_subdomain == "live.ruxit.com"
+
+- name: Download Dynatrace OneAgent | Dynatrace Managed
+  get_url:
+    url: "{{ dynatrace_oneagent_managed_url }}"
+    dest: "{{ dynatrace_oneagent_install_script }}"
+    force: yes
+  when: dynatrace_oneagent_cluster_subdomain is search("dynatrace-managed.com")
