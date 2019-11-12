@@ -1,27 +1,19 @@
 ---
+- name: Check required variables
+  fail:
+    msg: "One or more required variables are not defined. Please see documentation for further information."
+  when: dynatrace_oneagent_cluster_subdomain == "" or
+        dynatrace_oneagent_environment_id == "" or
+        dynatrace_oneagent_tenant_token == ""
+
 - name: Load variables based on OS
   include_vars: "vars/{{ ansible_system | lower }}.yml"
 
-- name: Fail if Dynatrace OneAgent is already installed | Linux
-  stat:
-    path: "{{ dynatrace_oneagent_install_artifact }}"
-  register: agent_installed
-  failed_when: agent_installed.stat.exists == True
-  when: ansible_system|lower == "linux"
+- name: Check prerequisites
+  include_tasks: "tasks/{{ ansible_system | lower }}/prereqs.yml"
 
-- name: Fail if Dynatrace OneAgent is already installed | Windows
-  win_stat:
-    path: "{{ dynatrace_oneagent_install_artifact }}"
-  register: agent_installed
-  failed_when: agent_installed.stat.exists == True
-  when: ansible_system|lower == "win32nt"
-
-- name: Use multi-platform download
-  import_tasks: multi_platform.yml
-  when:
-    - dynatrace_oneagent_cluster_subdomain is defined
-    - dynatrace_oneagent_environment_id is defined
-    - dynatrace_oneagent_tenant_token is defined
+- name: Download Dynatrace OneAgent
+  include_tasks: "tasks/{{ansible_system | lower}}/download.yml"
 
 - name: Install Dynatrace OneAgent
-  import_tasks: install.yml
+  include_tasks: "tasks/{{ansible_system | lower}}/install.yml"
