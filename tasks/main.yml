@@ -2,18 +2,16 @@
 - name: Check required variables
   fail:
     msg: "One or more required variables are not defined. Please see documentation for further information."
-  when: dynatrace_oneagent_cluster_subdomain == "" or
-        dynatrace_oneagent_environment_id == "" or
-        dynatrace_oneagent_tenant_token == ""
+  when: dynatrace_environment_url == "" or dynatrace_api_token == ""
 
 - name: Load variables based on OS
   include_vars: "vars/{{ ansible_system | lower }}.yml"
 
 - name: Check prerequisites
-  include_tasks: "tasks/{{ ansible_system | lower }}/prereqs.yml"
+  include_tasks: "tasks/prereqs.yml"
 
 - name: Download Dynatrace OneAgent
-  include_tasks: "tasks/{{ansible_system | lower}}/download.yml"
+  include_tasks: "tasks/download.yml"
 
 - name: Install Dynatrace OneAgent
-  include_tasks: "tasks/{{ansible_system | lower}}/install.yml"
+  include_tasks: "tasks/install.yml"
