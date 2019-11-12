@@ -20,10 +20,31 @@ transport:
   max_ssh_sessions: 6
 
 platforms:
-  - name: debian/jessie64
+  - name: ubuntu/xenial64
+  - name: ubuntu/bionic64
+  - name: generic/rhel7
+  - name: generic/rhel8
   - name: windows_2012r2
     driver:
       box: tas50/windows_2012r2
+      gui: false
+      network:
+        - ["forwarded_port", {guest: 5985, host: 5985}]
+    provisioner:
+      ansible_connection: winrm
+      ansible_port: 5985
+  - name: windows_2016
+    driver:
+      box: tas50/windows_2016
+      gui: false
+      network:
+        - ["forwarded_port", {guest: 5985, host: 5985}]
+    provisioner:
+      ansible_connection: winrm
+      ansible_port: 5985
+  - name: windows_2019
+    driver:
+      box: tas50/windows_2019
       gui: false
       network:
         - ["forwarded_port", {guest: 5985, host: 5985}]
@@ -34,7 +55,12 @@ platforms:
 suites:
   - name: linux
     includes:
-      - debian/jessie64
+      - ubuntu/xenial64
+      - ubuntu/bionic64
+      - generic/rhel7
+      - generic/rhel8
   - name: windows
     includes:
       - windows_2012r2
+      - windows_2016
+      - windows_2019
