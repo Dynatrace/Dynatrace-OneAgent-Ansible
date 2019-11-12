@@ -6,6 +6,7 @@ provisioner:
   name: ansible_push
   playbook: test/integration/default/oneagent.yml
   ansible_config: test/ansible.cfg
+  extra_vars: "@vars.yml"
   verbose: vv
   remote_user: vagrant
   chef_bootstrap_url: nil
