@@ -1,3 +1,3 @@
-describe file('C:\Dynatrace-OneAgent-Windows.exe') do
-  it { should be_file }
+describe service('Dynatrace OneAgent') do
+  it { should be_running }
 end

@@ -1,3 +1,4 @@
-describe file('/opt/dynatrace') do
-  it { should be_directory }
+describe service('oneagent.service') do
+  it { should be_enabled }
+  it { should be_running }
 end
