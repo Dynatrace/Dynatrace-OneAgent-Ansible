@@ -3,3 +3,4 @@
 Gemfile.lock
 .tool-versions
 *.swp
+vars.yml
