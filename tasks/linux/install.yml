@@ -1,4 +1,0 @@
----
-- name: Install Dynatrace OneAgent
-  shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
-  become: yes
