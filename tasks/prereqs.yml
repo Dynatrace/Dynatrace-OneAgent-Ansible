@@ -1,0 +1,24 @@
+---
+- name: Linux Prerequisites
+  block:
+    - name: Check for OneAgent install | Linux
+      stat:
+        path: "{{ dynatrace_oneagent_install_artifact }}"
+      register: agent_installed
+    - name: Fail if OneAgent is installed | Linux
+      fail:
+        msg: "Dynatrace OneAgent is already installed on this host."
+      when: agent_installed.stat.exists
+  when: ansible_system|lower == "linux"
+
+- name: Windows Prerequisites
+  block:
+    - name: Check for OneAgent install | Windows
+      win_stat:
+        path: "{{ dynatrace_oneagent_install_artifact }}"
+      register: agent_installed
+    - name: Fail if OneAgent is installed | Windows
+      fail:
+        msg: "Dynatrace OneAgent is already installed on this host."
+      when: agent_installed.stat.exists
+  when: ansible_system|lower == "win32nt"
