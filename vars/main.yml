@@ -1,2 +1,11 @@
-dynatrace_oneagent_saas_url: "https://{{ dynatrace_oneagent_environment_id }}.{{ dynatrace_oneagent_cluster_subdomain }}/api/v1/deployment/installer/agent/{{ dynatrace_oneagent_install_url_key }}/default/latest?Api-Token={{ dynatrace_oneagent_tenant_token }}&arch=x86&flavor=default"
-dynatrace_oneagent_managed_url: "https://{{ dynatrace_oneagent_cluster_subdomain }}/e/{{ dynatrace_oneagent_environment_id }}/api/v1/deployment/installer/agent/{{ dynatrace_oneagent_install_url_key }}/default/latest?Api-Token={{ dynatrace_oneagent_tenant_token }}&arch=x86&flavor=default"
+# Flags passed to installer
+dynatrace_app_log_content_access: 1
+dynatrace_infra_only: 0
+dynatrace_oneagent_install_args: "APP_LOG_CONTENT_ACCESS={{ dynatrace_app_log_content_access }} INFRA_ONLY={{ dynatrace_infra_only }}"
+
+# Download Dynatrace OneAgent
+dynatrace_oneagent_installer_url: "https://{{ dynatrace_environment_url }}/api/v1/deployment/installer/agent/{{ dynatrace_oneagent_install_url_key }}/default/latest?Api-Token={{ dynatrace_api_token }}&arch=x86&flavor=default"
+url_params:
+  url: "{{ dynatrace_oneagent_installer_url }}"
+  dest: "{{ dynatrace_oneagent_install_script }}"
+  force: yes
