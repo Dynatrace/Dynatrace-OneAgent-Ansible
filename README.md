@@ -1,73 +1,66 @@
 # OneAgent-Ansible
 
-This Ansible role installs [Dynatrace OneAgent](http://www.dynatrace.com) on Linux systems.
+This Ansible role installs [Dynatrace OneAgent](http://www.dynatrace.com) on Linux and Windows systems.
 
 ## Download
 
 The role is available via:
 
 - [Ansible Galaxy](https://galaxy.ansible.com/Dynatrace/OneAgent)
-- [GitHub](https://github.com/dynatrace/Dynatrace-OneAgent-Ansible)
+- [GitHub](https://github.com/dynatrace-acl/Dynatrace-OneAgent-Ansible)
 
 ## Description
 
-This role downloads and installs the most recent version of Dynatrace OneAgent in your Linux environment. Sign up for a [15-day free Dynatrace trial](https://www.dynatrace.com/trial/?vehicle_name=https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/) now!
+This role downloads and installs the most recent version of the Dynatrace OneAgent for your Linux and Windows environments. Sign up for a [15-day free Dynatrace trial](https://www.dynatrace.com/trial/?vehicle_name=https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/) now!
 
 ## Configuration
 
-Please edit below role variable(s) defined in ```defaults/main.yml```:
+The following variables are _required_ and can be found in `defaults/main.yml`:
 
-| Name                                   | Default            | Description
-|----------------------------------------|--------------------|------------
-| *oneagent_installer_script_url*        |                    | Url presented in the command on the Dynatrace OneAgent installation page
+| Name | Default | Description
+|-|-|-
+| `dynatrace_environment_url` | `""` | URL of the target Dynatrace environment (SaaS or Managed)
+| `dynatrace_api_token` | `""` | The API Token retrieved from the "Deploy Dynatrace" installer page
 
-You can get your url by following these steps:
+The `dynatrace_environment_url` can take two values:
+- **SaaS**: abc1234.live.dynatrace.com
+- **Managed**: abc123.dynatrace-managed.com/e/1a2b3c4d-5e6f-6g7h-abcd-12ab34cd56ef
 
+To retrieve the proper `dynatrace_api_token`, do the following:
 1. Select **Deploy Dynatrace** from the navigation menu.
 2. Click the **Start installation** button.
-3.  For **Linux**
-   - Locate your `oneagent_installer_script_url`, as shown below.
-   ![Alt text](https://raw.githubusercontent.com/Dynatrace/Dynatrace-OneAgent-Ansible/images/url_script_screenshot.png)
-4. For **Windows**
-    - Rightclick on "Download agent.exe" button and select "Copy link address"
-5. Paste the url as a value for the *oneagent_installer_script_url* variable in `defaults/main.yml`.
-
-### Previous versions
-
-If you’ve been using automated scripts or deployment via YAML utilizing the TENANT, SERVER, TENANT_TOKEN command line arguments, you’ll find that the new approach is fully transparent and no changes are required.
+3. Select **Linux** from the available platforms (even if you are installing on Windows).
+4. Copy the value of the `Api-Token` key in the installer script URL.
 
 ## Example Playbook
-
 ```
 - hosts: all
   roles:
     - role: Dynatrace.OneAgent
-      oneagent_installer_script_url: YOUR_ONEAGENT_INSTALLER_SCRIPT_URL
+      dynatrace_environment_url: abc1234.live.dynatrace.com
+      dynatrace_api_token: ABcDeFgHIJKLMN12opqr
 ```
-
-More in-depth examples can be found in the [examples](https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible/tree/master/examples) folder.
 
 ## Testing
+[Test Kitchen](http://kitchen.ci) is used in combination with [InSpec](https://www.inspec.io/) to automatically test OneAgent deployments using this Ansible Role. By default, Test Kitchen uses [Vagrant](https://www.vagrantup.com/) to create virtual machines thru the [VirtualBox](https://www.virtualbox.org/) hypervisor. This requires that the tester's workstation has [VT-x](https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) or [AMD-V](https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29) virtualization enabled, as well as **at least 1 CPU and 2048MB of RAM available**.
 
-We use [Test Kitchen](http://kitchen.ci) to automatically test our automated deployments with [Serverspec](http://serverspec.org) and [RSpec](http://rspec.info/):
+For installing Test Kitchen, **Ruby 2.6.5** is recommended. Testing also requires that Ansible be installed locally on the tester's workstation. This Role was developed using **Ansible 2.9.0** with **Python 3.7.5**.
 
-1) Install Test Kitchen and its dependencies from within the project's directory:
-
-```
-gem install bundler
-bundle install
-```
-
-2) Run all tests
-
-```
-kitchen test
-```
-
-By default, we run our tests using [Vagrant](https://www.vagrantup.com/) provisioning tool (see `.kitchen.yml`) since installation OneAgent on [Docker](https://www.docker.com/) containers is possible only by running Docker command -> [see our blog article](https://www.dynatrace.com/blog/new-docker-image-leverages-bootstrapper-download-oneagent-installer/).
-
-*Please note, that running tests using Vagrant provisioning on virtual machine or cloud instance may cause serious difficulties since [VT-x](https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29) or [AMD-V](https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29) virtualization can't be nested.*
+To test modifications to this Role, follow the steps below:
+1) Install Test Kitchen and dependencies:
+    ```
+    gem install bundler
+    bundle install
+    ```
+2) Install Ansible and dependencies:
+    ```
+    pip install -r requirements.txt
+    ```
+3) Run all tests
+    ```
+    kitchen test
+    ```
 
 ## License
 
-Licensed under the MIT License. See the [LICENSE](https://github.com/dynatrace/Dynatrace-OneAgent-Ansible/blob/master/LICENSE) file for details.
+Licensed under the MIT License. See the [LICENSE](https://github.com/dynatrace-acl/Dynatrace-OneAgent-Ansible/blob/master/LICENSE) file for details.
