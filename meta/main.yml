@@ -1,20 +1,24 @@
 ---
 galaxy_info:
-  author: Martin Etmajer
+  author: "Autonomous Cloud Management Team"
   company: Dynatrace
   license: MIT
-  min_ansible_version: 1.8
+  min_ansible_version: 2.9
   platforms:
   - name: EL
     versions:
-    - 6
+    - 8
     - 7
-  - name: Debian
-    versions:
-    - all
   - name: Ubuntu
     versions:
-    - all
+    - xenial
+    - bionic
+  - name: Windows
+    version:
+    - 2008R2
+    - 2012R2
+    - 2016
+    - 2019
   galaxy_tags:
   - monitoring
 dependencies: []
