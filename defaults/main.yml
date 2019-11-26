@@ -1,4 +1,4 @@
 ---
 # Required variables
 dynatrace_environment_url: ""
-dynatrace_api_token: ""
+dynatrace_paas_token: ""

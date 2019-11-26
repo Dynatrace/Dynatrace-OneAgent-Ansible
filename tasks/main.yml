@@ -2,7 +2,7 @@
 - name: Check required variables
   fail:
     msg: "One or more required variables are not defined. Please see documentation for further information."
-  when: dynatrace_environment_url == "" or dynatrace_api_token == ""
+  when: dynatrace_environment_url == "" or dynatrace_paas_token == ""
 
 - name: Load variables based on OS
   include_vars: "vars/{{ ansible_system | lower }}.yml"
