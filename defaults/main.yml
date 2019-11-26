@@ -3,6 +3,15 @@ oneagent_installer_script_url:
 
 # variables passed to the installer script
 dynatrace_app_log_content_access: 1
+# Optional (recommended) parameter.
+# See: https://www.dynatrace.com/support/help/how-to-use-dynatrace/hosts/configuration/organize-your-environment-using-host-groups/
+# Host Groups must be shorter than 100 characters and can contain:
+# - alphanumeric characters
+# - hyphen (-)
+# - underscore (_)
+# - dot (.)
+# Host Groups must NOT start with 'dt.'
+dynatrace_oneagent_host_group: host-group
 
 # for backward compatibility:
 dynatrace_oneagent_cluster_subdomain:
