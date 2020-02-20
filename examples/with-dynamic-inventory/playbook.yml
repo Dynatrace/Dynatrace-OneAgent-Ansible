@@ -1,5 +1,0 @@
----
-- hosts: tag_clusterid_openshift-oneagent
-  roles:
-  - role: Dynatrace.OneAgent
-    oneagent_installer_script_url: 

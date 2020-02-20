@@ -1,0 +1,8 @@
+---
+- name: Download Dynatrace OneAgent | Linux
+  get_url: "{{ url_params }}"
+  when: ansible_system|lower == "linux"
+
+- name: Download Dynatrace OneAgent | Windows
+  win_get_url: "{{ url_params }}"
+  when: ansible_system|lower == "win32nt"

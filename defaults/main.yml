@@ -1,10 +1,4 @@
 ---
-oneagent_installer_script_url:
-
-# variables passed to the installer script
-dynatrace_app_log_content_access: 1
-
-# for backward compatibility:
-dynatrace_oneagent_cluster_subdomain:
-dynatrace_oneagent_environment_id:
-dynatrace_oneagent_tenant_token:
+# Required variables
+dynatrace_environment_url: ""
+dynatrace_paas_token: ""

@@ -1,3 +1,6 @@
 .DS_Store
 .kitchen
 Gemfile.lock
+.tool-versions
+*.swp
+vars.yml
