@@ -2,3 +2,26 @@
 # Required variables
 dynatrace_environment_url: ""
 dynatrace_paas_token: ""
+
+# Default flags passed to installer
+dynatrace_oneagent_install_args: 
+  APP_LOG_CONTENT_ACCESS: 1
+  INFRA_ONLY: 0
+
+# Set the OneAgent version to download
+dynatrace_oneagent_version: "latest"
+
+# Set metadata
+dynatrace_oneagent_host_tags: ""
+dynatrace_oneagent_host_metadata: ""
+dynatrace_oneagent_hostname: ""
+
+# Set initial oneagent state. Recommended values: `started` or `stopped`
+dynatrace_oneagent_state: started
+
+# Set oneagent state when configuration changes are made. Recommended values:
+# `restarted` or `reloaded`
+dynatrace_oneagent_restart_state: restarted
+
+# oneagent package state; use `present` to make sure it's installed, or `latest`
+dynatrace_oneagent_package_state: present
