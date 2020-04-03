@@ -7,11 +7,17 @@
 - name: Load variables based on OS
   include_vars: "vars/{{ ansible_system | lower }}.yml"
 
-- name: Check prerequisites
-  include_tasks: "tasks/prereqs.yml"
-
 - name: Download Dynatrace OneAgent
   include_tasks: "tasks/download.yml"
 
 - name: Install Dynatrace OneAgent
   include_tasks: "tasks/install.yml"
+
+- name: Config Dynatrace OneAgent
+  include_tasks: "tasks/config.yml"
+
+- name: Ensure oneagent has selected state and enabled on boot.
+  service:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    state: "{{ dynatrace_oneagent_state }}"
+    enabled: true
