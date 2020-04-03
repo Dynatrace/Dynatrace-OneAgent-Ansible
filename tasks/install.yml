@@ -1,9 +1,18 @@
 ---
+- name: set install params
+  set_fact:
+    oneagent_install_params: "{{ item.key }}={{ item.value }}"
+  with_dict: "{{ dynatrace_oneagent_install_args }}"
+  register: oneagent_install_param
+
 - name: Install Dynatrace OneAgent | Linux
-  shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
-  become: yes
+  shell: "{{ dynatrace_oneagent_install_cmd }} {{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }}"
+  args:
+    creates: "{{ dynatrace_oneagent_install_artifact }}"
   when: ansible_system|lower == "linux"
 
 - name: Install Dynatrace OneAgent | Windows
-  win_shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
+  win_shell: "{{ dynatrace_oneagent_install_cmd }} {{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }}"
+  args:
+    creates: "{{ dynatrace_oneagent_install_artifact }}"
   when: ansible_system|lower == "win32nt"
