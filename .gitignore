@@ -4,3 +4,11 @@ Gemfile.lock
 .tool-versions
 *.swp
 vars.yml
+
+# ignore test playbooks and inventory files
+test*
+*.ini
+inventory*
+
+# .DS_Store files
+*.DS_Store
