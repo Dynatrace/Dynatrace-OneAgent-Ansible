@@ -1,8 +1,22 @@
 ---
+- name: set url for latest version
+  set_fact: 
+    dynatrace_oneagent_installer_url: https://{{ dynatrace_environment_url }}/api/v1/deployment/installer/agent/{{ version }}/default/latest?Api-Token={{ dynatrace_paas_token }}&arch=x86
+  when: dynatrace_oneagent_version == 'latest'
+
+- name: set url for specific version
+  set_fact:
+    dynatrace_oneagent_installer_url: https://{{ dynatrace_environment_url }}/api/v1/deployment/installer/agent/{{ dynatrace_oneagent_install_url_key }}/default/version/{{ dynatrace_oneagent_version }}?Api-Token={{ dynatrace_paas_token }}&arch=x86
+  when: dynatrace_oneagent_version != 'latest'
+
 - name: Download Dynatrace OneAgent | Linux
-  get_url: "{{ url_params }}"
+  get_url: 
+    url: "{{ dynatrace_oneagent_installer_url }}"
+    dest: "{{ dynatrace_oneagent_install_script }}"
   when: ansible_system|lower == "linux"
 
 - name: Download Dynatrace OneAgent | Windows
-  win_get_url: "{{ url_params }}"
+  win_get_url: 
+    url: "{{ dynatrace_oneagent_installer_url }}"
+    dest: "{{ dynatrace_oneagent_install_script }}"
   when: ansible_system|lower == "win32nt"
