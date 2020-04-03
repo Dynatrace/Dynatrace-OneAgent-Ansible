@@ -1,0 +1,5 @@
+---
+- name: restart oneagent
+  service:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    state: "{{ dynatrace_oneagent_restart_state }}"
