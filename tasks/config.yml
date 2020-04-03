@@ -1,0 +1,18 @@
+---
+  - name: create/update hostautotag.conf file
+    copy:
+      dest: "{{ dynatrace_oneagent_hostautotag_config_file }}"
+      content: "{{ dynatrace_oneagent_host_tags }}"
+
+  - name: create/update hostcustomproperties.conf file
+    copy:
+      dest: "{{ dynatrace_oneagent_hostmetadata_config_file }}"
+      content: "{{ dynatrace_oneagent_host_metadata }}"
+    when: dynatrace_oneagent_host_metadata != ""
+
+  - name: create/update hostcustomproperties.conf file
+    copy:
+      dest: "{{ dynatrace_oneagent_hostname_config_file }}"
+      content: "{{ dynatrace_oneagent_hostname }}"
+    when: dynatrace_oneagent_hostname != ""
+    notify: restart oneagent
