@@ -1,18 +1,38 @@
 ---
-  - name: create/update hostautotag.conf file
+  - name: create/update hostautotag.conf file | Linux
     copy:
       dest: "{{ dynatrace_oneagent_hostautotag_config_file }}"
       content: "{{ dynatrace_oneagent_host_tags }}"
+    when: ansible_system|lower == "linux"
 
-  - name: create/update hostcustomproperties.conf file
+  - name: create/update hostcustomproperties.conf file | Linux
     copy:
       dest: "{{ dynatrace_oneagent_hostmetadata_config_file }}"
       content: "{{ dynatrace_oneagent_host_metadata }}"
-    when: dynatrace_oneagent_host_metadata != ""
+    when: dynatrace_oneagent_host_metadata != "" and ansible_system|lower == "linux"
 
-  - name: create/update hostcustomproperties.conf file
+  - name: create/update hostname.conf file | linux
     copy:
       dest: "{{ dynatrace_oneagent_hostname_config_file }}"
       content: "{{ dynatrace_oneagent_hostname }}"
-    when: dynatrace_oneagent_hostname != ""
-    notify: restart oneagent
+    when: dynatrace_oneagent_hostname != "" and ansible_system|lower == "linux"
+    notify: restart oneagent linux
+
+  - name: create/update hostautotag.conf file | windows
+    win_copy:
+      dest: "{{ dynatrace_oneagent_hostautotag_config_file }}"
+      content: "{{ dynatrace_oneagent_host_tags }}"
+    when: ansible_system|lower == "win32nt"
+
+  - name: create/update hostcustomproperties.conf file | windows
+    win_copy:
+      dest: "{{ dynatrace_oneagent_hostmetadata_config_file }}"
+      content: "{{ dynatrace_oneagent_host_metadata }}"
+    when: dynatrace_oneagent_host_metadata != "" and ansible_system|lower == "win32nt"
+
+  - name: create/update hostname.conf file | windows
+    win_copy:
+      dest: "{{ dynatrace_oneagent_hostname_config_file }}"
+      content: "{{ dynatrace_oneagent_hostname }}"
+    when: dynatrace_oneagent_hostname != "" and ansible_system|lower == "win32nt"
+    notify: restart oneagent windows
