@@ -1,9 +1,26 @@
 ---
-- name: Install Dynatrace OneAgent | Linux
-  shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
-  become: yes
-  when: ansible_system|lower == "linux"
+- name: set install params
+  set_fact:
+    oneagent_install_params: "{{ item.key }}={{ item.value }}"
+  with_dict: "{{ dynatrace_oneagent_install_args }}"
+  register: oneagent_install_param
 
-- name: Install Dynatrace OneAgent | Windows
-  win_shell: "{{ dynatrace_oneagent_install_cmd }} {{ dynatrace_oneagent_install_args }}"
+- name: install dynatrace oneagent | linux
+  shell: "{{ dynatrace_oneagent_install_cmd }} {{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }}"
+  args:
+    creates: "{{ dynatrace_oneagent_install_artifact }}"
+  when: ansible_system|lower == "linux" and dynatrace_oneagent_package_state != "absent"
+
+- name: uninstall dynatrace oneAgent | linux
+  shell: "{{ dynatrace_oneagent_uninstall_cmd }}"
+  args:
+    removes: "{{ dynatrace_oneagent_install_artifact }}"
+  when: ansible_system|lower == "linux" and dynatrace_oneagent_package_state == "absent"
+
+- name: install dynatrace oneagent | windows
+  win_package:
+    path: "{{ dynatrace_oneagent_install_script }}"
+    creates_service: "{{ dynatrace_oneagent_service_name }}"
+    arguments: "{{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }} --quiet"
+    state: "{{ dynatrace_oneagent_package_state }}"
   when: ansible_system|lower == "win32nt"

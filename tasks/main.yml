@@ -4,14 +4,31 @@
     msg: "One or more required variables are not defined. Please see documentation for further information."
   when: dynatrace_environment_url == "" or dynatrace_paas_token == ""
 
-- name: Load variables based on OS
+- name: load default variables based on OS
+  include_vars: "defaults/main/{{ ansible_system | lower }}.yml"
+
+- name: load variables based on OS
   include_vars: "vars/{{ ansible_system | lower }}.yml"
 
-- name: Check prerequisites
-  include_tasks: "tasks/prereqs.yml"
-
-- name: Download Dynatrace OneAgent
+- name: download dynatrace oneagent
   include_tasks: "tasks/download.yml"
 
-- name: Install Dynatrace OneAgent
+- name: install dynatrace oneagent
   include_tasks: "tasks/install.yml"
+
+- name: config dynatrace oneagent
+  include_tasks: "tasks/config.yml"
+
+- name: ensure oneagent has selected state and enabled on boot | linux
+  service:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    state: "{{ dynatrace_oneagent_state }}"
+    enabled: true
+  when: dynatrace_oneagent_package_state != "absent" and ansible_system|lower == "linux"
+
+- name: ensure oneagent has selected state and enabled on boot | windows
+  win_service:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    state: "{{ dynatrace_oneagent_state }}"
+    enabled: true
+  when: dynatrace_oneagent_package_state != "absent" and ansible_system|lower == "win32nt"

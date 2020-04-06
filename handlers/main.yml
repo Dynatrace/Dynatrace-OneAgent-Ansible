@@ -1,0 +1,12 @@
+---
+- name: restart oneagent linux
+  service:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    state: "{{ dynatrace_oneagent_restart_state }}"
+  when: ansible_system|lower == "linux"
+
+- name: restart oneagent windows
+  win_service:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    state: "{{ dynatrace_oneagent_restart_state }}"
+  when: ansible_system|lower == "win32nt"

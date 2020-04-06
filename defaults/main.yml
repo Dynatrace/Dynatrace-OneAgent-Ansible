@@ -1,4 +1,0 @@
----
-# Required variables
-dynatrace_environment_url: ""
-dynatrace_paas_token: ""
