@@ -1,11 +1,13 @@
 ---
-dynatrace_oneagent_download_dir: "{{ dynatrace_oneagent_custom_install_dir | default('C:\\Windows\\Temp\\') }}"
-dynatrace_oneagent_install_dir: "{{ dynatrace_oneagent_install_args.INSTALL_PATH | default('C:\\Program Files (x86)\\dynatrace\\oneagent') }}"  
+windows64_default_install_dir: "{{ ansible_env.SystemDrive }}\\Program Files (x86)\\dynatrace\\oneagent"
+windows32_default_install_dir: "{{ ansible_env.SystemDrive }}\\Program Files\\dynatrace\\oneagent"
+windows_default_install_dir: "{{ windows64_default_install_dir if ansible_architecture == '64-bit' else windows32_default_install_dir }}"
+dynatrace_oneagent_install_dir: "{{ dynatrace_oneagent_install_args.INSTALL_PATH | default(windows_default_install_dir) }}"  
 dynatrace_oneagent_install_artifact: "{{ dynatrace_oneagent_install_dir }}\\agent\\agent.state"
-dynatrace_oneagent_install_script: "{{ dynatrace_oneagent_download_dir }}-Dynatrace-OneAgent-{{ ansible_os_family }}-{{ dynatrace_oneagent_version }}.exe"
+dynatrace_oneagent_install_script: "{{ dynatrace_oneagent_download_dir }}Dynatrace-OneAgent-{{ ansible_os_family }}-{{ dynatrace_oneagent_version }}.exe"
 dynatrace_oneagent_install_cmd: "{{ dynatrace_oneagent_install_script }} --quiet"
 dynatrace_oneagent_install_url_key: windows
-dynatrace_oneagent_service_name: 'Dynatrace OneAgent'
-dynatrace_oneagent_hostautotag_config_file: "{{ ansible_env.ProgramData }}/dynatrace/oneagent/agent/config/hostautotag.conf"
-dynatrace_oneagent_hostmetadata_config_file: "{{ ansible_env.ProgramData }}/dynatrace/oneagent/agent/config/hostcustomproperties.conf"
-dynatrace_oneagent_hostname_config_file: "{{ ansible_env.ProgramData }}/dynatrace/oneagent/agent/config/hostname.conf"
+dynatrace_oneagent_service_name: Dynatrace OneAgent
+dynatrace_oneagent_hostautotag_config_file: "{{ ansible_env.ProgramData }}\\dynatrace\\oneagent\\agent\\config\\hostautotag.conf"
+dynatrace_oneagent_hostmetadata_config_file: "{{ ansible_env.ProgramData }}\\dynatrace\\oneagent\\agent\\config\\hostcustomproperties.conf"
+dynatrace_oneagent_hostname_config_file: "{{ ansible_env.ProgramData }}\\dynatrace\\oneagent\\agent\\config\\hostname.conf"
