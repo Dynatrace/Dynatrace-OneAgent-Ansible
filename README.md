@@ -18,7 +18,7 @@ You will then need to supply the role with two critical pieces of information:
 * The [PaaS token] of your environment for downloading the OneAgent installer
 
 Refer to the customize OneAgent installation documentation on [Dynatrace Supported Operating Systems]
-This module uses the Dynatrace deployment API for downloading the installer for each supported OS. See [Deployment API]
+This role uses the Dynatrace deployment API for downloading the installer for each supported OS. See [Deployment API]
 
 Installation
 ------------
@@ -36,14 +36,14 @@ Use `git clone https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible.git` to p
 Role variables
 --------------
 
-The following variables are available in `defaults/main.yml` and can be overriden:
+The following variables are available in `defaults/main/` and can be overriden:
 
 | Name | Default | Description
 |-|-|-
 | `dynatrace_environment_url` | `""` | URL of the target Dynatrace environment (SaaS or Managed)
 | `dynatrace_paas_token` | `""` | The API Token retrieved from the "Deploy Dynatrace" installer page
 | `dynatrace_oneagent_version` | `"latest"` | The required version of the OneAgent in 1.155.275.20181112-084458 format
-| `dynatrace_oneagent_download_dir` | `Linux: /tmp/ | Windows: C:\Windows\Temp\` | Dynatrace OneAgent installer file download directory
+| `dynatrace_oneagent_download_dir` | `Linux: /tmp/ Windows: C:\Windows\Temp\` | Dynatrace OneAgent installer file download directory
 | `dynatrace_oneagent_install_args` | `APP_LOG_CONTENT_ACCESS=1 INFRA_ONLY=0` | Dynatrace OneAgent install parameters defined as a list of items
 | `dynatrace_oneagent_host_tags` | `""` | Values to automatically add tags to a host, should contain a list of strings or key/value pairs. Spaces are used to separate tag values.
 | `dynatrace_oneagent_host_metadata` | `""` | Values to automatically add metadata to a host, should contain a list of strings or key/value pairs. Spaces are used to separate metadata values.
@@ -93,7 +93,7 @@ Advanced configuration - Download OneAgent installer to a custom directory with 
   vars:
     dynatrace_environment_url: {your-environment-id}.live.dynatrace.com
     dynatrace_paas_token: {your-paas-token}
-    dynatrace_oneagent_download_dir: /root/
+    dynatrace_oneagent_download_dir: /home/user1/
     dynatrace_oneagent_install_args:
       APP_LOG_CONTENT_ACCESS: 1
       INFRA_ONLY: 0
