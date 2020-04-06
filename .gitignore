@@ -12,3 +12,8 @@ inventory*
 
 # .DS_Store files
 *.DS_Store
+
+# vagrant generated files
+Vagrantfile
+vagrant_cwd
+loader.rb
