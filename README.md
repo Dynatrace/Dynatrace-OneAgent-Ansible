@@ -23,11 +23,9 @@ This role uses the Dynatrace deployment API for downloading the installer for ea
 Installation
 ------------
 
-<!--
 **Ansible Galaxy**
 
 Use `ansible-galaxy install dynatrace.oneagent` to install the latest stable release of the role on your system.
--->
 
 **Git**
 
