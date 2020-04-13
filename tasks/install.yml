@@ -6,13 +6,13 @@
   register: oneagent_install_param
 
 - name: install dynatrace oneagent | linux
-  shell: "{{ dynatrace_oneagent_install_cmd }} {{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }}"
+  command: "{{ dynatrace_oneagent_install_cmd }} {{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }}"
   args:
     creates: "{{ dynatrace_oneagent_install_artifact }}"
   when: ansible_system|lower == "linux" and dynatrace_oneagent_package_state != "absent"
 
 - name: uninstall dynatrace oneAgent | linux
-  shell: "{{ dynatrace_oneagent_uninstall_cmd }}"
+  command: "{{ dynatrace_oneagent_uninstall_cmd }}"
   args:
     removes: "{{ dynatrace_oneagent_install_artifact }}"
   when: ansible_system|lower == "linux" and dynatrace_oneagent_package_state == "absent"

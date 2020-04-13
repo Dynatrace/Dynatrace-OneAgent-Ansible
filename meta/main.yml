@@ -2,6 +2,7 @@
 galaxy_info:
   author: "Autonomous Cloud Enablement Team"
   company: Dynatrace
+  description: Ansible role for dynatrace OneAgent
   license: MIT
   min_ansible_version: 2.9
   platforms:

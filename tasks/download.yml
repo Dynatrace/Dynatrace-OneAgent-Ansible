@@ -1,6 +1,6 @@
 ---
 - name: set url for latest version
-  set_fact: 
+  set_fact:
     dynatrace_oneagent_installer_url: https://{{ dynatrace_environment_url }}/api/v1/deployment/installer/agent/{{ dynatrace_oneagent_install_url_key }}/default/latest?Api-Token={{ dynatrace_paas_token }}&arch=x86
   when: dynatrace_oneagent_version == 'latest'
 
@@ -10,25 +10,25 @@
   when: dynatrace_oneagent_version != 'latest'
 
 - name: check if oneagent is installed | linux
-  stat: 
+  stat:
     path: "{{ dynatrace_oneagent_install_artifact }}"
   register: dynatrace_oneagent_state_file_linux
   when: ansible_system|lower == "linux"
 
 - name: check if oneagent is installed | windows
-  win_stat: 
+  win_stat:
     path: "{{ dynatrace_oneagent_install_artifact }}"
   register: dynatrace_oneagent_state_file_windows
   when: ansible_system|lower == "win32nt"
 
 - name: download dynatrace oneagent | linux
-  get_url: 
+  get_url:
     url: "{{ dynatrace_oneagent_installer_url }}"
     dest: "{{ dynatrace_oneagent_install_script }}"
-  when: ansible_system|lower == "linux" and dynatrace_oneagent_state_file_linux.stat.exists == false
+  when: ansible_system|lower == "linux" and not dynatrace_oneagent_state_file_linux.stat.exists
 
 - name: download dynatrace OneAgent | windows
-  win_get_url: 
+  win_get_url:
     url: "{{ dynatrace_oneagent_installer_url }}"
     dest: "{{ dynatrace_oneagent_install_script }}"
-  when: ansible_system|lower == "win32nt" and dynatrace_oneagent_state_file_windows.stat.exists == false
+  when: ansible_system|lower == "win32nt" and not dynatrace_oneagent_state_file_windows.stat.exists
