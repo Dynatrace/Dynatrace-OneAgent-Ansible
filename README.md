@@ -49,6 +49,7 @@ The following variables are available in `defaults/main/` and can be overriden:
 | `dynatrace_oneagent_state:` | `"started"` | Set initial oneagent state. Recommended values: `started` or `stopped`
 | `dynatrace_oneagent_restart_state` | `"restarted"` | Set oneagent state when configuration changes are made. Recommended values: `restarted` or `reloaded`
 | `dynatrace_oneagent_package_state` | `"present"` | oneagent package state; use `present` to make sure it's installed, or `latest`
+| `dynatrace_oneagent_package_download_validate_certs` | `yes` | oneagent package download using secure https; use `no` to skip tls verification
 
 Example Playbook
 ----------------

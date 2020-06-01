@@ -25,3 +25,5 @@ dynatrace_oneagent_restart_state: restarted
 
 # oneagent package state; use `present` to make sure it's installed, or `latest`
 dynatrace_oneagent_package_state: present
+
+dynatrace_oneagent_package_download_validate_certs: yes
