@@ -25,10 +25,12 @@
   get_url:
     url: "{{ dynatrace_oneagent_installer_url }}"
     dest: "{{ dynatrace_oneagent_install_script }}"
+    validate_certs: "{{ dynatrace_oneagent_package_download_validate_certs }}"
   when: ansible_system|lower == "linux" and not dynatrace_oneagent_state_file_linux.stat.exists
 
 - name: download dynatrace OneAgent | windows
   win_get_url:
     url: "{{ dynatrace_oneagent_installer_url }}"
     dest: "{{ dynatrace_oneagent_install_script }}"
+    validate_certs: "{{ dynatrace_oneagent_package_download_validate_certs }}"
   when: ansible_system|lower == "win32nt" and not dynatrace_oneagent_state_file_windows.stat.exists
