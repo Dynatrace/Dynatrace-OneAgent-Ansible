@@ -26,6 +26,17 @@
     enabled: true
   when: dynatrace_oneagent_package_state != "absent" and ansible_system|lower == "linux"
 
+
+- name: ensure oneagent has selected state and enabled on boot | AIX
+  community.general.aix_inittab:
+    name: "{{ dynatrace_oneagent_service_name }}"
+    runlevel: 4
+    action: once
+    state: "{{ dynatrace_oneagent_state }}"
+    enabled: true
+  when: dynatrace_oneagent_package_state != "absent" and ansible_system|lower == "linux"
+
+
 - name: ensure oneagent has selected state and enabled on boot | windows
   win_service:
     name: "{{ dynatrace_oneagent_service_name }}"

@@ -1,0 +1,11 @@
+---
+dynatrace_oneagent_install_dir: "{{ dynatrace_oneagent_install_args.INSTALL_PATH | default('/opt/dynatrace/oneagent') }}"  
+dynatrace_oneagent_install_artifact: "{{ dynatrace_oneagent_install_dir }}/agent/agent.state"
+dynatrace_oneagent_install_script: "{{ dynatrace_oneagent_download_dir }}Dynatrace-OneAgent-{{ ansible_system }}-{{ dynatrace_oneagent_version }}.sh"
+dynatrace_oneagent_install_cmd: "sh {{ dynatrace_oneagent_install_script }}"
+dynatrace_oneagent_uninstall_cmd: "sh {{ dynatrace_oneagent_install_dir }}/agent/uninstall.sh"
+dynatrace_oneagent_install_url_key: unix
+dynatrace_oneagent_service_name: oneagent
+dynatrace_oneagent_hostautotag_config_file: /var/lib/dynatrace/oneagent/agent/config/hostautotag.conf
+dynatrace_oneagent_hostmetadata_config_file: /var/lib/dynatrace/oneagent/agent/config/hostcustomproperties.conf
+dynatrace_oneagent_hostname_config_file: /var/lib/dynatrace/oneagent/agent/config/hostname.conf

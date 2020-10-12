@@ -11,11 +11,12 @@
     creates: "{{ dynatrace_oneagent_install_artifact }}"
   when: ansible_system|lower == "linux" and dynatrace_oneagent_package_state != "absent"
 
-- name: uninstall dynatrace oneAgent | linux
-  command: "{{ dynatrace_oneagent_uninstall_cmd }}"
+- name: install dynatrace oneagent | AIX
+  command: "{{ dynatrace_oneagent_install_cmd }} {{ oneagent_install_param.results | map(attribute='ansible_facts.oneagent_install_params') | join(' ') }}"
   args:
-    removes: "{{ dynatrace_oneagent_install_artifact }}"
-  when: ansible_system|lower == "linux" and dynatrace_oneagent_package_state == "absent"
+    creates: "{{ dynatrace_oneagent_install_artifact }}"
+  when: ansible_system|lower == "AIX" and dynatrace_oneagent_package_state != "absent"
+
 
 - name: install dynatrace oneagent | windows
   win_package:

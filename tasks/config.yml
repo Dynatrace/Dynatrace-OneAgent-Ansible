@@ -15,7 +15,26 @@
     copy:
       dest: "{{ dynatrace_oneagent_hostname_config_file }}"
       content: "{{ dynatrace_oneagent_hostname }}"
-    when: dynatrace_oneagent_hostname and ansible_system|lower == "linux"
+    when: dynatrace_oneagent_hostname and ansible_system|lower == "AIX"
+    notify: restart oneagent linux
+
+  - name: create/update hostautotag.conf file | AIX
+    copy:
+      dest: "{{ dynatrace_oneagent_hostautotag_config_file }}"
+      content: "{{ dynatrace_oneagent_host_tags }}"
+    when: ansible_system|lower == "AIX"
+
+  - name: create/update hostcustomproperties.conf file | Aix
+    copy:
+      dest: "{{ dynatrace_oneagent_hostmetadata_config_file }}"
+      content: "{{ dynatrace_oneagent_host_metadata }}"
+    when: dynatrace_oneagent_host_metadata and ansible_system|lower == "AIX"
+
+  - name: create/update hostname.conf file | AIX
+    copy:
+      dest: "{{ dynatrace_oneagent_hostname_config_file }}"
+      content: "{{ dynatrace_oneagent_hostname }}"
+    when: dynatrace_oneagent_hostname and ansible_system|lower == "AIX"
     notify: restart oneagent linux
 
   - name: create/update hostautotag.conf file | windows
