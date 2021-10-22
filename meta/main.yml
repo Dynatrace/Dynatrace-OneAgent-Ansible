@@ -1,11 +1,15 @@
 ---
 galaxy_info:
-  author: "Autonomous Cloud Enablement Team"
+  author: "Innovation Services Team"
   company: Dynatrace
   description: Ansible role for dynatrace OneAgent
   license: MIT
   min_ansible_version: 2.9
   platforms:
+  - name: Debian
+    versions:
+      - jessie
+      - stretch
   - name: EL
     versions:
     - 8
@@ -22,4 +26,6 @@ galaxy_info:
     - 2019
   galaxy_tags:
   - monitoring
+  - dynatrace
+  - oneagent
 dependencies: []
