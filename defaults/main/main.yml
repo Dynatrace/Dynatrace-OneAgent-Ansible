@@ -3,13 +3,16 @@
 dynatrace_environment_url: ""
 dynatrace_paas_token: ""
 
+# Reporting Variables
+dynatrace_oneagent_script_version: 'v1.0.9E'
+
 # Set the OneAgent version to download
 dynatrace_oneagent_version: latest
 
 # Default flags passed to installer
 dynatrace_oneagent_install_args: 
-  APP_LOG_CONTENT_ACCESS: 1
-  INFRA_ONLY: 0
+  --set-app-log-content-access: true
+  --set-infra-only: false
 
 # Set metadata
 dynatrace_oneagent_host_tags: ""
@@ -27,3 +30,7 @@ dynatrace_oneagent_restart_state: restarted
 dynatrace_oneagent_package_state: present
 
 dynatrace_oneagent_package_download_validate_certs: yes
+
+# oneagent reporting params
+dynatrace_oneagent_additional_reporting_params:
+  --set-deployment-metadata="script_version: "{{ dynatrace_oneagent_script_version }}\""

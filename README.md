@@ -1,3 +1,10 @@
+:warning::warning::warning:The most up to date version of the oneagent role is now accessible directly via Dynatrace.:warning::warning::warning:
+================
+
+## Please visit this link for more info: [Install OneAgent using Ansible]
+
+<br>
+
 Ansible Role: Dynatrace OneAgent
 ================
 
@@ -14,7 +21,7 @@ To use this Role requires the following:
 
 You will then need to supply the role with two critical pieces of information:
 
-* The environment URL: **Managed** `https://{your-domain}/e/{your-environment-id}` |  **SaaS** `https://{your-environment-id}.live.dynatrace.com`
+* The environment URL: **Managed** `{your-domain}/e/{your-environment-id}` |  **SaaS** `{your-environment-id}.live.dynatrace.com`
 * The [PaaS token] of your environment for downloading the OneAgent installer
 
 Refer to the customize OneAgent installation documentation on [Dynatrace Supported Operating Systems]
@@ -38,11 +45,11 @@ The following variables are available in `defaults/main/` and can be overriden:
 
 | Name | Default | Description
 |-|-|-
-| `dynatrace_environment_url` | `""` | URL of the target Dynatrace environment (SaaS or Managed)
+| `dynatrace_environment_url` | `""` | URL of the target Dynatrace environment without http(s) (SaaS or Managed)
 | `dynatrace_paas_token` | `""` | The API Token retrieved from the "Deploy Dynatrace" installer page
 | `dynatrace_oneagent_version` | `"latest"` | The required version of the OneAgent in 1.155.275.20181112-084458 format
 | `dynatrace_oneagent_download_dir` | `Linux: /tmp/ Windows: C:\Windows\Temp\` | Dynatrace OneAgent installer file download directory
-| `dynatrace_oneagent_install_args` | `APP_LOG_CONTENT_ACCESS=1 INFRA_ONLY=0` | Dynatrace OneAgent install parameters defined as a list of items
+| `dynatrace_oneagent_install_args` | `--set-app-log-content-access=true --set-infra-only=false` | Dynatrace OneAgent install parameters defined as a list of items
 | `dynatrace_oneagent_host_tags` | `""` | Values to automatically add tags to a host, should contain a list of strings or key/value pairs. Spaces are used to separate tag values.
 | `dynatrace_oneagent_host_metadata` | `""` | Values to automatically add metadata to a host, should contain a list of strings or key/value pairs. Spaces are used to separate metadata values.
 | `dynatrace_oneagent_hostname` | `""` | Overrides an automatically detected host name.
@@ -61,7 +68,7 @@ Most basic OneAgent installation using a SAAS tenant
 - hosts: all
   become: true
   roles:
-    - role: Dynatrace.OneAgent
+    - role: dynatrace.oneagent
   vars:
     dynatrace_environment_url: {your-environment-id}.live.dynatrace.com
     dynatrace_paas_token: {your-paas-token}
@@ -74,7 +81,7 @@ OneAgent installation using a managed tenant with a specific version. The requir
 - hosts: all
   become: true
   roles:
-    - role: Dynatrace.OneAgent
+    - role: dynatrace.oneagent
   vars:
     dynatrace_environment_url: {your-domain}/e/{your-environment-id}
     dynatrace_paas_token: {your-paas-token}
@@ -88,7 +95,7 @@ Advanced configuration - Download OneAgent installer to a custom directory with 
 - hosts: all
   become: true
   roles:
-    - role: Dynatrace.OneAgent
+    - role: dynatrace.oneagent
   vars:
     dynatrace_environment_url: {your-environment-id}.live.dynatrace.com
     dynatrace_paas_token: {your-paas-token}
@@ -107,7 +114,7 @@ Setting tags, metadata and custom hostname
 - hosts: all
   become: true
   roles:
-    - role: Dynatrace.OneAgent
+    - role: dynatrace.oneagent
   vars:
     dynatrace_environment_url: {your-environment-id}.live.dynatrace.com
     dynatrace_paas_token: {your-paas-token}
@@ -183,3 +190,4 @@ Dynatrace Autonomous Cloud Enablement team (ACE): [ace@dynatrace.com]
 [AMD-V]: https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29
 [LICENSE]: https://github.com/dynatrace-acl/Dynatrace-OneAgent-Ansible/blob/master/LICENSE
 [ace@dynatrace.com]: mailto:ace@dynatrace.com
+[Install OneAgent using Ansible]: https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible/
