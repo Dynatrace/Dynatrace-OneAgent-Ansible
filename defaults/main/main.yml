@@ -29,6 +29,10 @@ dynatrace_oneagent_restart_state: restarted
 # oneagent package state; use `present` to make sure it's installed, or `latest`
 dynatrace_oneagent_package_state: present
 
+<<<<<<< HEAD
 # oneagent reporting params
 dynatrace_oneagent_additional_reporting_params:
   --set-deployment-metadata="script_version: "{{ dynatrace_oneagent_script_version }}\""
+=======
+dynatrace_oneagent_package_download_validate_certs: yes
+>>>>>>> master
