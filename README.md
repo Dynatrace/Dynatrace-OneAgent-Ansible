@@ -175,7 +175,7 @@ Licensed under the MIT License. See the [LICENSE] file for details.
 Author Information
 ------------------
 
-Dynatrace Autonomous Cloud Enablement team (ACE): [ace@dynatrace.com]
+Dynatrace ACE Innovation Team: [innovation.services@dynatrace.com]
 
 [Dynatrace Supported Operating Systems]:https://www.dynatrace.com/support/help/technology-support/operating-systems/
 [PAAS token]: https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/other-deployments-and-configurations/deploy-oneagent-on-kubernetes-for-application-only-monitoring/#expand-1548how-to-get-your-paas-token
@@ -189,5 +189,5 @@ Dynatrace Autonomous Cloud Enablement team (ACE): [ace@dynatrace.com]
 [VT-x]: https://en.wikipedia.org/wiki/X86_virtualization#Intel_virtualization_.28VT-x.29
 [AMD-V]: https://en.wikipedia.org/wiki/X86_virtualization#AMD_virtualization_.28AMD-V.29
 [LICENSE]: https://github.com/dynatrace-acl/Dynatrace-OneAgent-Ansible/blob/master/LICENSE
-[ace@dynatrace.com]: mailto:ace@dynatrace.com
+[innovation.services@dynatrace.com]: mailto:innovation.services@dynatrace.com
 [Install OneAgent using Ansible]: https://www.dynatrace.com/support/help/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible/
