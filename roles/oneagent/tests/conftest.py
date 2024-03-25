@@ -1,4 +1,5 @@
 # PYTEST CONFIGURATION FILE
+from collections.abc import Generator
 import logging
 import os
 import shutil
@@ -77,7 +78,7 @@ def output_installer_server_log(proc):
         logfile.writelines(proc.stderr)
 
 
-def try_connect_to_server(url):
+def try_connect_to_server(url: str):
     try:
         response = requests.get(url, verify=False)
         logging.info("Installer server started successfully")
@@ -87,10 +88,9 @@ def try_connect_to_server(url):
         return None
 
 
-def wait_for_server_or_fail(url, max_attempts=10):
-    for attempt in range(max_attempts):
-        result = try_connect_to_server(url)
-        if result is not None:
+def wait_for_server_or_fail(url: str, max_attempts: int = 10) -> bool:
+    for _attempt in range(max_attempts):
+        if try_connect_to_server(url) is not None:
             return True
     return False
 
@@ -137,7 +137,7 @@ def prepare_installers(request) -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def installer_server_url(request) -> None:
+def installer_server_url() -> Generator[str, None, None]:
     port = 8021
     ipaddress = socket.gethostbyname(socket.gethostname())
     url = f"https://{ipaddress}:{port}"
