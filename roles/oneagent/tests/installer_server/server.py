@@ -1,7 +1,6 @@
 import logging
-from http import HTTPStatus
 import threading
-from typing import Any
+from http import HTTPStatus
 from threading import Event
 
 from constants import (
@@ -12,7 +11,10 @@ from constants import (
     WORK_SERVER_DIR_PATH,
 )
 from deployment.deployment_operations import get_installers
-from deployment.ssl_certificate_generator import SSLCertificateGenerator
+from deployment.ssl_certificate_generator import (
+    SSLCertificateGenerator,
+    SSLCertificateInfo,
+)
 from flask import Blueprint, Flask, Response, request, send_file
 from werkzeug.serving import make_server
 
@@ -66,16 +68,17 @@ def run_server(ip_address: str, port: int, log_file_path: str, stop_event: Event
 
     logging.info("Starting server on %s:%d", ip_address, port)
 
-    generator = SSLCertificateGenerator(
+    ssl_info = SSLCertificateInfo(
         country_name="US",
         state_name="California",
         locality_name="San Francisco",
         organization_name="Dynatrace",
         common_name=ip_address,
     )
-    generator.generate_and_save(
-        f"{WORK_SERVER_DIR_PATH / SERVER_PRIVATE_KEY_FILE_NAME}",
-        f"{WORK_SERVER_DIR_PATH / SERVER_CERTIFICATE_FILE_NAME}",
+    ssl_generator = SSLCertificateGenerator(ssl_info, validity_days=365)
+    ssl_generator.generate_and_save(
+        WORK_SERVER_DIR_PATH / SERVER_PRIVATE_KEY_FILE_NAME,
+        WORK_SERVER_DIR_PATH / SERVER_CERTIFICATE_FILE_NAME,
     )
 
     ssl_context = (

@@ -1,16 +1,16 @@
 # PYTEST CONFIGURATION FILE
-from collections.abc import Generator
 import logging
 import os
 import shutil
 import socket
-import requests
 import time
-from pathlib import Path
+from collections.abc import Generator
+from threading import Event, Thread
 from typing import Any
-from threading import Thread, Event
 
 import pytest
+import requests
+from _pytest.fixtures import FixtureRequest
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
@@ -105,7 +105,7 @@ def create_test_directories(request) -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def prepare_installers(request) -> None:
+def prepare_installers(request: FixtureRequest) -> None:
     logging.info("Preparing installers...")
     tenant = request.config.getoption(TENANT_KEY)
     tenant_token = request.config.getoption(TENANT_TOKEN_KEY)
