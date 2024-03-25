@@ -13,14 +13,14 @@ from constants import (
 )
 from deployment.deployment_operations import get_installers
 from deployment.ssl_certificate_generator import SSLCertificateGenerator
-from flask import Blueprint, Flask, request, send_file
+from flask import Blueprint, Flask, Response, request, send_file
 from werkzeug.serving import make_server
 
 app = Flask(__name__)
 installer_bp = Blueprint("installer", __name__)
 certificate_bp = Blueprint("certificate", __name__)
 
-TransferResult = Any | tuple[str, HTTPStatus]
+TransferResult = tuple[str, HTTPStatus] | Response
 
 
 def get_installer(system: str, arch: str, version: str) -> TransferResult:
@@ -47,12 +47,12 @@ def get_ca_certificate() -> TransferResult:
 
 
 @installer_bp.route("/<system>/default/latest")
-def get_latest_agent(system) -> TransferResult:
+def get_latest_agent(system: str) -> TransferResult:
     return get_installer(system, request.args["arch"], "latest")
 
 
 @installer_bp.route("/<system>/default/version/<version>")
-def get_agent_in_version(system, version) -> TransferResult:
+def get_agent_in_version(system: str, version: str) -> TransferResult:
     return get_installer(system, request.args["arch"], version)
 
 
@@ -92,7 +92,7 @@ def run_server(ip_address: str, port: int, log_file_path: str, stop_event: Event
 
     logging.info("Server thread started on %s:%d", ip_address, port)
 
-    stop_event.wait()
+    _flag = stop_event.wait()
 
     logging.info("Received stop event, shutting down the server")
     server.shutdown()
