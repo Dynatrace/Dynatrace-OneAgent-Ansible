@@ -3,12 +3,11 @@ import logging
 import os
 import shutil
 import socket
-import subprocess
-import sys
 import requests
 import time
 from pathlib import Path
 from typing import Any
+from threading import Thread, Event
 
 import pytest
 from ansible.config import AnsibleConfig
@@ -16,7 +15,6 @@ from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
 from constants import (
     TEST_RUN_DIR_PATH,
-    TESTS_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_LOGS_DIR_PATH,
@@ -37,6 +35,7 @@ from deployment.installer_fetching import (
     download_signature,
     generate_installers,
 )
+from installer_server.server import run_server
 
 # Command line options
 USER_KEY = "user"
@@ -145,31 +144,20 @@ def installer_server_url(request) -> None:
 
     logging.info("Running installer server on %s...", url)
 
-    proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "installer_server",
-            "--port",
-            f"{port}",
-            "--ip-address",
-            ipaddress,
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding="utf-8",
-        env={"PYTHONPATH": f"{TESTS_DIR_PATH}"},
+    stop_event = Event()
+    server_thread = Thread(
+        target=run_server, args=(ipaddress, port, WORK_LOGS_DIR_PATH / "installer_server.log", stop_event), daemon=True
     )
+    server_thread.start()
 
     if not wait_for_server_or_fail(url):
-        proc.terminate()
-        output_installer_server_log(proc)
         pytest.exit("Failed to start installer server")
 
     yield url
 
-    proc.terminate()
-    output_installer_server_log(proc)
+    logging.info("Stopping installer server...")
+    stop_event.set()
+    server_thread.join()
 
 
 @pytest.fixture(autouse=True)

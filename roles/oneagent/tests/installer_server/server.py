@@ -1,7 +1,8 @@
-import argparse
 import logging
 from http import HTTPStatus
+import threading
 from typing import Any
+from threading import Event
 
 from constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
@@ -13,6 +14,7 @@ from constants import (
 from deployment.deployment_operations import get_installers
 from deployment.ssl_certificate_generator import SSLCertificateGenerator
 from flask import Blueprint, Flask, request, send_file
+from werkzeug.serving import make_server
 
 app = Flask(__name__)
 installer_bp = Blueprint("installer", __name__)
@@ -54,39 +56,44 @@ def get_agent_in_version(system, version) -> TransferResult:
     return get_installer(system, request.args["arch"], version)
 
 
-def main() -> None:
+def run_server(ip_address: str, port: int, log_file_path: str, stop_event: Event) -> None:
     logging.basicConfig(
-        format="%(asctime)s [server] %(levelname)s: %(message)s",
+        format=f"%(asctime)s [{__name__}] %(levelname)s: %(message)s",
         datefmt="%H:%M:%S",
         level=logging.INFO,
+        handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()],
     )
 
-    parser = argparse.ArgumentParser(description="Run Flask server.")
-    parser.add_argument(
-        "--ip-address",
-        type=str,
-        dest="ip_address",
-        help="IP address of the host to run the server on",
-    )
-    parser.add_argument("--port", type=int, help="Port to run the server on")
-    args = parser.parse_args()
+    logging.info("Starting server on %s:%d", ip_address, port)
 
     generator = SSLCertificateGenerator(
         country_name="US",
         state_name="California",
         locality_name="San Francisco",
         organization_name="Dynatrace",
-        common_name=args.ip_address,
+        common_name=ip_address,
     )
     generator.generate_and_save(
         f"{WORK_SERVER_DIR_PATH / SERVER_PRIVATE_KEY_FILE_NAME}",
         f"{WORK_SERVER_DIR_PATH / SERVER_CERTIFICATE_FILE_NAME}",
     )
 
-    context = (
+    ssl_context = (
         f"{WORK_SERVER_DIR_PATH / SERVER_CERTIFICATE_FILE_NAME}",
         f"{WORK_SERVER_DIR_PATH / SERVER_PRIVATE_KEY_FILE_NAME}",
     )
     app.register_blueprint(installer_bp, url_prefix="/api/v1/deployment/installer/agent")
     app.register_blueprint(certificate_bp)
-    app.run(host="0.0.0.0", debug=True, ssl_context=context, port=args.port)
+
+    server = make_server(ip_address, port, app, ssl_context=ssl_context)
+    server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+
+    server_thread.start()
+
+    logging.info("Server thread started on %s:%d", ip_address, port)
+
+    stop_event.wait()
+
+    logging.info("Received stop event, shutting down the server")
+    server.shutdown()
+    server_thread.join()
