@@ -72,12 +72,6 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
     return platforms
 
 
-def output_installer_server_log(proc):
-    with Path(WORK_LOGS_DIR_PATH / "installer_server.log").open("a") as logfile:
-        logfile.writelines(proc.stdout)
-        logfile.writelines(proc.stderr)
-
-
 def try_connect_to_server(url: str):
     try:
         response = requests.get(url, verify=False)
