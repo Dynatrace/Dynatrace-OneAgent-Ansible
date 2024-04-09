@@ -1,0 +1,15 @@
+---
+- name: Validate installation directory name doesn't contains spaces
+  fail:
+    msg: "{{ oneagent_install_dir_contains_spaces }}"
+  when: oneagent_install_path|regex_search(" ")
+
+- name: Validate download directory name doesn't contain spaces
+  fail:
+    msg: "{{ oneagent_download_dir_contains_spaces }}"
+  when: oneagent_is_operation_installation and oneagent_download_path|regex_search(" ")
+
+- name: Validate if download directory is available
+  stat:
+    path: "{{ oneagent_download_path }}"
+  register: _oneagent_download_path_state

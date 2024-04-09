@@ -1,0 +1,23 @@
+---
+all:
+  children:
+    unix:
+      children:
+        linux:
+          children:
+            linux_other:
+              hosts:
+                www.otherhost1.com:
+                www.otherhost2.com:
+              vars:
+                oneagent_installer_arch: x86
+                oneagent_platform_install_args:
+                  - USER=other_user
+            linux_arm:
+              hosts: arm_host.com
+              vars:
+                oneagent_installer_arch: arm
+                oneagent_platform_install_args:
+                  - USER=arm_user
+      vars:
+        ansible_become: true

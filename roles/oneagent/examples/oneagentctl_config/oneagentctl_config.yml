@@ -1,0 +1,14 @@
+---
+- name: Apply host level configuration with oneagentctl
+  hosts: linux_other
+  collections:
+    - dynatrace.oneagent
+  vars:
+    oneagent_install_args:
+      - --set-host-name=new_host_name
+      - --set-host-tag=new_tag
+      - --set-host-property=property1
+      - --set-host-property=other=property
+  tasks:
+    - import_role:
+        name: oneagent

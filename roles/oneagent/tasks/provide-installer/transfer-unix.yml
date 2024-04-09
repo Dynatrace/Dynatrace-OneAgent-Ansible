@@ -1,0 +1,6 @@
+---
+- name: Transfer installer
+  copy:
+    src: "{{ oneagent_local_installer }}"
+    dest: "{{ oneagent_installer_path }}"
+    mode: 0644

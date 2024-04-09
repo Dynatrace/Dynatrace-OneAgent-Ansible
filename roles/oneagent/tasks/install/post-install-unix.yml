@@ -1,0 +1,11 @@
+---
+- name: Reboot the host
+  reboot:
+    reboot_timeout: oneagent_reboot_timeout
+  register: _oneagent_reboot_status
+  when: oneagent_reboot_host
+
+- name: Check the host reboot status
+  fail:
+    msg: "{{ oneagent_reboot_failed }}"
+  when: oneagent_reboot_host and not _oneagent_reboot_status.rebooted|default(false)

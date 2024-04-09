@@ -1,0 +1,30 @@
+---
+oneagent_default_arch: x86
+oneagent_default_install_dir:
+  "{{ ansible_env.SystemDrive }}\\Program Files\\dynatrace\\oneagent"
+oneagent_default_download_dir:
+  "{{ ansible_env['TEMP'] | default('C:\\Windows\\Temp') }}"
+
+oneagent_download_system: windows
+oneagent_available_arch: "{{ [ oneagent_default_arch ] }}"
+oneagent_download_arch:
+  "{{ oneagent_installer_arch | default(oneagent_default_arch, true) }}"
+
+oneagent_install_path: "{{ oneagent_passed_install_args
+  | select('regex', 'INSTALL_PATH') | first
+  | default(oneagent_default_install_dir)
+  | regex_replace('INSTALL_PATH=(.*)', '\\1') }}"
+oneagent_ctl_bin_path:
+  "{{ oneagent_install_path }}\\agent\\tools\\oneagentctl.exe"
+oneagent_download_path:
+  "{{ oneagent_download_dir | default(oneagent_default_download_dir, true) }}"
+oneagent_installer_path: "{{ oneagent_download_path }}\\\
+  Dynatrace-OneAgent-Windows-{{ oneagent_version }}.exe"
+oneagent_log_dir:
+  "{{ ansible_env['ProgramData'] }}\\dynatrace\\oneagent\\log\\installer"
+oneagent_uninstall_log_file_name: "uninstall-{{ ansible_date_time.date
+  | replace('-', '') }}-{{ ansible_date_time.time | replace(':', '') }}.log"
+oneagent_uninstall_log_path: "{{ oneagent_log_dir }}\\\
+  {{ oneagent_uninstall_log_file_name }}"
+
+oneagent_service_name: Dynatrace OneAgent

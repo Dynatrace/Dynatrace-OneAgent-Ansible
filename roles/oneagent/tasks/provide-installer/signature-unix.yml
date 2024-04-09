@@ -1,0 +1,21 @@
+---
+- name: Transfer CA certificate
+  copy:
+    src: "{{ oneagent_ca_cert_src_path }}"
+    dest: "{{ oneagent_ca_cert_dest_path }}"
+    mode: 0644
+
+- name: Validate installer signature
+  shell: ( printf "%s" "{{ oneagent_certificate_verification_header }}";
+    cat "{{ oneagent_installer_path }}" ) |
+    openssl cms -verify -CAfile "{{ oneagent_ca_cert_dest_path }}" > /dev/null
+  no_log: true
+  ignore_errors: true
+  changed_when: false
+  register: _oneagent_cert_verification_result
+
+- name: Installer signature validation result
+  fail:
+    msg: "{{ oneagent_signature_verification_failed
+      | format(_oneagent_cert_verification_result.stderr) }}"
+  when: _oneagent_cert_verification_result.rc != 0

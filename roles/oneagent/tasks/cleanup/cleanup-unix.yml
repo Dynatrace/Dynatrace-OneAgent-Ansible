@@ -1,0 +1,10 @@
+---
+- name: Remove leftover signature
+  file:
+    path: "{{ oneagent_ca_cert_dest_path }}"
+    state: absent
+
+- name: Remove leftover installer
+  file:
+    path: "{{ oneagent_installer_path }}"
+    state: absent

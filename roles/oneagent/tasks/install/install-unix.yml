@@ -1,0 +1,13 @@
+---
+- name: Install OneAgent
+  command: "{{ oneagent_install_cmd }} {{ _oneagent_all_install_args | join(' ') }}"
+  no_log: true
+  ignore_errors: true
+  register: _oneagent_install_result
+  changed_when: true
+
+- name: Verify installation result
+  fail:
+    msg: "{{ oneagent_installation_failed_unix | format(_oneagent_install_result.rc,
+      _oneagent_install_result.stdout, _oneagent_install_result.stderr) }}"
+  when: _oneagent_install_result.failed|default(false)

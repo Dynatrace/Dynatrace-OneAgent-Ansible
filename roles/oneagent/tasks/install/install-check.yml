@@ -1,0 +1,7 @@
+---
+- name: Validate minimal version of installer
+  fail:
+    msg: "{{ oneagent_version_lower_than_minimal | format(_oneagent_new_agent_version,
+      oneagent_minimal_install_version) }}"
+  when: _oneagent_new_agent_version is defined and
+    _oneagent_new_agent_version.stdout < oneagent_minimal_install_version

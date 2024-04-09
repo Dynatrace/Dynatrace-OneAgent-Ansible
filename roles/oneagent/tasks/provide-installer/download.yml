@@ -1,0 +1,21 @@
+---
+- name: Set URL for agent download
+  set_fact:
+    _oneagent_installer_url: "{{ _oneagent_installer_url
+      | default(oneagent_default_download_url)
+      | replace(item.key, item.value) }}"
+  no_log: true
+  with_dict:
+    "#URL": "{{ oneagent_environment_url }}"
+    "#SYS": "{{ oneagent_download_system }}"
+    "#VER": "{{ (oneagent_version == 'latest')
+             | ternary('', 'version/') + oneagent_version }}"
+    "#ARCH": "{{ oneagent_download_arch }}"
+
+- include_tasks: provide-installer/download-{{ oneagent_system_family }}.yml
+
+- name: Verify download result
+  fail:
+    msg: "{{ oneagent_failed_download | format(_oneagent_download_result.response
+        | default(_oneagent_download_result.msg)) }}"
+  when: _oneagent_download_result.failed|default(false)

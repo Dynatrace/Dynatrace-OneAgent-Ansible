@@ -1,0 +1,30 @@
+---
+all:
+  children:
+    unix:
+      children:
+        linux:
+          children:
+            linux_x86:
+              hosts: www[01:50].example.com
+              vars:
+                oneagent_local_installer: /path/to/linux-x86-installer.sh
+                oneagent_install_args:
+                  - INSTALL_PATH=/opt/example
+                  - USER=example_user
+        aix_ppc:
+          hosts: hosts[1:5]
+          vars:
+            oneagent_local_installer: /path/to/aix-ppc-installer.sh
+      vars:
+        ansible_become: true
+    windows:
+      hosts: www[51:100].example.com
+      vars:
+        oneagent_local_installer: /path/to/dynatrace-windows-installer.exe
+        oneagent_install_args:
+          - USER=LocalService
+          - INSTALL_PATH=C:\\example
+        ansible_connection: ssh
+        ansible_shell_type: cmd
+        ansible_user: some_admin

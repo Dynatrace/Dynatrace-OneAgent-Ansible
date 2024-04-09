@@ -1,0 +1,39 @@
+---
+- name: Validate URL and token
+  fail:
+    msg: "{{ oneagent_missing_mandatory_params }}"
+  when: oneagent_is_operation_installation and oneagent_local_installer|length == 0 and
+    (oneagent_environment_url|length == 0 or oneagent_paas_token|length == 0)
+
+- name: Check local installer
+  stat:
+    path: "{{ oneagent_local_installer }}"
+  delegate_to: localhost
+  register: _oneagent_local_installer_state
+  when: oneagent_local_installer|length > 0
+
+- name: Validate availability of local installer
+  fail:
+    msg: "{{ oneagent_missing_local_installer }}"
+  when: oneagent_is_operation_installation and oneagent_local_installer|length > 0 and not
+    _oneagent_local_installer_state.stat.exists
+
+- name: Validate installer architecture
+  fail:
+    msg: "{{ oneagent_unknown_arch | format(oneagent_download_arch, oneagent_available_arch) }}"
+  when: oneagent_is_operation_installation and not oneagent_download_arch in oneagent_available_arch
+
+- include_tasks: tasks/params/params-{{ oneagent_system_family }}.yml
+
+- name: Validate OneAgent installer version parameter
+  fail:
+    msg: "{{ oneagent_version_lower_than_minimal | format(oneagent_version,
+      oneagent_minimal_install_version) }}"
+  when: oneagent_is_operation_installation and oneagent_version != 'latest' and
+    oneagent_version < oneagent_minimal_install_version
+
+- name: Validate installation arguments
+  fail:
+    msg: "{{ oneagent_multiple_install_dir }}"
+  when: oneagent_passed_install_args|
+    select('regex', 'INSTALL_PATH')|list|length > 1
