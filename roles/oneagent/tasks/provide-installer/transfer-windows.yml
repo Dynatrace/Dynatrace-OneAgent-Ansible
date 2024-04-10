@@ -1,0 +1,5 @@
+---
+- name: Transfer installer
+  win_copy:
+    src: "{{ oneagent_local_installer }}"
+    dest: "{{ oneagent_installer_path }}"

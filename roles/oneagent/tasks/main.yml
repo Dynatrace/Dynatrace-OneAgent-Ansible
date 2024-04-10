@@ -1,0 +1,35 @@
+---
+- name: Load variables based on OS
+  include_vars: vars/{{ oneagent_system_name }}.yml
+
+- name: Load messages
+  include_vars: vars/messages.yml
+
+- name: Check passed parameters
+  include_tasks: params/params.yml
+
+- name: Prepare and perform installation
+  block:
+    - name: Provide OneAgent installer
+      include_tasks: provide-installer/provide-installer.yml
+      when: oneagent_is_operation_installation
+
+    - name: Gather installers info
+      include_tasks: gather-info/gather-info.yml
+      when: oneagent_is_operation_installation
+
+    - name: Apply OneAgent configuration
+      include_tasks: config/config.yml
+      when: oneagent_is_operation_configuration
+
+    - name: Install OneAgent
+      include_tasks: install/install.yml
+      when: oneagent_is_operation_installation
+  always:
+    - name: Cleanup
+      include_tasks: cleanup/cleanup.yml
+      when: oneagent_is_operation_installation and not oneagent_preserve_installer
+
+- name: Uninstall OneAgent
+  include_tasks: uninstall/uninstall.yml
+  when: oneagent_is_operation_uninstall

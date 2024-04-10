@@ -1,0 +1,16 @@
+---
+- name: Install Dynatrace OneAgent
+  win_package:
+    path: "{{ oneagent_installer_path }}"
+    creates_path: "{{ oneagent_ctl_bin_path }}"
+    creates_version: "{{ _oneagent_new_agent_version.stdout }}"
+    arguments: "{{ _oneagent_all_install_args | join(' ') }} --quiet"
+    state: present
+  no_log: true
+  ignore_errors: true
+  register: _oneagent_install_result
+
+- name: Verify installation result
+  fail:
+    msg: "{{ oneagent_installation_failed_windows | format(_oneagent_install_result.rc) }}"
+  when: _oneagent_install_result.failed|default(false)

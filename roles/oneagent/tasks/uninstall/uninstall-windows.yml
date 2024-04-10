@@ -1,0 +1,34 @@
+---
+- name: Check if OneAgent is uninstalled
+  win_command:
+    wmic product where name='{{ oneagent_service_name }}' get IdentifyingNumber
+  register: _oneagent_wmic_output
+
+- name: Search for product code
+  set_fact:
+    _oneagent_product_code_list: "{{ _oneagent_wmic_output.stdout_lines
+      | select('regex', '{.*}') | map('trim') | list }}"
+  no_log: true
+
+- name: Gather product code
+  set_fact:
+    _oneagent_product_code: "{{ _oneagent_product_code_list | first }}"
+  no_log: true
+  when: _oneagent_product_code_list|length > 0
+
+- name: Uninstall OneAgent
+  win_package:
+    product_id: "{{ _oneagent_product_code }}"
+    state: absent
+    log_path: "{{ oneagent_uninstall_log_path }}"
+  no_log: true
+  ignore_errors: true
+  register: _oneagent_uninstall_result
+  when: _oneagent_product_code is defined
+
+- name: Verify uninstall result
+  fail:
+    msg: "Uninstall failed, exit code: {{ _oneagent_uninstall_result.rc }}.
+      For details, see {{ oneagent_uninstall_log_file_name }}"
+  when: _oneagent_product_code is defined and
+    _oneagent_uninstall_result.failed|default(false)

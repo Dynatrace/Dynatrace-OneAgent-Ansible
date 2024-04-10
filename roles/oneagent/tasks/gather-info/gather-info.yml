@@ -1,0 +1,14 @@
+---
+- name: Gather installers info
+  include_tasks: tasks/gather-info/gather-info-{{ oneagent_system_family }}.yml
+
+- name: Compare versions of installed OneAgent and uploaded installer
+  set_fact:
+    _oneagent_is_installation_possible:
+      "{{ _oneagent_installed_agent_version.stdout
+      | default('') < _oneagent_new_agent_version.stdout }}"
+
+- name: Determine deployment type
+  set_fact:
+    oneagent_is_operation_installation: "{{ _oneagent_is_installation_possible }}"
+    oneagent_is_operation_configuration: "{{ not _oneagent_is_installation_possible }}"

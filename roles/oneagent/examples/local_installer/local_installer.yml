@@ -1,0 +1,10 @@
+---
+- name: Basic OneAgent installation using a local installer. Hosts placed
+    in unix hosts groups have its local installer paths defined in
+    inventory file. Main node communicates with Windows hosts over SSH.
+  hosts: windows,unix
+  collections:
+    - dynatrace.oneagent
+  tasks:
+    - import_role:
+        name: oneagent

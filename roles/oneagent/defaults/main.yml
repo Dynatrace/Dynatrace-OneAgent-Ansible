@@ -1,0 +1,37 @@
+---
+# Set environment variables
+oneagent_environment_url: ''
+oneagent_paas_token: ''
+
+# Set local installer location
+oneagent_local_installer: ''
+
+# Set installer download architecture
+oneagent_installer_arch: ''
+
+# Set the OneAgent version to download
+oneagent_version: latest
+
+# Set the OneAgent common installer parameters
+oneagent_install_args: []
+
+# Set the OneAgent platform-specific installer parameters
+oneagent_platform_install_args: []
+
+# Set the OneAgent package state
+oneagent_package_state: present
+
+# Set the OneAgent download directory
+oneagent_download_dir: ''
+
+# Set the need of preserving installers on secondary machines
+oneagent_preserve_installer: false
+
+# Set the need of rebooting machine after installation
+oneagent_reboot_host: false
+
+# Set the need of validating certs during installer download
+oneagent_validate_certs: true
+
+# Set the timeout for platform reboot
+oneagent_reboot_timeout: 3600

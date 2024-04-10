@@ -1,0 +1,9 @@
+---
+- name: Combine configuration parameters
+  set_fact:
+    _oneagent_all_config_args: "{{ oneagent_passed_install_args
+      | map('regex_search', '(--set-(.*))') | select('string') | list }} --restart-service"
+  no_log: true
+
+- name: Apply OneAgent configuration
+  include_tasks: config-{{ oneagent_system_family }}.yml

@@ -1,0 +1,12 @@
+---
+- name: Download OneAgent installer
+  include_tasks: provide-installer/download.yml
+  when: oneagent_local_installer|length == 0
+
+- name: Transfer OneAgent installer
+  include_tasks: provide-installer/transfer-{{ oneagent_system_family }}.yml
+  when: oneagent_local_installer|length > 0
+
+- name: Verify OneAgent installer signature
+  include_tasks: provide-installer/signature-{{ oneagent_system_family }}.yml
+  when: oneagent_system_is_unix

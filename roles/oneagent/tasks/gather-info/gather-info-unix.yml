@@ -1,0 +1,15 @@
+---
+- name: Check if OneAgent is installed
+  stat:
+    path: "{{ oneagent_ctl_bin_path }}"
+  register: _oneagent_ctl_state
+
+- name: Determine version of installed OneAgent
+  command: "{{ oneagent_ctl_bin_path }} --version"
+  register: _oneagent_installed_agent_version
+  when: _oneagent_ctl_state.stat.exists
+
+- name: Determine version of new installer
+  command: /bin/sh {{ oneagent_installer_path }} --version
+  register: _oneagent_new_agent_version
+  changed_when: false
