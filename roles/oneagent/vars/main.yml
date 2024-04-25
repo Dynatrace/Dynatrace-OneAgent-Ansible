@@ -1,28 +1,19 @@
 ---
-oneagent_script_version: '1.2.0'
-oneagent_minimal_install_version: '1.199'
-oneagent_minimal_reporting_version: '1.203'
+oneagent_script_version: 1.2.0
+oneagent_minimal_install_version: "1.199"
+oneagent_minimal_reporting_version: "1.203"
 
 oneagent_system_name: "{{ ansible_system|lower }}"
 oneagent_system_is_unix: "{{ oneagent_system_name in [ 'aix', 'linux' ] }}"
 oneagent_system_is_windows: "{{ oneagent_system_name == 'win32nt' }}"
-oneagent_system_family:
-  "{{ oneagent_system_is_windows | ternary('windows', 'unix') }}"
+oneagent_system_family: "{{ oneagent_system_is_windows | ternary('windows', 'unix') }}"
 
 oneagent_is_operation_uninstall: "{{ oneagent_package_state == 'absent' }}"
-oneagent_is_operation_configuration: "{{ not oneagent_is_operation_uninstall and
-  oneagent_environment_url|length == 0 and oneagent_paas_token|length == 0 and
-  oneagent_local_installer|length == 0 }}"
-oneagent_is_operation_installation: "{{ not (oneagent_is_operation_uninstall or
-  oneagent_is_operation_configuration) }}"
+oneagent_is_operation_configuration: "{{ not oneagent_is_operation_uninstall and oneagent_environment_url|length == 0 and oneagent_paas_token|length == 0 and oneagent_local_installer|length
+  == 0 }}"
+oneagent_is_operation_installation: "{{ not (oneagent_is_operation_uninstall or oneagent_is_operation_configuration) }}"
 
-
-oneagent_passed_install_args:
-  "{{ (oneagent_install_args + oneagent_platform_install_args) | unique }}"
-oneagent_default_download_url:
-  "#URL/api/v1/deployment/installer/agent/#SYS/default/#VER?arch=#ARCH"
-oneagent_additional_reporting_params: "{{ [
-  '--set-deployment-metadata=\"orchestration_tech=Ansible\"',
-  '--set-deployment-metadata=\"tech_version=' + ansible_version.full + '\"',
-  '--set-deployment-metadata=\"script_version=' + oneagent_script_version + '\"'
-  ] }}"
+oneagent_passed_install_args: "{{ (oneagent_install_args + oneagent_platform_install_args) | unique }}"
+oneagent_default_download_url: "#URL/api/v1/deployment/installer/agent/#SYS/default/#VER?arch=#ARCH"
+oneagent_additional_reporting_params: "{{ [ '--set-deployment-metadata=\"orchestration_tech=Ansible\"', '--set-deployment-metadata=\"tech_version=' + ansible_version.full
+  + '\"', '--set-deployment-metadata=\"script_version=' + oneagent_script_version + '\"' ] }}"

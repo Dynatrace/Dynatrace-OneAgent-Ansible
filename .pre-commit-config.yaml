@@ -6,7 +6,7 @@ repos:
     hooks:
       - id: ansible-lint
         pass_filenames: false
-        args: ['--generate-ignore']
+        args: [--fix]
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.35.1
     hooks:

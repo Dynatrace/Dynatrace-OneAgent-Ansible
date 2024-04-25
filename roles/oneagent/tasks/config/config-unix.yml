@@ -1,11 +1,11 @@
 ---
 - name: Check if OneAgent is installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ oneagent_ctl_bin_path }}"
   register: _oneagent_ctl_state
 
 - name: Applying OneAgent configuration
-  command: "{{ oneagent_ctl_bin_path }} {{ _oneagent_all_config_args | join(' ') }}"
+  ansible.builtin.command: "{{ oneagent_ctl_bin_path }} {{ _oneagent_all_config_args | join(' ') }}"
   no_log: true
   ignore_errors: true
   changed_when: true
@@ -13,7 +13,6 @@
   when: _oneagent_ctl_state.stat.exists
 
 - name: Verify configuration result
-  debug:
-    msg: "{{ oneagent_configuration_failed | format(_oneagent_config_result.rc,
-      _oneagent_config_result.stdout, _oneagent_config_result.stderr) }}"
+  ansible.builtin.debug:
+    msg: "{{ oneagent_configuration_failed | format(_oneagent_config_result.rc, _oneagent_config_result.stdout, _oneagent_config_result.stderr) }}"
   when: _oneagent_ctl_state.stat.exists and _oneagent_config_result.failed|default(false)

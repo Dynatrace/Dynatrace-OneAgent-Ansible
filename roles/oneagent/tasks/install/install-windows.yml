@@ -11,6 +11,6 @@
   register: _oneagent_install_result
 
 - name: Verify installation result
-  fail:
+  ansible.builtin.fail:
     msg: "{{ oneagent_installation_failed_windows | format(_oneagent_install_result.rc) }}"
   when: _oneagent_install_result.failed|default(false)

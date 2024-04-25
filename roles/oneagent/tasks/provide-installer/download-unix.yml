@@ -1,17 +1,16 @@
 ---
 - name: Ensure Download directory exists
-  file:
+  ansible.builtin.file:
     path: "{{ oneagent_download_path }}"
     state: directory
-    mode: 0755
+    mode: "0755"
   when: not _oneagent_download_path_state.stat.exists
 
 - name: Download OneAgent installer
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ _oneagent_installer_url }}"
     dest: "{{ oneagent_installer_path }}"
-    validate_certs:
-      "{{ oneagent_validate_certs | bool }}"
+    validate_certs: "{{ oneagent_validate_certs | bool }}"
     headers:
       Authorization: Api-Token {{ oneagent_paas_token }}
   no_log: true
