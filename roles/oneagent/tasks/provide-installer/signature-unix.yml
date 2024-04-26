@@ -6,8 +6,9 @@
     mode: "0644"
 
 - name: Validate installer signature
-  ansible.builtin.shell: ( printf "%s" "{{ oneagent_certificate_verification_header }}"; cat "{{ oneagent_installer_path }}" ) | openssl cms -verify -CAfile "{{ oneagent_ca_cert_dest_path
-    }}" > /dev/null
+  ansible.builtin.shell: >
+    ( printf "%s" "{{ oneagent_certificate_verification_header }}"; cat "{{ oneagent_installer_path }}" ) |
+    openssl cms -verify -CAfile "{{ oneagent_ca_cert_dest_path }}" > /dev/null
   no_log: true
   ignore_errors: true
   changed_when: false

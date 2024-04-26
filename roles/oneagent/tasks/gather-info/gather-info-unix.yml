@@ -8,6 +8,7 @@
   ansible.builtin.command: "{{ oneagent_ctl_bin_path }} --version"
   register: _oneagent_installed_agent_version
   when: _oneagent_ctl_state.stat.exists
+  changed_when: false
 
 - name: Determine version of new installer
   ansible.builtin.command: /bin/sh {{ oneagent_installer_path }} --version
