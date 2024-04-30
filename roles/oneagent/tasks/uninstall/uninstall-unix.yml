@@ -1,11 +1,11 @@
 ---
 - name: Check if OneAgent is installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ oneagent_ctl_bin_path }}"
   register: _oneagent_ctl_state
 
 - name: Uninstall OneAgent
-  command: "{{ oneagent_uninstall_cmd }}"
+  ansible.builtin.command: "{{ oneagent_uninstall_cmd }}"
   args:
     removes: "{{ oneagent_ctl_bin_path }}"
   register: _oneagent_uninstall_result
@@ -14,8 +14,6 @@
   when: _oneagent_ctl_state.stat.exists
 
 - name: Verify uninstall result
-  fail:
-    msg: "{{ oneagent_uninstall_failed_unix | format(_oneagent_uninstall_result.rc,
-      _oneagent_uninstall_result.stdout, _oneagent_uninstall_result.stderr) }}"
-  when: _oneagent_ctl_state.stat.exists and
-    _oneagent_uninstall_result.failed|default(false)
+  ansible.builtin.fail:
+    msg: "{{ oneagent_uninstall_failed_unix | format(_oneagent_uninstall_result.rc, _oneagent_uninstall_result.stdout, _oneagent_uninstall_result.stderr) }}"
+  when: _oneagent_ctl_state.stat.exists and _oneagent_uninstall_result.failed|default(false)

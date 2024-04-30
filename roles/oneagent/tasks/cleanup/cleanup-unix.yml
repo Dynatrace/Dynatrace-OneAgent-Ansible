@@ -1,10 +1,10 @@
 ---
 - name: Remove leftover signature
-  file:
+  ansible.builtin.file:
     path: "{{ oneagent_ca_cert_dest_path }}"
     state: absent
 
 - name: Remove leftover installer
-  file:
+  ansible.builtin.file:
     path: "{{ oneagent_installer_path }}"
     state: absent

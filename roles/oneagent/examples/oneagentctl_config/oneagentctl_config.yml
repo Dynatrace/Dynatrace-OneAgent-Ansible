@@ -10,5 +10,6 @@
       - --set-host-property=property1
       - --set-host-property=other=property
   tasks:
-    - import_role:
+    - name: Import Dynatrace OneAgent role
+      ansible.builtin.import_role:
         name: oneagent

@@ -13,7 +13,6 @@
   when: _oneagent_ctl_state.stat.exists
 
 - name: Verify configuration result
-  fail:
-    msg: "{{ oneagent_configuration_failed | format(_oneagent_config_result.rc,
-      _oneagent_config_result.stdout, _oneagent_config_result.stderr) }}"
+  ansible.builtin.fail:
+    msg: "{{ oneagent_configuration_failed | format(_oneagent_config_result.rc, _oneagent_config_result.stdout, _oneagent_config_result.stderr) }}"
   when: _oneagent_ctl_state.stat.exists and _oneagent_config_result.failed|default(false)

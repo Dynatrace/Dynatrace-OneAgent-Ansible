@@ -1,11 +1,11 @@
 ---
-namespace: "dynatrace"
-name: "oneagent"
-version: "1.2.0"
-readme: "README.md"
+namespace: dynatrace
+name: oneagent
+version: 1.2.0
+readme: README.md
 authors:
-  - "Dynatrace LLC"
-description: "Module to install and configure Dynatrace OneAgent deployment"
+  - Dynatrace LLC
+description: Module to install and configure Dynatrace OneAgent deployment
 license:
   - MIT
 tags:
@@ -13,6 +13,5 @@ tags:
   - oneagent
   - monitoring
   - deployment
-repository: "https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible"
-documentation: "https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible"
-
+repository: https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible
+documentation: https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible

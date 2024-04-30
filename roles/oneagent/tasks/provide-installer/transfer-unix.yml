@@ -1,6 +1,6 @@
 ---
 - name: Transfer installer
-  copy:
+  ansible.builtin.copy:
     src: "{{ oneagent_local_installer }}"
     dest: "{{ oneagent_installer_path }}"
-    mode: 0644
+    mode: "0644"
