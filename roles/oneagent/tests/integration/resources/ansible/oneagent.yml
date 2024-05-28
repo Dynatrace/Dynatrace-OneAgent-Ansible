@@ -1,0 +1,11 @@
+---
+- name: Basic playbook
+  hosts: all
+  vars_files:
+    - credentials.yml
+  vars: {}
+  collections:
+    - dynatrace.oneagent
+  tasks:
+    - import_role:
+        name: oneagent

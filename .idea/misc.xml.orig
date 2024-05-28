@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
+  <component name="ProjectRootManager" version="2" default="true">
+=======
   <component name="Black">
     <option name="sdkName" value="Python 3.8 (building)" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Python 3.8 (building)" project-jdk-type="Python SDK">
+>>>>>>> 4493b44 (Adapt old integration scripts to work with GitHub actions)
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
