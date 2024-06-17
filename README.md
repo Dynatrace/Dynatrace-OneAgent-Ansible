@@ -2,7 +2,9 @@
 In its current state, the collection consists of a single role that deploys Dynatrace OneAgent on Linux and Windows operating systems using dedicated configuration and ensures the OneAgent service maintains a running state.
 
 ## Requirements
+### General
 * Ansible >= 2.15.0
+### Windows
 * pywinrm >= 0.4.1
 
 ## Setup
