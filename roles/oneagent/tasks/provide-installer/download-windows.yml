@@ -9,7 +9,7 @@
   win_get_url:
     url: "{{ _oneagent_installer_url }}"
     dest: "{{ oneagent_installer_path }}"
-    validate_certs: "{{ oneagent_validate_certs }}"
+    validate_certs: "{{ oneagent_validate_certs | bool }}"
     headers:
       Authorization: Api-Token {{ oneagent_paas_token }}
   no_log: true
