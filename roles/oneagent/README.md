@@ -41,7 +41,7 @@ The following variables are available in `defaults/main/` and can be overridden:
 
 | Name | Default | Description
 |-|-|-
-| `oneagent_environment_url` | `-` | The URL of the target Dynatrace environment (SaaS or Managed) in `https://<environment_uuid>.dev.dynatracelabs.com` format.
+| `oneagent_environment_url` | `-` | The URL of the target Dynatrace environment (SaaS or Managed).
 | `oneagent_paas_token` | `-` | The [PaaS Token] retrieved from the "Deploy Dynatrace" installer page.
 | `oneagent_local_installer` | `-` | The Path to OneAgent installer stored on the main node.
 | `oneagent_installer_arch` | `-` | Specifies the OneAgent installer architecture.
