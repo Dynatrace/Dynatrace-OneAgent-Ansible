@@ -4,8 +4,7 @@ oneagent_default_install_dir: "{{ ansible_env.SystemDrive }}\\Program Files\\dyn
 oneagent_default_download_dir: "{{ ansible_env['TEMP'] | default('C:\\Windows\\Temp') }}"
 
 oneagent_download_system: windows
-oneagent_available_arch:
-  - "{{ oneagent_default_arch }}"
+oneagent_available_arch: [ "{{ oneagent_default_arch }}" ]
 oneagent_download_arch: "{{ oneagent_installer_arch | default(oneagent_default_arch, true) }}"
 
 oneagent_install_path: "{{ oneagent_passed_install_args | select('regex', 'INSTALL_PATH') | first | default(oneagent_default_install_dir) | regex_replace('INSTALL_PATH=(.*)', '\\1') }}"
