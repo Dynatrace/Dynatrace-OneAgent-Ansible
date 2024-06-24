@@ -25,7 +25,7 @@
   always:
     - name: Cleanup
       ansible.builtin.include_tasks: cleanup/cleanup.yml
-      when: oneagent_is_operation_installation and not oneagent_preserve_installer
+      when: oneagent_is_operation_installation and not (oneagent_preserve_installer | bool)
 
 - name: Uninstall OneAgent
   ansible.builtin.include_tasks: uninstall/uninstall.yml
