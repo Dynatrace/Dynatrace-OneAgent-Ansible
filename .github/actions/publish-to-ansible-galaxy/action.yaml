@@ -12,17 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build, test and upload
-on:
-  push:
-    branches: [ 'main' ]
-  workflow_dispatch:
+name: publish-to-ansible-galaxy
+description: Publish to Ansible Galaxy
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build and test
-        uses: ./.github/workflows/build-and-test.yaml
-      - name: Upload the collection
-        uses: ./.github/actions/upload-collection
+runs:
+  using: composite
+  steps:
+    - name: Publish the Ansible collection
+      shell: bash
+      run: ansible-galaxy collection publish dynatrace-oneagent* --token ${{ secrets.ANSIBLE_GALAXY_API_TOKEN }}
