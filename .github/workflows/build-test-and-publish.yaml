@@ -21,6 +21,8 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Update version
+        uses: ./.github/workflows/update-version.yaml
       - name: Build and test
         uses: ./.github/workflows/build-and-test.yaml
       - name: Publish to Ansible Galaxy
