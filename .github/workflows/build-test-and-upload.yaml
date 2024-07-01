@@ -15,14 +15,19 @@
 name: Build, test and upload
 on:
   push:
-    branches: [ 'main' ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Build and test
-        uses: ./.github/workflows/build-and-test.yaml
-      - name: Upload the collection
-        uses: ./.github/actions/upload-collection
+      - uses: actions/checkout@v4
+      - name: Set environment variables
+        uses: ./.github/actions/set-environment-variables
+      - name: Set up environment
+        uses: ./.github/actions/setup-build-environment
+      - name: Build the collection
+        uses: ./.github/actions/build-collection
+      - name: Run tests
+        uses: ./.github/actions/run-tests

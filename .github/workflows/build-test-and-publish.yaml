@@ -12,28 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build and test
+name: Build, test and publish
 on:
-  pull_request:
-    branches: [ "*" ]
   push:
-    branches: [ "*" ]
-  workflow_dispatch:
-  workflow_call:
-
-env:
-  FILES_DIR: roles/oneagent/files
+    tags:
+      - "v*.*.*" 
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
+      - name: Update version
+        uses: ./.github/actions/update-version
       - name: Set up environment
         uses: ./.github/actions/setup-build-environment
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run tests
         uses: ./.github/actions/run-tests
+      - name: Publish to Ansible Galaxy
+        uses: ./.github/actions/publish-to-ansible-galaxy
+        with:
+          ansible-galaxy-api-token: ${{ secrets.ANSIBLE_GALAXY_API_TOKEN }}

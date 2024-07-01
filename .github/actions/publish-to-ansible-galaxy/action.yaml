@@ -1,0 +1,28 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: publish-to-ansible-galaxy
+description: Publish to Ansible Galaxy
+
+inputs:
+  ansible-galaxy-api-token:
+    description: Ansible Galaxy API token required for ansible-galaxy client authentication
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Publish the Ansible collection
+      shell: bash
+      run: ansible-galaxy collection publish dynatrace-oneagent* --token ${{ inputs.ansible-galaxy-api-token }}
