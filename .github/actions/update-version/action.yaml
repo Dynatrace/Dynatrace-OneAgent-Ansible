@@ -22,7 +22,7 @@ runs:
       id: get_version
       run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\/v/}"
 
-    - name: Update galaxy.yaml version
+    - name: Update galaxy.yml version
       run: sed -i "s/version: .*/version: ${{ steps.get_version.outputs.version }}/" galaxy.yml
       shell: bash
 
@@ -34,8 +34,8 @@ runs:
     - name: Commit and push changes
       run: |
         git checkout master
-        git add galaxy.yaml
-        git commit -m "Update galaxy.yaml version to ${{ steps.get_version.outputs.version }}"
+        git add galaxy.yml
+        git commit -m "Update galaxy.yml version to ${{ steps.get_version.outputs.version }}"
         git push origin master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
