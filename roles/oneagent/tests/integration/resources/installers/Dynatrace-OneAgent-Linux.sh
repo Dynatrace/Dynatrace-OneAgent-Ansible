@@ -11,7 +11,12 @@ deployOneagentCtl() {
 }
 
 main() {
-	deployOneagentCtl
+	if [ "${@}" = '--version' ]; then
+		printf '%s\n' "${INSTALLER_VERSION}"
+		return 0
+	else
+		deployOneagentCtl
+	fi
 }
 
 ##################

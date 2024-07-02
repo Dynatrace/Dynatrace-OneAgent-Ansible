@@ -1,10 +1,9 @@
-import os
 from pathlib import Path
 
-# Currently the base is `integration` directory
-INTEGRATION_TEST_BASE = Path().cwd()
-TEST_DIRECTORY = INTEGRATION_TEST_BASE / "test_dir"
-RESOURCES_DIRECTORY = INTEGRATION_TEST_BASE / "resources"
+# is cwd() correct?
+INTEGRATION_TEST_BASE = Path().cwd() / "test_dir"
+TEST_DIRECTORY = INTEGRATION_TEST_BASE / "working_dir"
+RESOURCES_DIRECTORY = Path().cwd() / "resources"
 INSTALLERS_DIRECTORY = TEST_DIRECTORY / "installers"
 SIGNATURE_FILE_NAME = "dt-root.cert.pem"
 
