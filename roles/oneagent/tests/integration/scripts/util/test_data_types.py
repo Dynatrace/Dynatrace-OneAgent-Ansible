@@ -11,20 +11,6 @@ class CommandResult:
     stderr: str
 
 
-class TechType(Enum):
-    ANSIBLE = "Ansible"
-
-    def __str__(self) -> str:
-        return str(self.name)
-
-    @staticmethod
-    def from_str(param: str) -> type:
-        try:
-            return TechType[param]
-        except KeyError:
-            raise ValueError(f"Invalid option passed: {param}") from KeyError
-
-
 class DeploymentPlatform(Enum):
     AIX_PPC = "aix_ppc"
     LINUX_ARM = "linux_arm"

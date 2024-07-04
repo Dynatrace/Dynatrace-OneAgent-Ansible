@@ -12,6 +12,8 @@ COLLECTION_NAME = "oneagent"
 COLLECTION_NAMESPACE = "dynatrace"
 ROLE_NAME = "oneagent"
 
+TECH_NAME = "Ansible"
+
 ANSIBLE_USER_KEY = "ansible_user"
 ANSIBLE_PASS_KEY = "ansible_password"
 

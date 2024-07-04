@@ -10,12 +10,11 @@ from command.platform_command_wrapper import PlatformCommandWrapper
 from technology.ansible.config import AnsibleConfig
 from technology.ansible.runner import AnsibleRunner
 from util.common_utils import prepare_test_dirs
-from util.test_data_types import DeploymentPlatform, PlatformCollection, TechType, DeploymentResult
+from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult
 
 
 USER_KEY = "user"
 PASS_KEY = "password"
-TECH_KEY = "technology"
 
 UTIL_KEY = "util"
 RUNNER_KEY = "runner"
@@ -53,9 +52,7 @@ def tear_down(runner, configurator) -> None:
 def pytest_addoption(parser):
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=True)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=True)
-    parser.addoption(
-        f"--{TECH_KEY}", type=TechType.from_str, choices=list(TechType), help="Name of tested technology", required=True
-    )
+
     for platform in DeploymentPlatform:
         parser.addoption(
             f"--{platform.value}", type=str, nargs="+", default=[], help="List of IPs for specified platform"
@@ -72,13 +69,12 @@ def pytest_configure():
 
 def pytest_generate_tests(metafunc):
     options = vars(metafunc.config.option)
-    for key in [USER_KEY, PASS_KEY, TECH_KEY]:
+    for key in [USER_KEY, PASS_KEY]:
         if key in metafunc.fixturenames:
             metafunc.parametrize(key, [options[key]])
 
     user = options[USER_KEY]
     password = options[PASS_KEY]
-    technology = options[TECH_KEY]
 
     platforms = {}
     deployment_platforms = [e.value for e in DeploymentPlatform]
@@ -88,7 +84,7 @@ def pytest_generate_tests(metafunc):
 
     wrapper = PlatformCommandWrapper(user, password)
 
-    configurator, runner, util, constants = _create_technology_classes(technology, user, password, platforms, wrapper)
+    configurator, runner, util, constants = _create_technology_classes(user, password, platforms, wrapper)
 
     if CONFIGURATOR_KEY in metafunc.fixturenames:
         metafunc.parametrize(CONFIGURATOR_KEY, [configurator])
@@ -110,8 +106,6 @@ def pytest_generate_tests(metafunc):
 
 
 def _create_technology_classes(
-    technology: TechType, user: str, password: str, platforms: PlatformCollection, wrapper: PlatformCommandWrapper
+    user: str, password: str, platforms: PlatformCollection, wrapper: PlatformCommandWrapper
 ):
-    if technology == TechType.ANSIBLE:
-        return AnsibleConfig(user, password, platforms), AnsibleRunner(user, password), AnsibleUtil, AnsibleConstants
-    raise ImportError(f"Technology '{technology}' is not supported")
+    return AnsibleConfig(user, password, platforms), AnsibleRunner(user, password), AnsibleUtil, AnsibleConstants
