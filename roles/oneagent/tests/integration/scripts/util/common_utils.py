@@ -14,7 +14,7 @@ from util.constants.common_constants import (
 )
 from util.constants.unix_constants import UNIX_ONEAGENTCTL_PATH
 from util.constants.windows_constants import WINDOWS_ONEAGENTCTL_PATH
-from util.test_data_types import DeploymentPlatform, TechType
+from util.test_data_types import DeploymentPlatform
 
 ParsedYaml = Union[dict, list, None]
 

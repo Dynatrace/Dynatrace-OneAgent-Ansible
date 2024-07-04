@@ -8,7 +8,7 @@ from technology.deployment_config import DeploymentConfig
 from technology.deployment_runner import DeploymentRunner
 from util.common_utils import get_oneagentctl_path, get_platform_argument
 from util.constants.common_constants import INSTALLER_PARTIAL_NAME, HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN
-from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection, TechType
+from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
 
 CallableOperation = Callable[[DeploymentPlatform, str, Any], None]
 

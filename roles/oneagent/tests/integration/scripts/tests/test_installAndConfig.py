@@ -5,7 +5,7 @@ from typing import Set
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
 from util.constants.common_constants import HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN
-from util.test_data_types import DeploymentPlatform, TechType, DeploymentResult
+from util.test_data_types import DeploymentPlatform, DeploymentResult
 from util.test_helpers import (
     check_agent_state,
     check_download_directory,
@@ -52,7 +52,7 @@ def _assert_oneagentctl_getter(
 
 
 def _check_install_args(
-    platform: DeploymentPlatform, address: str, technology: TechType, wrapper: PlatformCommandWrapper
+    platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, technology: str
 ) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
 
@@ -68,7 +68,7 @@ def _check_install_args(
     params = dict(kv.split("=") for kv in metadata.stdout.strip().splitlines())
     assert params[TECH_VERSION_KEY] is not None
     assert params[TECH_SCRIPT_VERSION_KEY] is not None
-    assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == technology.value
+    assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == technology
 
 
 def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, expected_tags: Set[str],
@@ -80,13 +80,13 @@ def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: Plat
 
 
 # noinspection PyUnusedLocal
-def _check_output_for_secrets(result: DeploymentResult, technology: TechType) -> None:
+def _check_output_for_secrets(result: DeploymentResult) -> None:
     for out in result:
         assert HOST_SERVER_TOKEN not in out.stdout
         assert HOST_SERVER_ADDRESS not in out.stderr
 
 
-def test_basic_installation(_set_up, technology, runner, configurator, platforms, wrapper):
+def test_basic_installation(_set_up, runner, configurator, constants, platforms, wrapper):
     logging.info("Running basic installation test")
 
     set_installer_download_params(configurator)
@@ -101,7 +101,7 @@ def test_basic_installation(_set_up, technology, runner, configurator, platforms
     result = run_deployment(runner)
 
     logging.info("Check if output contains secrets")
-    _check_output_for_secrets(result, technology=technology)
+    _check_output_for_secrets(result)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
@@ -112,7 +112,7 @@ def test_basic_installation(_set_up, technology, runner, configurator, platforms
     )
 
     logging.info("Check if installer args were passed correctly")
-    perform_operation_on_platforms(platforms, _check_install_args, technology, wrapper)
+    perform_operation_on_platforms(platforms, _check_install_args, wrapper, constants.TECH_NAME)
 
 
 def test_oneagentctl_installation_config(_set_up, runner, configurator, platforms, wrapper):
@@ -131,7 +131,7 @@ def test_oneagentctl_installation_config(_set_up, runner, configurator, platform
 
 
 # noinspection PyUnusedLocal
-def test_oneagentctl_intended_config(_set_up, technology, runner, configurator, platforms, wrapper):
+def test_oneagentctl_intended_config(_set_up, runner, configurator, platforms, wrapper):
     logging.info("Running oneagentctl config test")
 
     configurator.clear_parameters_section()

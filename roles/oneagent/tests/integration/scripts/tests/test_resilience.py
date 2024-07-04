@@ -78,7 +78,7 @@ def test_invalid_architecture(_error_messages, runner, configurator, constants):
 
 
 # noinspection PyUnusedLocal
-def test_missing_local_installer(_error_messages, technology, runner, configurator, constants):
+def test_missing_local_installer(_error_messages, runner, configurator, constants):
     logging.info("Running missing local installer test")
 
     configurator.set_common_parameter(configurator.LOCAL_INSTALLER_KEY, "non_existing_installer")
@@ -143,7 +143,7 @@ def test_multiple_install_path_arguments(_error_messages, runner, configurator, 
 
 
 # noinspection PyUnusedLocal
-def test_failed_download(_error_messages, technology, runner, configurator, constants):
+def test_failed_download(_error_messages, runner, configurator, constants):
     logging.info("Running failed download test")
 
     set_installer_download_params(configurator)
@@ -156,7 +156,7 @@ def test_failed_download(_error_messages, technology, runner, configurator, cons
 
 # noinspection PyUnusedLocal
 @enable_for_family(family="unix")
-def test_failed_signature_verification(_error_messages, technology, runner, configurator, constants):
+def test_failed_signature_verification(_error_messages, runner, configurator, constants):
     logging.info("Running failed signature verification test")
 
     set_installer_download_params(configurator)
