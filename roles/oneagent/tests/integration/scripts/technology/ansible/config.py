@@ -5,6 +5,7 @@ from technology.ansible.constants import (
     PLAYBOOK_TEMPLATE_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     ANSIBLE_USER_KEY,
+    ANSIBLE_CONNECTION_KEY,
     ANSIBLE_RESOURCE_DIR,
     COLLECTION_DIR,
     COLLECTION_NAME,
@@ -32,6 +33,9 @@ def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
     for platform, hosts in platforms.items():
         group_data = data["all"]["children"][platform.family()]["children"][platform.value]
         group_data["hosts"] = {k: None for k in hosts}
+        # TODO: Replace so that both local and ssh connections can be used
+        if "localhost" in hosts:
+            group_data["vars"][ANSIBLE_CONNECTION_KEY] = "local"
         group_data["vars"][ANSIBLE_USER_KEY] = user
     write_yaml_file(INVENTORY_FILE, data)
 
