@@ -16,6 +16,7 @@ TECH_NAME = "Ansible"
 
 ANSIBLE_USER_KEY = "ansible_user"
 ANSIBLE_PASS_KEY = "ansible_password"
+ANSIBLE_CONNECTION_KEY = "ansible_connection"
 
 HOSTS_TEMPLATE_FILE_NAME = "hosts.yml"
 CREDENTIALS_FILE_NAME = "credentials.yml"
