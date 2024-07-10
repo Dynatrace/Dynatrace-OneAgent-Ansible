@@ -14,6 +14,8 @@ from util.test_helpers import (
 def test_local_installer(_set_up, runner, configurator, constants, platforms, wrapper, _tear_down):
     logging.info("Running local installer test")
 
+    configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)
+
     for platform, _ in platforms.items():
         installers_location = constants.LOCAL_INSTALLERS_LOCATION
         latest_installer_name = get_installers(platform.system(), platform.arch(), "latest")[-1]
