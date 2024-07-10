@@ -66,6 +66,10 @@ class DeploymentConfig(ABC):
         raise NotImplementedError
 
     @constant_key
+    def VERIFY_SIGNATURE_KEY(cls):
+        raise NotImplementedError
+
+    @constant_key
     def INSTALLER_ARCH_KEY(cls):
         raise NotImplementedError
 

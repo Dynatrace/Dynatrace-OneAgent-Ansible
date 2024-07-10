@@ -4,7 +4,7 @@ from pathlib import Path
 INTEGRATION_TEST_BASE = Path().cwd() / "test_dir"
 TEST_DIRECTORY = INTEGRATION_TEST_BASE / "working_dir"
 RESOURCES_DIRECTORY = Path().cwd() / "resources"
-INSTALLERS_DIRECTORY = TEST_DIRECTORY / "installers"
+INSTALLERS_DIRECTORY = INTEGRATION_TEST_BASE / "installers"
 SIGNATURE_FILE_NAME = "dt-root.cert.pem"
 
 INSTALLER_PARTIAL_NAME = "Dynatrace-OneAgent"

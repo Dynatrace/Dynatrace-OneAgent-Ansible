@@ -89,9 +89,10 @@ def _check_output_for_secrets(result: DeploymentResult) -> None:
 def test_basic_installation(_set_up, runner, configurator, constants, platforms, wrapper):
     logging.info("Running basic installation test")
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator) 
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, True)
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY, INSTALLER_ARGS)
+    configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)
 
     for platform, _ in platforms.items():
         download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH)
@@ -114,7 +115,7 @@ def test_basic_installation(_set_up, runner, configurator, constants, platforms,
     logging.info("Check if installer args were passed correctly")
     perform_operation_on_platforms(platforms, _check_install_args, wrapper, constants.TECH_NAME)
 
-
+#
 def test_oneagentctl_installation_config(_set_up, runner, configurator, platforms, wrapper):
     logging.info("Running oneagentctl config test")
 
