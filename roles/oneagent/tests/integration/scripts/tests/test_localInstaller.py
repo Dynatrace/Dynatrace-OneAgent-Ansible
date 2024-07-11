@@ -8,9 +8,11 @@ from util.test_helpers import (
     check_download_directory,
     perform_operation_on_platforms,
     run_deployment,
+    disable_for_localhost,
 )
 
 
+@disable_for_localhost()
 def test_local_installer(_set_up, runner, configurator, constants, platforms, wrapper, _tear_down):
     logging.info("Running local installer test")
 
