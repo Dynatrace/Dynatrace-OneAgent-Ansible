@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Callable, Any
 
 from command.platform_command_wrapper import PlatformCommandWrapper
+
 from technology.deployment_config import DeploymentConfig
 from technology.deployment_runner import DeploymentRunner
 from util.common_utils import get_oneagentctl_path, get_platform_argument
@@ -16,6 +17,21 @@ CallableOperation = Callable[[DeploymentPlatform, str, Any], None]
 def _get_param_by_name(name: str, **kwargs) -> Any:
     assert name in kwargs, f"No '{name}' parameter in parameters list"
     return kwargs[name]
+
+
+def disable_for_localhost():
+    def func_wrapper(func):
+        @functools.wraps(func)
+        def platforms_wrapper(*args, **kwargs):
+            platforms: DeploymentConfig = _get_param_by_name("platforms", **kwargs)
+            for _, hosts in platforms.items():
+                if any(host == "localhost" for host in hosts):
+                    return
+            func(*args, **kwargs)
+
+        return platforms_wrapper
+
+    return func_wrapper
 
 
 def enable_for_family(family: str):

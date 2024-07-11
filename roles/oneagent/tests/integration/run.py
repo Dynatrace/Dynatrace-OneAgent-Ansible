@@ -18,7 +18,7 @@ def get_env_vars():
     return env_vars
 
 
-def save_log(out, log_path: str):
+def save_log(out, log_path: Path):
     with open(log_path, "w") as log:
         for line in out:
             log.write(line)
@@ -29,32 +29,49 @@ def run_tests():
 
     test_path = "scripts/tests"
     for test in glob.glob(f"{test_path}/test_*.py"):
-        proc = subprocess.run(["pytest", test], env=get_env_vars(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8")
-        save_log(proc.stdout, f"{LOG_DIR}/{Path(test).stem}.log")
+        test_name = Path(test).stem
+        proc = subprocess.run(["pytest", test, "--user=''", "--password=''", "--linux_x86=localhost"],
+                              env=get_env_vars(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8")
+        save_log(proc.stdout, LOG_DIR / f"{test_name}.log")
 
 
 def run_server():
     logging.info("Running server...")
     server_path = Path("scripts") / "server" / "server.py"
-    return subprocess.Popen(["python", server_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=get_env_vars(), encoding="utf-8")
+    return subprocess.Popen(["python", server_path], env=get_env_vars(),
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8")
+
+
+def get_file_content(path: Path):
+    with open(path, "r") as f:
+        return f.readlines()
 
 
 def prepare_installers():
     logging.info("Preparing installers...")
 
+    oneagentctl_bin_name = "oneagentctl.sh"
+    uninstall_script_name = "uninstall.sh"
     installer_partial_name = "Dynatrace-OneAgent-Linux"
-    src_dir = Path("resources") / "installers"
+
     version_tag = "##VERSION##"
+    uninstall_code_tag = "##UNINSTALL_CODE##"
+    oneagentctl_code_tag = "##ONEAGENTCTL_CODE##"
 
-    installers = list(glob.glob(f"{src_dir}/*.sh"))
-    assert len(installers) == 1, "Only one installer is supported"
+    src_dir = Path("resources") / "installers"
 
-    with open(installers[0], "r") as i:
-        installer_template = i.readlines()
-        for ver in ["1.0.0", "2.0.0"]:
-            versioned_installer = [line.replace(version_tag, ver) for line in installer_template]
-            with open(INSTALLERS_DIR / f"{installer_partial_name}-{ver}.sh", "w") as f:
-                f.writelines(versioned_installer)
+    uninstall_code = get_file_content(src_dir / uninstall_script_name)
+    # TODO: remove SH once oneagentctl in ready
+    oneagentctl_code = get_file_content(src_dir / oneagentctl_bin_name)
+    installer_template = get_file_content(src_dir / f"{installer_partial_name}.sh")
+
+    installer_template = [line.replace(uninstall_code_tag, "".join(uninstall_code)) for line in installer_template]
+    installer_template = [line.replace(oneagentctl_code_tag, "".join(oneagentctl_code)) for line in installer_template]
+
+    for ver in ["1.0.0", "2.0.0"]:
+        versioned_installer = [line.replace(version_tag, ver) for line in installer_template]
+        with open(INSTALLERS_DIR / f"{installer_partial_name}-{ver}.sh", "w") as f:
+            f.writelines(versioned_installer)
 
 
 def prepare_environment():
@@ -70,7 +87,7 @@ def main():
     run_tests()
 
     server.terminate()
-    save_log(server.stdout, f"{LOG_DIR}/server.log")
+    save_log(server.stdout, LOG_DIR / "server.log")
 
 
 if __name__ == "__main__":

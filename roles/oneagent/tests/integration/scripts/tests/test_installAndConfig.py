@@ -115,7 +115,7 @@ def test_basic_installation(_set_up, runner, configurator, constants, platforms,
     logging.info("Check if installer args were passed correctly")
     perform_operation_on_platforms(platforms, _check_install_args, wrapper, constants.TECH_NAME)
 
-#
+
 def test_oneagentctl_installation_config(_set_up, runner, configurator, platforms, wrapper):
     logging.info("Running oneagentctl config test")
 

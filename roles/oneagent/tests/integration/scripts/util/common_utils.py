@@ -66,11 +66,7 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
 
 def _get_available_installers() -> Dict[DeploymentPlatform, List[Path]]:
     installers: Dict[DeploymentPlatform, List[Path]] = {k: [] for k in DeploymentPlatform}
-    print("BBBBB")
-    print(INSTALLERS_DIRECTORY)
-    print(sorted(INSTALLERS_DIRECTORY.glob(f"{INSTALLER_PARTIAL_NAME}*")))
     for installer in sorted(INSTALLERS_DIRECTORY.glob(f"{INSTALLER_PARTIAL_NAME}*")):
-        print(installer)
         platform = _get_platform_by_installer(installer)
         installers[platform].append(installer)
     return installers
