@@ -33,10 +33,12 @@ def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
     for platform, hosts in platforms.items():
         group_data = data["all"]["children"][platform.family()]["children"][platform.value]
         group_data["hosts"] = {k: None for k in hosts}
-        # TODO: Replace so that both local and ssh connections can be used
-        if "localhost" in hosts:
-            group_data["vars"][ANSIBLE_CONNECTION_KEY] = "local"
         group_data["vars"][ANSIBLE_USER_KEY] = user
+        # TODO: Add condition to fail test if localhost is used with multiple platforms
+        # We assume that localhost is used only with single platform
+        if "localhost" in hosts:
+            family_vars = group_data = data["all"]["children"][platform.family()]["vars"]
+            group_data[ANSIBLE_CONNECTION_KEY] = "local"
     write_yaml_file(INVENTORY_FILE, data)
 
 
@@ -50,18 +52,18 @@ def _prepare_credentials_file(user: str, password: str) -> None:
 
 
 class AnsibleConfig(DeploymentConfig):
-    PARAM_SECTION_KEY = "vars"
     HOSTS_PARAM_KEY = "hosts"
+    PARAM_SECTION_KEY = "vars"
 
     # Platform-agnostic
-    INSTALLER_VERSION_KEY = "oneagent_version"
-    PACKAGE_STATE_KEY = "oneagent_package_state"
-    VERIFY_SIGNATURE_KEY = "oneagent_verify_signature"
-    PRESERVE_INSTALLER_KEY = "oneagent_preserve_installer"
-    ENVIRONMENT_URL_KEY = "oneagent_environment_url"
-    VALIDATE_DOWNLOAD_CERTS_KEY = "oneagent_validate_certs"
     PAAS_TOKEN_KEY = "oneagent_paas_token"
+    PACKAGE_STATE_KEY = "oneagent_package_state"
     INSTALLER_ARGS_KEY = "oneagent_install_args"
+    ENVIRONMENT_URL_KEY = "oneagent_environment_url"
+    VERIFY_SIGNATURE_KEY = "oneagent_verify_signature"
+    INSTALLER_VERSION_KEY = "oneagent_version"
+    PRESERVE_INSTALLER_KEY = "oneagent_preserve_installer"
+    VALIDATE_DOWNLOAD_CERTS_KEY = "oneagent_validate_certs"
 
     # Platform-specific
     DOWNLOAD_DIR_KEY = "oneagent_download_dir"
@@ -102,5 +104,6 @@ class AnsibleConfig(DeploymentConfig):
         data = read_yaml_file(INVENTORY_FILE)
         for platform in DeploymentPlatform:
             group_data = data["all"]["children"][platform.family()]["children"][platform.value]
+
             group_data[self.PARAM_SECTION_KEY] = {}
         write_yaml_file(INVENTORY_FILE, data)

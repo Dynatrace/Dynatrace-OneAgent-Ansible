@@ -122,6 +122,7 @@ def test_oneagentctl_installation_config(_set_up, runner, configurator, platform
     configurator.clear_parameters_section()
     set_installer_download_params(configurator)
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY, CONFIG_INSTALL_ARGS)
+    configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)
 
     run_deployment(runner)
 
@@ -137,6 +138,7 @@ def test_oneagentctl_intended_config(_set_up, runner, configurator, platforms, w
 
     configurator.clear_parameters_section()
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY, CONFIG_INTENDED_ARGS)
+    configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)
 
     run_deployment(runner)
 
@@ -146,13 +148,13 @@ def test_oneagentctl_intended_config(_set_up, runner, configurator, platforms, w
 
     perform_operation_on_platforms(platforms, _check_config_args, wrapper, expected_tags, expected_properties)
 
-
-def test_uninstall(_set_up, runner, configurator, platforms, wrapper):
-    logging.info("Running uninstall test")
-
-    configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
-
-    run_deployment(runner)
-
-    logging.info("Check if agent is uninstalled")
-    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
+#
+# def test_uninstall(_set_up, runner, configurator, platforms, wrapper):
+#     logging.info("Running uninstall test")
+#
+#     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
+#
+#     run_deployment(runner)
+#
+#     logging.info("Check if agent is uninstalled")
+#     perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)

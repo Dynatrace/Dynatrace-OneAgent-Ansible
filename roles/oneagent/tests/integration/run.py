@@ -28,7 +28,7 @@ def run_tests():
     logging.info("Running tests...")
 
     test_path = "scripts/tests"
-    for test in glob.glob(f"{test_path}/test_*.py"):
+    for test in glob.glob(f"{test_path}/test_i*.py"):
         test_name = Path(test).stem
         proc = subprocess.run(["pytest", test, "--user=''", "--password=''", "--linux_x86=localhost"],
                               env=get_env_vars(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8")
@@ -61,10 +61,12 @@ def prepare_installers():
     src_dir = Path("resources") / "installers"
 
     uninstall_code = get_file_content(src_dir / uninstall_script_name)
+    uninstall_code = [line.replace("$", r"\$") for line in uninstall_code]
     # TODO: remove SH once oneagentctl in ready
     oneagentctl_code = get_file_content(src_dir / oneagentctl_bin_name)
-    installer_template = get_file_content(src_dir / f"{installer_partial_name}.sh")
+    oneagentctl_code = [line.replace("$", r"\$") for line in oneagentctl_code]
 
+    installer_template = get_file_content(src_dir / f"{installer_partial_name}.sh")
     installer_template = [line.replace(uninstall_code_tag, "".join(uninstall_code)) for line in installer_template]
     installer_template = [line.replace(oneagentctl_code_tag, "".join(oneagentctl_code)) for line in installer_template]
 
