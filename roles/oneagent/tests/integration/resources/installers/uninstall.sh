@@ -1,7 +1,7 @@
 #!/bin/sh
 
 main() {
-	rm -rf /opt/dynatrace/
+	rm -rf /opt/dynatrace
 }
 
 ##################

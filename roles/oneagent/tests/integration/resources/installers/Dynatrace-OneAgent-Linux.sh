@@ -1,41 +1,71 @@
 #!/bin/sh
 
-readonly INSTALLER_VERSION='##VERSION##'
+readonly DEFAULT_INSTALL_DIR="/opt/dynatrace/oneagent"
+readonly INSTALLER_VERSION="##VERSION##"
+readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
 
-readonly UNINSTALL_DIR='/opt/dynatrace/oneagent/agent'
-readonly UNINSTALL_SCRIPT='uninstall.sh'
+readonly UNINSTALL_SCRIPT="uninstall.sh"
 readonly UNINSTALL_CODE="$(cat <<-ENDUNINSTALL
 ##UNINSTALL_CODE##
 ENDUNINSTALL
 )"
 
-readonly ONEAGENTCTL_BIN='oneagentctl'
-readonly ONEAGENTCTL_DIR='/opt/dynatrace/oneagent/agent/tools'
+readonly ONEAGENTCTL_BIN="oneagentctl"
 readonly ONEAGENTCTL_CODE="$(cat <<-ENDCTL
 ##ONEAGENTCTL_CODE##
 ENDCTL
 )"
 
+CTL_PARAMS=
+INSTALL_DIR="${DEFAULT_INSTALL_DIR}"
+
+uninstall() {
+	local uninstallScript="${INSTALL_DIR}/agent/${UNINSTALL_SCRIPT}"
+	if [ -f "${uninstallScript}" ]; then
+		"${uninstallScript}"
+	fi
+}
+
+parseParams() {
+	while [ $# -gt 0 ]; do
+		local param="${1}"
+		if [ "${param}" = "--version" ]; then
+			printf "%s" "${INSTALLER_VERSION}"
+			exit 0
+		elif [ "${param}" = "INSTALL_PATH" ]; then
+			INSTALL_DIR="$(printf "%s" "${param}" | cut -d "=" -f "2-")"
+		elif printf "%s" "${param}" | grep -q -- "--set"; then
+			CTL_PARAMS="${CTL_PARAMS} ${1}"
+		fi
+		shift
+	done
+}
+
 deployOneagentCtl() {
+	local ONEAGENTCTL_DIR="${INSTALL_DIR}/agent/tools"
 	mkdir -p "${ONEAGENTCTL_DIR}"
+	mkdir -p "${DEPLOYMENT_CONF_PATH}"
 	printf '%s' "${ONEAGENTCTL_CODE}" > "${ONEAGENTCTL_DIR}/${ONEAGENTCTL_BIN}"
 	chmod +x "${ONEAGENTCTL_DIR}/${ONEAGENTCTL_BIN}"
 }
 
 deployUninstallScript() {
+	local UNINSTALL_DIR="${INSTALL_DIR}/agent"
 	mkdir -p "${UNINSTALL_DIR}"
 	printf '%s' "${UNINSTALL_CODE}" > "${UNINSTALL_DIR}/${UNINSTALL_SCRIPT}"
 	chmod +x "${UNINSTALL_DIR}/${UNINSTALL_SCRIPT}"
 }
 
+applyConfig() {
+	"${INSTALL_DIR}/agent/tools/${ONEAGENTCTL_BIN}" ${CTL_PARAMS}
+}
+
 main() {
-	if [ "${1}" = '--version' ]; then
-		printf '%s\n' "${INSTALLER_VERSION}"
-		return 0
-	else
-		deployOneagentCtl
-		deployUninstallScript
-	fi
+	parseParams "$@"
+	uninstall
+	deployOneagentCtl
+	deployUninstallScript
+	applyConfig
 }
 
 ##################
