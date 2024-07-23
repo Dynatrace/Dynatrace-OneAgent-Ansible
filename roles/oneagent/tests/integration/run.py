@@ -50,6 +50,7 @@ def get_file_content(path: Path):
 def prepare_installers():
     logging.info("Preparing installers...")
 
+    # TODO: remove SH once oneagentctl in ready
     oneagentctl_bin_name = "oneagentctl.sh"
     uninstall_script_name = "uninstall.sh"
     installer_partial_name = "Dynatrace-OneAgent-Linux"
@@ -58,15 +59,15 @@ def prepare_installers():
     uninstall_code_tag = "##UNINSTALL_CODE##"
     oneagentctl_code_tag = "##ONEAGENTCTL_CODE##"
 
-    src_dir = Path("resources") / "installers"
+    resource_dir = Path("resources") / "installers"
 
-    uninstall_code = get_file_content(src_dir / uninstall_script_name)
+    uninstall_code = get_file_content(resource_dir / uninstall_script_name)
     uninstall_code = [line.replace("$", r"\$") for line in uninstall_code]
-    # TODO: remove SH once oneagentctl in ready
-    oneagentctl_code = get_file_content(src_dir / oneagentctl_bin_name)
+
+    oneagentctl_code = get_file_content(resource_dir / oneagentctl_bin_name)
     oneagentctl_code = [line.replace("$", r"\$") for line in oneagentctl_code]
 
-    installer_template = get_file_content(src_dir / f"{installer_partial_name}.sh")
+    installer_template = get_file_content(resource_dir / f"{installer_partial_name}.sh")
     installer_template = [line.replace(uninstall_code_tag, "".join(uninstall_code)) for line in installer_template]
     installer_template = [line.replace(oneagentctl_code_tag, "".join(oneagentctl_code)) for line in installer_template]
 

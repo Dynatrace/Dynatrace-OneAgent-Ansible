@@ -19,13 +19,6 @@ ENDCTL
 CTL_PARAMS=
 INSTALL_DIR="${DEFAULT_INSTALL_DIR}"
 
-uninstall() {
-	local uninstallScript="${INSTALL_DIR}/agent/${UNINSTALL_SCRIPT}"
-	if [ -f "${uninstallScript}" ]; then
-		"${uninstallScript}"
-	fi
-}
-
 parseParams() {
 	while [ $# -gt 0 ]; do
 		local param="${1}"
@@ -39,6 +32,13 @@ parseParams() {
 		fi
 		shift
 	done
+}
+
+uninstall() {
+	local uninstallScript="${INSTALL_DIR}/agent/${UNINSTALL_SCRIPT}"
+	if [ -f "${uninstallScript}" ]; then
+		"${uninstallScript}"
+	fi
 }
 
 deployOneagentCtl() {
