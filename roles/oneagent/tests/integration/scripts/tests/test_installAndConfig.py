@@ -48,6 +48,9 @@ def _assert_oneagentctl_getter(
 ):
     oneagentctl = f"{get_oneagentctl_path(platform)}"
     tags = wrapper.run_command(platform, address, oneagentctl, ctl_param)
+    logging.info("AAAAAAAAAAAAAAAAAAAAA")
+    logging.info(set(tags.stdout.strip().splitlines()))
+    logging.info(expected_values)
     assert tags.returncode == 0 and expected_values == set(tags.stdout.strip().splitlines())
 
 
@@ -144,17 +147,17 @@ def test_oneagentctl_intended_config(_set_up, runner, configurator, platforms, w
 
     logging.info("Check if config args were applied correctly")
     expected_tags = {INSTALLER_TAG, PLATFORM_TAG, CONFIG_INSTALL_TAG, CONFIG_INTENDED_TAG}
-    expected_properties = {PLATFORM_PROPERTY, CONFIG_INTENDED_PROPERTY, INSTALLER_PROPERTY}
+    expected_properties = {PLATFORM_PROPERTY, CONFIG_INSTALL_PROPERTY, CONFIG_INTENDED_PROPERTY, INSTALLER_PROPERTY}
 
     perform_operation_on_platforms(platforms, _check_config_args, wrapper, expected_tags, expected_properties)
 
-#
-# def test_uninstall(_set_up, runner, configurator, platforms, wrapper):
-#     logging.info("Running uninstall test")
-#
-#     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
-#
-#     run_deployment(runner)
-#
-#     logging.info("Check if agent is uninstalled")
-#     perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
+
+def test_uninstall(_set_up, runner, configurator, platforms, wrapper):
+    logging.info("Running uninstall test")
+
+    configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
+
+    run_deployment(runner)
+
+    logging.info("Check if agent is uninstalled")
+    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
