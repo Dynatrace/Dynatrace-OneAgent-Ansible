@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This file simulates deployment functionalities of oneagentctl binary, used to configure installation.
+
 readonly DIR_NAME="$(dirname "${0}")"
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"

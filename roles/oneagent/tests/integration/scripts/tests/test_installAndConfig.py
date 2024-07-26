@@ -47,11 +47,8 @@ def _assert_oneagentctl_getter(
     expected_values: Set[str],
 ):
     oneagentctl = f"{get_oneagentctl_path(platform)}"
-    tags = wrapper.run_command(platform, address, oneagentctl, ctl_param)
-    logging.info("AAAAAAAAAAAAAAAAAAAAA")
-    logging.info(set(tags.stdout.strip().splitlines()))
-    logging.info(expected_values)
-    assert tags.returncode == 0 and expected_values == set(tags.stdout.strip().splitlines())
+    result = wrapper.run_command(platform, address, oneagentctl, ctl_param)
+    assert result.returncode == 0 and expected_values == set(result.stdout.strip().splitlines())
 
 
 def _check_install_args(
