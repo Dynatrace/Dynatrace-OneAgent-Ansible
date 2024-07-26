@@ -144,7 +144,7 @@ def test_oneagentctl_intended_config(_set_up, runner, configurator, platforms, w
 
     logging.info("Check if config args were applied correctly")
     expected_tags = {INSTALLER_TAG, PLATFORM_TAG, CONFIG_INSTALL_TAG, CONFIG_INTENDED_TAG}
-    expected_properties = {PLATFORM_PROPERTY, CONFIG_INSTALL_PROPERTY, CONFIG_INTENDED_PROPERTY, INSTALLER_PROPERTY}
+    expected_properties = {PLATFORM_PROPERTY, CONFIG_INTENDED_PROPERTY, INSTALLER_PROPERTY}
 
     perform_operation_on_platforms(platforms, _check_config_args, wrapper, expected_tags, expected_properties)
 

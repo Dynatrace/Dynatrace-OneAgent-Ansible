@@ -15,13 +15,22 @@ cutVariable() {
 
 saveToConfig() {
 	while [ $# -gt 0 ]; do
-			local setter="$(cutVariable "${1}" "=" 1)"
-			local setterType="$(cutVariable "${setter}" "-" "5-")"
-			local value="$(cutVariable "${1}" "=" "2-")"
-			local setterFile="${DEPLOYMENT_CONF_PATH}/${setterType}"
+		# example command: --set-host-property=TENANT=tenant1
+		# setter: --set-host-property
+		local setter="$(cutVariable "${1}" "=" 1)"
+		# setterType: property
+		local setterType="$(cutVariable "${setter}" "-" "5-")"
+		# value: TENANT=tenant1
+		local value="$(cutVariable "${1}" "=" "2-")"
+		# property: TENANT
+		local property="$(cutVariable "${value}" "=" "1")"
+		local setterFile="${DEPLOYMENT_CONF_PATH}/${setterType}"
+		if grep -q "${property}" "${setterFile}"; then
+			sed -i "s/${property}.*/${value}/" "${setterFile}"
+		else
 			printf '%s\n' "${value}" >>"${setterFile}"
-			echo "${1} Set ${setterType} to ${value}" >> "${DIR_NAME}/output"
-			shift
+		fi
+		shift
 	done
 }
 

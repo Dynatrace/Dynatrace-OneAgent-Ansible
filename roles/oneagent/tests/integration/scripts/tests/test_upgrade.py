@@ -18,7 +18,7 @@ def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> 
     for platform, _ in platforms.items():
         installers = get_installers(platform.system(), platform.arch())
         versioned_installer = installers[-1 if latest else 0]
-        versions[platform] = re.search(r"\d.\d+.\d+", str(versioned_installer)).group()
+        versions[platform] = re.search(r"\d.\d+.\d+.\d+-\d+", str(versioned_installer)).group()
     return versions
 
 
