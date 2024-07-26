@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# This script acts as a self contained installer of the procuct
+
 readonly DEFAULT_INSTALL_DIR="/opt/dynatrace/oneagent"
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
