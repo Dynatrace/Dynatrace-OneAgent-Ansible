@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import subprocess
+from datetime import datetime
 
 from pathlib import Path
 from typing import Dict, Any, List
@@ -112,10 +113,12 @@ def prepare_installers():
     installer_template = replace_tag(installer_template, uninstall_code_tag, "".join(uninstall_code))
     installer_template = replace_tag(installer_template, oneagentctl_code_tag, "".join(oneagentctl_code))
 
+    timestamp = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
     # Minimal supported version is 1.199
     for version in ["1.199.0", "1.300.0"]:
-        installer_code = replace_tag(installer_template, version_tag, version)
-        with open(INSTALLERS_DIR / f"{installer_partial_name}-{version}.sh", "w") as f:
+        full_version = f"{version}.{timestamp}"
+        installer_code = replace_tag(installer_template, version_tag, full_version)
+        with open(INSTALLERS_DIR / f"{installer_partial_name}-{full_version}.sh", "w") as f:
             f.writelines(installer_code)
 
 
@@ -151,6 +154,7 @@ def main():
     prepare_environment()
     with ServerWrapper(run_server()):
         result = run_tests(parse_args())
+    shutil.rmtree(TEST_DIR, ignore_errors=True)
     return result
 
 
