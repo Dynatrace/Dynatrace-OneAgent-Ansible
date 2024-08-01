@@ -41,12 +41,6 @@ def get_agent_in_version(system, version):
     return get_installer(system, request.args["arch"], version)
 
 
-# def parse_args():
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("--log_path", type=str, default=None, help="Log file path")
-#     return parser.parse_args()
-
-
 def main() -> None:
     # args = parse_args()
 

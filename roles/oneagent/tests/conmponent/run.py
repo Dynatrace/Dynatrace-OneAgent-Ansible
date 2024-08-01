@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import subprocess
+import sys
 from datetime import datetime
 
 from pathlib import Path
@@ -54,10 +55,13 @@ def get_test_args(args: Dict[str, Any]) -> List[str]:
 
 def run_test(test: str, test_args: List[str]) -> bool:
     test_name = Path(test).stem
+    logging.info(f"Test: {test_name}")
     proc = subprocess.run(["pytest", test] + test_args, env=get_env_vars(), encoding="utf-8",
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     save_log(proc.stdout, LOG_DIR / f"{test_name}.log")
-    return proc.returncode == 0
+    success = proc.returncode == 0
+    logging.info("PASSED" if success else "FAILED")
+    return success
 
 
 def run_tests(args: Dict[str, Any]) -> bool:
@@ -134,7 +138,7 @@ def prepare_environment():
 
 def parse_args() -> Dict[str, Any]:
     parser = argparse.ArgumentParser(
-        description="Run integration tests for OneAgent role. If any of specified platform contains"
+        description="Run component tests for OneAgent role. If any of specified platform contains"
                     " 'localhost' as an IP address, the script will perform tests on the local machine."
                     " In such case, user and password arguments can be empty"
     )
@@ -151,12 +155,12 @@ def parse_args() -> Dict[str, Any]:
 
 
 def main():
+    args = parse_args()
     prepare_environment()
     with ServerWrapper(run_server()):
-        result = run_tests(parse_args())
-    shutil.rmtree(TEST_DIR, ignore_errors=True)
+        result = run_tests(args)
     return result
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

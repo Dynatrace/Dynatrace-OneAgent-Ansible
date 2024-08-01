@@ -1,10 +1,10 @@
 from pathlib import Path
 
 # is cwd() correct?
-INTEGRATION_TEST_BASE = Path().cwd() / "test_dir"
-TEST_DIRECTORY = INTEGRATION_TEST_BASE / "working_dir"
+COMPONENT_TEST_BASE = Path().cwd() / "test_dir"
+TEST_DIRECTORY = COMPONENT_TEST_BASE / "working_dir"
 RESOURCES_DIRECTORY = Path().cwd() / "resources"
-INSTALLERS_DIRECTORY = INTEGRATION_TEST_BASE / "installers"
+INSTALLERS_DIRECTORY = COMPONENT_TEST_BASE / "installers"
 SIGNATURE_FILE_NAME = "dt-root.cert.pem"
 
 INSTALLER_PARTIAL_NAME = "Dynatrace-OneAgent"

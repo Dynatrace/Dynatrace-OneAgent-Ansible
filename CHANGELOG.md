@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - Added parameter `--restart-service` parameter, once OneAgent configuration is performed
 - Fixed problem with `Invalid version string` during collection install
+- Added parameter `oneagent_verify_signature` controlling signature verification step
 
 ## [1.1.0] - 2021-10-06
 

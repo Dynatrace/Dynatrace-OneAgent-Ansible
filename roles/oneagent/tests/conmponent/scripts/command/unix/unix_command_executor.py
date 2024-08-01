@@ -14,6 +14,9 @@ def _get_command_prefix(address: str, user: str, password: str) -> List[str]:
 def _get_command_and_shell(address: str, user: str, password: str, command: str, *args: str) \
         -> [Union[List[str], str], bool]:
     prefix = _get_command_prefix(address, user, password)
+    # If ssh prefix is absent, the command is executed locally, so we need to use shell=True and make it string
+    # to avoid interpreting args as separate commands and avoid problems with non-existing commands
+    # If prefix exists, we do not need shell as we will be executing the command on the remote machine
     if not prefix:
         return " ".join([command, *args]), True
     return prefix + [command, *args], False

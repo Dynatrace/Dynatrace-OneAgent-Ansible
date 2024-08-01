@@ -104,6 +104,5 @@ class AnsibleConfig(DeploymentConfig):
         data = read_yaml_file(INVENTORY_FILE)
         for platform in DeploymentPlatform:
             group_data = data["all"]["children"][platform.family()]["children"][platform.value]
-
             group_data[self.PARAM_SECTION_KEY] = {}
         write_yaml_file(INVENTORY_FILE, data)
