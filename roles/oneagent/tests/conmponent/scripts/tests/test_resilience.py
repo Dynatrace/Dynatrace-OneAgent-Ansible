@@ -25,10 +25,8 @@ def _prepare_test_data(constants, data: Dict[str, str]) -> Dict[str, str]:
     parsed_data = {}
     prefix_length = len(constants.VARIABLE_PREFIX)
     for key, value in data.items():
-        # Remove oneagent_ prefix for Ansible and $ for Puppet
-        # (can be replaced with key.removeprefix since Python 3.9+, DEP-9799)
-        key = key.strip()
-        key = key[key.startswith(constants.VARIABLE_PREFIX) and prefix_length :]
+        # Remove oneagent_ prefix
+        key = key.strip().removeprefix(constants.VARIABLE_PREFIX)
         # Replace all parentheses with its escaped version
         value = value.strip().strip('"')
         value = value.replace("(", "\\(").replace(")", "\\)")
@@ -164,7 +162,5 @@ def test_failed_signature_verification(_error_messages, runner, configurator, co
     with open(INSTALLER_SIGNATURE_FILE, "w") as signature:
         signature.write("break signature by writing some text")
 
-    # Dirty trick so that we at least check whether Puppet module failed in this case as we do not
-    # define this error message in there. "universal_message" will be empty and regex will pass
-    universal_message = _error_messages.get(SIGNATURE_VERIFICATION_FAILED_KEY, "")
+    universal_message = _error_messages.get(SIGNATURE_VERIFICATION_FAILED_KEY)
     _check_deployment_failure(run_deployment(runner, True), universal_message, constants.FAILED_DEPLOYMENT_EXIT_CODE)

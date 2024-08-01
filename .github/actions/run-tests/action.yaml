@@ -20,19 +20,19 @@ runs:
   steps:
     - name: Install the collection
       shell: bash
-      run: ansible-galaxy collection install dynatrace-oneagent*
+      run: ansible-galaxy collection install -vvv dynatrace-oneagent*
     - name: Run sanity test
       shell: bash
       run: pushd ~/.ansible/collections/ansible_collections/dynatrace/oneagent && ansible-test sanity && popd
-    - name: Run integration tests
-      id: integration-tests
+    - name: Run component tests
+      id: component-tests
       shell: bash
-      run: python -m venv venv && source venv/bin/activate && cd roles/oneagent/tests/integration && python run.py
+      run: python -m virtualenv venv && source venv/bin/activate && cd roles/oneagent/tests/component &&
+           pip install -r resources/requirements.txt && python run.py --linux_x86=localhost
     - name: Upload logs
-      if: failure() && steps.integration-tests.outcome == 'failure'
+      if: failure() && steps.component-tests.outcome == 'failure'
       uses: actions/upload-artifact@v4
-      run: echo "Uploading logs"
       with:
-        name: integration-tests-${{ github.sha }}
+        name: component-tests-${{ github.sha }}
         retention-days: 1
-        path: roles/oneagent/tests/integration/test_dir/logs
+        path: roles/oneagent/tests/component/test_dir/logs
