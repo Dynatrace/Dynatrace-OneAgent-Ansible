@@ -1,0 +1,6 @@
+ansible >= 2.15
+Flask == 3.0.3
+netifaces ~= 0.11.0
+pytest ~= 8.2.1
+pywinrm == 0.4.3
+PyYAML ~= 6.0.1
