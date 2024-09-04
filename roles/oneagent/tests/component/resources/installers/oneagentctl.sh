@@ -2,7 +2,6 @@
 
 # This file simulates deployment functionalities of oneagentctl binary, used to configure installation.
 
-readonly DIR_NAME="$(dirname "${0}")"
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
 
@@ -47,9 +46,9 @@ readFromConfig() {
 main() {
 	if [ "${1}" = '--version' ]; then
 		printf '%s\n' "${INSTALLER_VERSION}"
-	elif printf "%s" "${1}" | grep -q "get"; then
+	elif printf "%s" "${1}" | grep -q "^--get"; then
 		readFromConfig ${1}
-	elif printf "%s" "${1}" | grep -q "set"; then
+	elif printf "%s" "${1}" | grep -q "^--set"; then
 		saveToConfig "$@"
 	fi
 }

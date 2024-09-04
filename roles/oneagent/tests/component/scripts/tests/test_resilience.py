@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import Dict
 
 import pytest
 
@@ -21,7 +20,7 @@ SIGNATURE_VERIFICATION_FAILED_KEY = "signature_verification_failed"
 VERSION_LOWER_THAN_INSTALLED_KEY = "version_lower_than_installed"
 
 
-def _prepare_test_data(constants, data: Dict[str, str]) -> Dict[str, str]:
+def _prepare_test_data(constants, data: dict[str, str]) -> dict[str, str]:
     parsed_data = {}
     prefix_length = len(constants.VARIABLE_PREFIX)
     for key, value in data.items():
@@ -36,7 +35,7 @@ def _prepare_test_data(constants, data: Dict[str, str]) -> Dict[str, str]:
 
 
 @pytest.fixture
-def _error_messages(_set_up, util, constants, _tear_down) -> Dict[str, str]:
+def _error_messages(_set_up, util, constants, _tear_down) -> dict[str, str]:
     return _prepare_test_data(constants, util.parse_error_messages_file())
 
 

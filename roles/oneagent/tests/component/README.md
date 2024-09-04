@@ -6,15 +6,15 @@ The tests are adapted run on the same machine as main node.
 ## Requirements
 - Python 3.10+
 - pip 21.0+
-- virtualenv 20.0+
+- venv 20.0+
 ## Running tests
 Upon downloading the collection
 ```commandline
 # Install dependencies
-$ pip install virtualenv
+$ apt-get install -y python3-venv python3-pip
 
 # Create virtual environment
-$ python -m virtualenv venv && source venv/bin/activate
+$ python -m venv venv && source venv/bin/activate
 
 # Install requirements
 $ pip install -r roles/oneagent/tests/component/resources/requirements.txt

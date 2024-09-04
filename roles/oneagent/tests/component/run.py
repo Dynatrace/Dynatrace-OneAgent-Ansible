@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Any
 from scripts.util.test_data_types import DeploymentPlatform
 
 USER_KEY = "user"
@@ -33,7 +33,7 @@ class ServerWrapper(object):
 
 
 def get_env_vars():
-    # This is required to pass current venv vars down to the subprocess
+    # This is required to pass current venv vars down to the subprocess for tests and server
     env_vars = os.environ.copy()
     env_vars.update(TEST_VARS)
     return env_vars
@@ -45,7 +45,7 @@ def save_log(out, log_path: Path):
             log.write(line)
 
 
-def get_test_args(args: Dict[str, Any]) -> List[str]:
+def get_test_args(args: dict[str, Any]) -> list[str]:
     test_args = [f"--{USER_KEY}='{args[USER_KEY]}'", f"--{PASS_KEY}='{args[PASS_KEY]}'"]
     for platform in [p.value for p in DeploymentPlatform]:
         hosts = ','.join(args[platform])
@@ -53,7 +53,7 @@ def get_test_args(args: Dict[str, Any]) -> List[str]:
     return test_args
 
 
-def run_test(test: str, test_args: List[str]) -> bool:
+def run_test(test: str, test_args: list[str]) -> bool:
     test_name = Path(test).stem
     logging.info(f"Test: {test_name}")
     proc = subprocess.run(["pytest", test] + test_args, env=get_env_vars(), encoding="utf-8",
@@ -64,7 +64,7 @@ def run_test(test: str, test_args: List[str]) -> bool:
     return success
 
 
-def run_tests(args: Dict[str, Any]) -> bool:
+def run_all_tests(args: dict[str, Any]) -> bool:
     logging.info("Running tests...")
 
     test_path = "scripts/tests"
@@ -90,7 +90,7 @@ def get_file_content(path: Path):
         return f.readlines()
 
 
-def replace_tag(source: List[str], old: str, new: str) -> List[str]:
+def replace_tag(source: list[str], old: str, new: str) -> list[str]:
     return [line.replace(old, new) for line in source]
 
 
@@ -136,7 +136,7 @@ def prepare_environment():
     prepare_installers()
 
 
-def parse_args() -> Dict[str, Any]:
+def parse_args() -> dict[str, Any]:
     parser = argparse.ArgumentParser(
         description="Run component tests for OneAgent role. If any of specified platform contains"
                     " 'localhost' as an IP address, the script will perform tests on the local machine."
@@ -158,7 +158,7 @@ def main():
     args = parse_args()
     prepare_environment()
     with ServerWrapper(run_server()):
-        result = run_tests(args)
+        result = run_all_tests(args)
     return result
 
 

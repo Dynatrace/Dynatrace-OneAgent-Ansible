@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path, PureWindowsPath
-from typing import Set
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
@@ -44,7 +43,7 @@ def _assert_oneagentctl_getter(
     address: str,
     wrapper: PlatformCommandWrapper,
     ctl_param: str,
-    expected_values: Set[str],
+    expected_values: set[str],
 ):
     oneagentctl = f"{get_oneagentctl_path(platform)}"
     result = wrapper.run_command(platform, address, oneagentctl, ctl_param)
@@ -71,8 +70,8 @@ def _check_install_args(
     assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == technology
 
 
-def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, expected_tags: Set[str],
-                       expected_properties: Set[str]):
+def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, expected_tags: set[str],
+                       expected_properties: set[str]):
     logging.debug("Platform: %s, IP: %s", platform, address)
 
     _assert_oneagentctl_getter(platform, address, wrapper, CTL_TAGS_GETTER, expected_tags)

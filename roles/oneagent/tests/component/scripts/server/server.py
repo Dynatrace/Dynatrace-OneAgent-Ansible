@@ -1,8 +1,7 @@
-import argparse
 import logging
 from http import HTTPStatus
 from pathlib import Path
-from typing import Any, Tuple, Union
+from typing import Any, Union
 
 from flask import Blueprint, Flask, request, send_file
 
@@ -14,7 +13,7 @@ APPLICATION_ROOT = "/api/v1/deployment/installer/agent"
 app = Flask(__name__)
 bp = Blueprint("server", __name__)
 
-TransferResult = Union[Any, Tuple[str, HTTPStatus]]
+TransferResult = Union[Any, tuple[str, HTTPStatus]]
 
 
 def get_installer(system: str, arch: str, version: str) -> TransferResult:
@@ -42,8 +41,6 @@ def get_agent_in_version(system, version):
 
 
 def main() -> None:
-    # args = parse_args()
-
     logging.basicConfig(
         format="%(asctime)s [server] %(levelname)s: %(message)s", datefmt="%H:%M:%S", level=logging.INFO
     )

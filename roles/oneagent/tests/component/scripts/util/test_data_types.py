@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
-from typing import Dict, List
 
 
 @dataclass
@@ -43,5 +41,5 @@ class DeploymentPlatform(Enum):
         return DeploymentPlatform.from_str(f"{system}_{arch}")
 
 
-DeploymentResult = List[CommandResult]
-PlatformCollection = Dict[DeploymentPlatform, List[str]]
+DeploymentResult = list[CommandResult]
+PlatformCollection = dict[DeploymentPlatform, list[str]]

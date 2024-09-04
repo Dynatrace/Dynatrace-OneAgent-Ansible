@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from typing import Union, List, Any, Dict
+from typing import Union, Any
 
 import yaml
 
@@ -64,15 +64,15 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
     return DeploymentPlatform.LINUX_X86
 
 
-def _get_available_installers() -> Dict[DeploymentPlatform, List[Path]]:
-    installers: Dict[DeploymentPlatform, List[Path]] = {k: [] for k in DeploymentPlatform}
+def _get_available_installers() -> dist[DeploymentPlatform, list[Path]]:
+    installers: dict[DeploymentPlatform, list[Path]] = {k: [] for k in DeploymentPlatform}
     for installer in sorted(INSTALLERS_DIRECTORY.glob(f"{INSTALLER_PARTIAL_NAME}*")):
         platform = _get_platform_by_installer(installer)
         installers[platform].append(installer)
     return installers
 
 
-def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> List[Union[Path, str]]:
+def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> list[Union[Path, str]]:
     try:
         # Special handling for mocking server behavior as URL for Linux installers contains "unix" instead of linux
         system = INSTALLER_SYSTEM_NAME_TYPE_MAP[system]
