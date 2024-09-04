@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 from flask import Blueprint, Flask, request, send_file
 
@@ -13,7 +13,7 @@ APPLICATION_ROOT = "/api/v1/deployment/installer/agent"
 app = Flask(__name__)
 bp = Blueprint("server", __name__)
 
-TransferResult = Union[Any, tuple[str, HTTPStatus]]
+TransferResult = Any | tuple[str, HTTPStatus]
 
 
 def get_installer(system: str, arch: str, version: str) -> TransferResult:

@@ -78,7 +78,6 @@ def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: Plat
     _assert_oneagentctl_getter(platform, address, wrapper, CTL_PROPERTIES_GETTER, expected_properties)
 
 
-# noinspection PyUnusedLocal
 def _check_output_for_secrets(result: DeploymentResult) -> None:
     for out in result:
         assert HOST_SERVER_TOKEN not in out.stdout
@@ -131,7 +130,6 @@ def test_oneagentctl_installation_config(_set_up, runner, configurator, platform
     perform_operation_on_platforms(platforms, _check_config_args, wrapper, expected_tags, expected_properties)
 
 
-# noinspection PyUnusedLocal
 def test_oneagentctl_intended_config(_set_up, runner, configurator, platforms, wrapper):
     logging.info("Running oneagentctl config test")
 

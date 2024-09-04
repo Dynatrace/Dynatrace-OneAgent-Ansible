@@ -74,7 +74,6 @@ def test_invalid_architecture(_error_messages, runner, configurator, constants):
     )
 
 
-# noinspection PyUnusedLocal
 def test_missing_local_installer(_error_messages, runner, configurator, constants):
     logging.info("Running missing local installer test")
 
@@ -139,7 +138,6 @@ def test_multiple_install_path_arguments(_error_messages, runner, configurator, 
     )
 
 
-# noinspection PyUnusedLocal
 def test_failed_download(_error_messages, runner, configurator, constants):
     logging.info("Running failed download test")
 

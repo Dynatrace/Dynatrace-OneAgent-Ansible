@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from typing import Union, Any
+from typing import Any
 
 import yaml
 
@@ -16,7 +16,7 @@ from util.constants.unix_constants import UNIX_ONEAGENTCTL_PATH
 from util.constants.windows_constants import WINDOWS_ONEAGENTCTL_PATH
 from util.test_data_types import DeploymentPlatform
 
-ParsedYaml = Union[dict, list, None]
+ParsedYaml = dict | list | None
 
 
 def prepare_test_dirs() -> None:
@@ -72,7 +72,7 @@ def _get_available_installers() -> dist[DeploymentPlatform, list[Path]]:
     return installers
 
 
-def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> list[Union[Path, str]]:
+def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> list[Path | str]:
     try:
         # Special handling for mocking server behavior as URL for Linux installers contains "unix" instead of linux
         system = INSTALLER_SYSTEM_NAME_TYPE_MAP[system]

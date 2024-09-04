@@ -1,5 +1,4 @@
 import subprocess
-from typing import Union
 
 from util.test_data_types import CommandResult
 
@@ -12,7 +11,7 @@ def _get_command_prefix(address: str, user: str, password: str) -> list[str]:
 
 
 def _get_command_and_shell(address: str, user: str, password: str, command: str, *args: str) \
-        -> [Union[list[str], str], bool]:
+        -> tuple[list[str] | str, bool]:
     prefix = _get_command_prefix(address, user, password)
     # If ssh prefix is absent, the command is executed locally, so we need to use shell=True and make it string
     # to avoid interpreting args as separate commands and avoid problems with non-existing commands
