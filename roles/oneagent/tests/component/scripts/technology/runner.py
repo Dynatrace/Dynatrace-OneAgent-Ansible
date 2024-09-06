@@ -1,6 +1,6 @@
 import subprocess
 
-from technology.ansible.constants import HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME
+from technology.constants import HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME
 from technology.deployment_runner import DeploymentRunner, DeploymentResult
 from util.test_data_types import CommandResult
 

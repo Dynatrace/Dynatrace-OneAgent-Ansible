@@ -1,4 +1,4 @@
-from technology.ansible.constants import ERROR_MESSAGES_FILE
+from technology.constants import ERROR_MESSAGES_FILE
 from util.common_utils import read_yaml_file
 
 

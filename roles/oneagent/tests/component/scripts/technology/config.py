@@ -1,7 +1,7 @@
 import shutil
 from typing import Any
 
-from technology.ansible.constants import (
+from technology.constants import (
     PLAYBOOK_TEMPLATE_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     ANSIBLE_USER_KEY,

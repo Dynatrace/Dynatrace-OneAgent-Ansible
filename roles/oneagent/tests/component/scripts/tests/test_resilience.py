@@ -3,7 +3,7 @@ import re
 
 import pytest
 
-from technology.ansible.constants import INSTALLER_SIGNATURE_FILE
+from technology.constants import INSTALLER_SIGNATURE_FILE
 from util.test_data_types import DeploymentResult
 from util.test_helpers import run_deployment, set_installer_download_params, enable_for_family
 
