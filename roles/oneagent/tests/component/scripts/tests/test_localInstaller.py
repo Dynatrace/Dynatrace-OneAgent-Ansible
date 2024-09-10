@@ -6,6 +6,7 @@ from util.constants.windows_constants import WINDOWS_DEFAULT_DOWNLOAD_PATH
 from util.test_helpers import (
     check_agent_state,
     check_download_directory,
+    disable_for_localhost,
     perform_operation_on_platforms,
     run_deployment,
 )

@@ -14,7 +14,7 @@ Upon downloading the collection
 $ apt-get install -y python3-venv python3-pip
 
 # Create virtual environment
-$ python -m venv venv && source venv/bin/activate
+$ cd Dynatrace-OneAgent-Ansible && python -m venv venv && source venv/bin/activate
 
 # Install requirements
 $ pip install -r roles/oneagent/tests/component/resources/requirements.txt
@@ -30,3 +30,11 @@ $ ansible-galaxy collection install -vvv dynatrace-oneagent*
 $ cd roles/oneagent/tests/component
 $ python run.py --linux_x86=localhost
 ```
+
+
+- repo: https://github.com/ansible/ansible-lint
+  rev: v24.2.2
+  hooks:
+    - id: ansible-lint
+      pass_filenames: false
+      args: ['--exclude', 'roles/oneagent/examples']

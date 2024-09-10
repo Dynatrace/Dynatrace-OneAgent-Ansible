@@ -156,7 +156,7 @@ def test_failed_signature_verification(_error_messages, runner, configurator, co
 
     set_installer_download_params(configurator)
 
-    with open(INSTALLER_SIGNATURE_FILE, "w") as signature:
+    with INSTALLER_SIGNATURE_FILE.open("w") as signature:
         signature.write("break signature by writing some text")
 
     universal_message = _error_messages.get(SIGNATURE_VERIFICATION_FAILED_KEY)

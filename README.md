@@ -5,7 +5,7 @@ In its current state, the collection consists of a single role that deploys Dyna
 ### General
 * Ansible >= 2.15.0
 ### Windows
-* pywinrm >= 0.4.1
+* pywinrm >= 0.4.3
 
 ## Setup
 `pip install -r requirements.txt`

@@ -64,7 +64,7 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
     return DeploymentPlatform.LINUX_X86
 
 
-def _get_available_installers() -> dist[DeploymentPlatform, list[Path]]:
+def _get_available_installers() -> dict[DeploymentPlatform, list[Path]]:
     installers: dict[DeploymentPlatform, list[Path]] = {k: [] for k in DeploymentPlatform}
     for installer in sorted(INSTALLERS_DIRECTORY.glob(f"{INSTALLER_PARTIAL_NAME}*")):
         platform = _get_platform_by_installer(installer)

@@ -40,7 +40,7 @@ def get_env_vars():
 
 
 def save_log(out, log_path: Path):
-    with open(log_path, "w") as log:
+    with log_path.open("w") as log:
         for line in out:
             log.write(line)
 
@@ -86,7 +86,7 @@ def run_server():
 
 
 def get_file_content(path: Path):
-    with open(path, "r") as f:
+    with path.open("r") as f:
         return f.readlines()
 
 

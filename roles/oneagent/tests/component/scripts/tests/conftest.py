@@ -3,8 +3,8 @@ import logging
 
 import pytest
 
-import technology.ansible.constants as AnsibleConstants
-import technology.ansible.util as AnsibleUtil
+import technology.constants as AnsibleConstants
+import technology.util as AnsibleUtil
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 from technology.config import AnsibleConfig
