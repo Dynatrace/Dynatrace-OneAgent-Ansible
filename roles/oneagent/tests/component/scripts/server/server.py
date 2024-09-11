@@ -31,12 +31,12 @@ def get_installer(system: str, arch: str, version: str) -> TransferResult:
 
 
 @bp.route("/<system>/default/latest")
-def get_latest_agent(system):
+def get_latest_agent(system) -> TransferResult:
     return get_installer(system, request.args["arch"], "latest")
 
 
 @bp.route("/<system>/default/version/<version>")
-def get_agent_in_version(system, version):
+def get_agent_in_version(system, version) -> TransferResult:
     return get_installer(system, request.args["arch"], version)
 
 

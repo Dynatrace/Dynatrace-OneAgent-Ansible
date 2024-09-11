@@ -14,7 +14,8 @@ from scripts.util.test_data_types import DeploymentPlatform
 USER_KEY = "user"
 PASS_KEY = "password"
 
-TEST_DIR = Path("test_dir")
+BASE_DIR = Path(__file__).resolve().parent
+TEST_DIR = BASE_DIR / "test_dir"
 LOG_DIR = TEST_DIR / "logs"
 INSTALLERS_DIR = TEST_DIR / "installers"
 TEST_VARS = {"PYTHONPATH": "scripts/"}
@@ -32,14 +33,14 @@ class ServerWrapper(object):
         save_log(self.proc.stdout, LOG_DIR / "server.log")
 
 
-def get_env_vars():
+def get_env_vars() -> dict[str, str]:
     # This is required to pass current venv vars down to the subprocess for tests and server
     env_vars = os.environ.copy()
     env_vars.update(TEST_VARS)
     return env_vars
 
 
-def save_log(out, log_path: Path):
+def save_log(out, log_path: Path) -> None:
     with log_path.open("w") as log:
         for line in out:
             log.write(line)
@@ -78,14 +79,14 @@ def run_all_tests(args: dict[str, Any]) -> bool:
     return tests_failed
 
 
-def run_server():
+def run_server() -> subprocess.Popen:
     logging.info("Running server...")
-    server_path = Path("scripts") / "server" / "server.py"
+    server_path = BASE_DIR / "scripts" / "server" / "server.py"
     return subprocess.Popen(["python", server_path], env=get_env_vars(),
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8")
 
 
-def get_file_content(path: Path):
+def get_file_content(path: Path) -> list[str]:
     with path.open("r") as f:
         return f.readlines()
 
@@ -94,7 +95,7 @@ def replace_tag(source: list[str], old: str, new: str) -> list[str]:
     return [line.replace(old, new) for line in source]
 
 
-def prepare_installers():
+def prepare_installers() -> None:
     logging.info("Preparing installers...")
 
     oneagentctl_bin_name = "oneagentctl.sh"
@@ -105,7 +106,7 @@ def prepare_installers():
     uninstall_code_tag = "##UNINSTALL_CODE##"
     oneagentctl_code_tag = "##ONEAGENTCTL_CODE##"
 
-    resource_dir = Path("resources") / "installers"
+    resource_dir = BASE_DIR / "resources" / "installers"
 
     uninstall_template = get_file_content(resource_dir / uninstall_script_name)
     uninstall_code = replace_tag(uninstall_template, "$", r"\$")
@@ -126,7 +127,7 @@ def prepare_installers():
             f.writelines(installer_code)
 
 
-def prepare_environment():
+def prepare_environment() -> None:
     logging.basicConfig(
         format="%(asctime)s [server] %(levelname)s: %(message)s", datefmt="%H:%M:%S", level=logging.INFO
     )
@@ -154,7 +155,7 @@ def parse_args() -> dict[str, Any]:
     return vars(parser.parse_args())
 
 
-def main():
+def main() -> bool:
     args = parse_args()
     prepare_environment()
     with ServerWrapper(run_server()):

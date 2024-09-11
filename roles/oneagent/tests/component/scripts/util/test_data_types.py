@@ -30,14 +30,14 @@ class DeploymentPlatform(Enum):
         return str(self.value).split("_")[0]
 
     @staticmethod
-    def from_str(param: str):
+    def from_str(param: str) -> "DeploymentPlatform":
         try:
             return DeploymentPlatform[param.upper()]
         except KeyError:
             raise ValueError(f"Invalid option passed: {param}") from KeyError
 
     @staticmethod
-    def from_system_and_arch(system: str, arch: str):
+    def from_system_and_arch(system: str, arch: str) -> "DeploymentPlatform":
         return DeploymentPlatform.from_str(f"{system}_{arch}")
 
 

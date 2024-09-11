@@ -5,7 +5,7 @@ import pytest
 
 from technology.constants import INSTALLER_SIGNATURE_FILE
 from util.test_data_types import DeploymentResult
-from util.test_helpers import run_deployment, set_installer_download_params, enable_for_family
+from util.test_helpers import run_deployment, set_installer_download_params, enable_for_system_family
 
 MISSING_REQUIRED_PARAMETERS_KEY = "missing_mandatory_params"
 UNKNOWN_ARCHITECTURE_KEY = "unknown_arch"
@@ -86,7 +86,7 @@ def test_missing_local_installer(_error_messages, runner, configurator, constant
     )
 
 
-@enable_for_family(family="unix")
+@enable_for_system_family(family="unix")
 def test_directories_contain_spaces(_error_messages, runner, configurator, constants):
     logging.info("Running directories contain spaces test")
 
@@ -150,7 +150,7 @@ def test_failed_download(_error_messages, runner, configurator, constants):
 
 
 # noinspection PyUnusedLocal
-@enable_for_family(family="unix")
+@enable_for_system_family(family="unix")
 def test_failed_signature_verification(_error_messages, runner, configurator, constants):
     logging.info("Running failed signature verification test")
 

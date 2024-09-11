@@ -20,10 +20,13 @@ TECH_NAME_KEY = "orchestration_tech"
 TECH_VERSION_KEY = "tech_version"
 TECH_SCRIPT_VERSION_KEY = "script_version"
 
+# Tags and properties for regular installation
 INSTALLER_TAG = "install_tag"
 INSTALLER_PROPERTY = "install_prop1=install_1"
 PLATFORM_TAG = "platform_install_tag"
 PLATFORM_PROPERTY = "platform_install_property"
+
+# Tags and properties for intended configuration with oneagentctl
 CONFIG_INSTALL_TAG = "config_install_tag"
 CONFIG_INSTALL_PROPERTY = "install_prop2=config_install_prop"
 CONFIG_INTENDED_TAG = "config_intended_tag"
@@ -87,7 +90,7 @@ def _check_output_for_secrets(result: DeploymentResult) -> None:
 def test_basic_installation(_set_up, runner, configurator, constants, platforms, wrapper):
     logging.info("Running basic installation test")
 
-    set_installer_download_params(configurator) 
+    set_installer_download_params(configurator)
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, True)
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY, INSTALLER_ARGS)
     configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)

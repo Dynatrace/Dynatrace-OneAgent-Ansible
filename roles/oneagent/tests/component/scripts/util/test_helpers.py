@@ -34,7 +34,7 @@ def disable_for_localhost():
     return func_wrapper
 
 
-def enable_for_family(family: str):
+def enable_for_system_family(family: str):
     def func_wrapper(func):
         @functools.wraps(func)
         def params_wrapper(*args, **kwargs):
