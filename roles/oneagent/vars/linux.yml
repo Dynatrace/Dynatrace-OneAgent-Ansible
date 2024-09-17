@@ -4,10 +4,12 @@ oneagent_default_install_dir: /opt/dynatrace/oneagent
 oneagent_default_download_dir: "{{ ansible_env['TEMP'] | default('/tmp') }}"
 
 oneagent_download_system: unix
-oneagent_available_arch: [ "{{ oneagent_default_arch }}", "ppcle", "s390", "arm" ]
+oneagent_available_arch: ["{{ oneagent_default_arch }}", "ppcle", "s390", "arm"]
 oneagent_download_arch: "{{ oneagent_installer_arch | default(oneagent_default_arch, true) }}"
 
-oneagent_install_path: "{{ oneagent_passed_install_args | select('regex', 'INSTALL_PATH') | first | default(oneagent_default_install_dir) | regex_replace('INSTALL_PATH=(.*)','\\1') }}"
+oneagent_install_path: >-
+  "{{ oneagent_passed_install_args | select('regex', 'INSTALL_PATH') | first
+  | default(oneagent_default_install_dir) | regex_replace('INSTALL_PATH=(.*)', '\\1') }}"
 oneagent_download_path: "{{ oneagent_download_dir | default(oneagent_default_download_dir, true) }}"
 oneagent_installer_arch_name: "{{ (oneagent_download_arch == oneagent_default_arch) | ternary('', oneagent_download_arch + '-') }}"
 oneagent_installer_path: "{{ oneagent_download_path }}/Dynatrace-OneAgent-Linux-{{ oneagent_installer_arch_name }}{{ oneagent_version }}.sh"
@@ -19,8 +21,6 @@ oneagent_uninstall_cmd: sh {{ oneagent_install_path }}/agent/uninstall.sh
 oneagent_ca_cert_src_path: files/dt-root.cert.pem
 oneagent_ca_cert_dest_path: "{{ oneagent_download_path }}/dt-root.cert.pem"
 oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem
-oneagent_certificate_verification_header: >
-  "Content-Type: multipart/signed; protocol=\"application/x-pkcs7-signature\"; micalg=\"sha-256\"; boundary=\"--SIGNED-INSTALLER\"\
-  \n\n----SIGNED-INSTALLER\n"
-
+oneagent_certificate_verification_header: >-
+  "Content-Type: multipart/signed; protocol=\"application/x-pkcs7-signature\"; micalg=\"sha-256\"; boundary=\"--SIGNED-INSTALLER\""
 oneagent_service_name: oneagent
