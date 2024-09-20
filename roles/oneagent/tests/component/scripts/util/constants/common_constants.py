@@ -1,6 +1,6 @@
 from pathlib import Path
 
-# is cwd() correct?
+# TODO: is cwd() correct?
 COMPONENT_TEST_BASE = Path().cwd() / "test_dir"
 TEST_DIRECTORY = COMPONENT_TEST_BASE / "working_dir"
 RESOURCES_DIRECTORY = Path().cwd() / "resources"

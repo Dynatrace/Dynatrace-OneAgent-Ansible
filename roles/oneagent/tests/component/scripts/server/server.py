@@ -6,7 +6,7 @@ from typing import Any
 from flask import Blueprint, Flask, request, send_file
 
 from util.common_utils import get_installers
-from util.constants.common_constants import HOST_SERVER_PORT
+from util.constants.common_constants import HOST_SERVER_PORT, INSTALLERS_DIRECTORY, SIGNATURE_FILE_NAME
 
 APPLICATION_ROOT = "/api/v1/deployment/installer/agent"
 
@@ -28,6 +28,14 @@ def get_installer(system: str, arch: str, version: str) -> TransferResult:
     msg = f"Installer for system {system} in {version} version was not found"
     logging.warning(msg)
     return msg, HTTPStatus.NOT_FOUND
+
+
+@bp.route(f"/{SIGNATURE_FILE_NAME}")
+def get_ca_certificate() -> TransferResult:
+    cert_file = INSTALLERS_DIRECTORY / SIGNATURE_FILE_NAME
+    if not cert_file.exists():
+        return f"{cert_file} not found", HTTPStatus.NOT_FOUND
+    return send_file(cert_file)
 
 
 @bp.route("/<system>/default/latest")

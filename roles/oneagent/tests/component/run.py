@@ -10,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 from scripts.util.test_data_types import DeploymentPlatform
+from scripts.util.constants.common_constants import SIGNATURE_FILE_NAME
 
 USER_KEY = "user"
 PASS_KEY = "password"
@@ -17,8 +18,10 @@ PASS_KEY = "password"
 BASE_DIR = Path(__file__).resolve().parent
 TEST_DIR = BASE_DIR / "test_dir"
 LOG_DIR = TEST_DIR / "logs"
-INSTALLERS_DIR = TEST_DIR / "installers"
+INSTALLERS_DEST_DIR = TEST_DIR / "installers"
+INSTALLERS_RESOURCE_DIR = BASE_DIR / "resources" / "installers"
 TEST_VARS = {"PYTHONPATH": "scripts/"}
+
 
 
 class ServerWrapper(object):
@@ -30,7 +33,7 @@ class ServerWrapper(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.proc.terminate()
-        save_log(self.proc.stdout, LOG_DIR / "server.log")
+        save_file(self.proc.stdout, LOG_DIR / "server.log")
 
 
 def get_env_vars() -> dict[str, str]:
@@ -40,10 +43,9 @@ def get_env_vars() -> dict[str, str]:
     return env_vars
 
 
-def save_log(out, log_path: Path) -> None:
-    with log_path.open("w") as log:
-        for line in out:
-            log.write(line)
+def save_file(data: list[str], path: Path) -> None:
+    with path.open("w") as log:
+        log.writelines(data)
 
 
 def get_test_args(args: dict[str, Any]) -> list[str]:
@@ -59,7 +61,7 @@ def run_test(test: str, test_args: list[str]) -> bool:
     logging.info(f"Test: {test_name}")
     proc = subprocess.run(["pytest", test] + test_args, env=get_env_vars(), encoding="utf-8",
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    save_log(proc.stdout, LOG_DIR / f"{test_name}.log")
+    save_file(proc.stdout, LOG_DIR / f"{test_name}.log")
     success = proc.returncode == 0
     logging.info("PASSED" if success else "FAILED")
     return success
@@ -95,36 +97,55 @@ def replace_tag(source: list[str], old: str, new: str) -> list[str]:
     return [line.replace(old, new) for line in source]
 
 
+def sign_installer(installer: list[str]) -> list[str]:
+    cmd = ["openssl", "cms", "-sign",
+           "-signer", f"{INSTALLERS_RESOURCE_DIR / SIGNATURE_FILE_NAME}",
+           "-inkey", f"{INSTALLERS_RESOURCE_DIR / 'private.key'}"]
+
+    proc = subprocess.run(cmd, input=f"{''.join(installer)}", encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if proc.returncode != 0:
+        logging.error(f"Failed to sign installer: {proc.stdout}")
+        sys.exit(1)
+
+    signed_installer = proc.stdout.splitlines()
+    delimiter = next(l for l in signed_installer if l.startswith("----"))
+    index = signed_installer.index(delimiter)
+    signed_installer = signed_installer[index + 1:]
+
+    custom_delimiter = "----SIGNED_INSTALLER"
+    return [ f"{l}\n" if not l.startswith(delimiter) else f"{l.replace(delimiter, custom_delimiter)}\n" for l in signed_installer]
+
+
 def prepare_installers() -> None:
     logging.info("Preparing installers...")
 
-    oneagentctl_bin_name = "oneagentctl.sh"
-    uninstall_script_name = "uninstall.sh"
-    installer_partial_name = "Dynatrace-OneAgent-Linux"
-
-    version_tag = "##VERSION##"
-    uninstall_code_tag = "##UNINSTALL_CODE##"
-    oneagentctl_code_tag = "##ONEAGENTCTL_CODE##"
-
-    resource_dir = BASE_DIR / "resources" / "installers"
-
-    uninstall_template = get_file_content(resource_dir / uninstall_script_name)
+    uninstall_template = get_file_content(INSTALLERS_RESOURCE_DIR / "uninstall.sh")
     uninstall_code = replace_tag(uninstall_template, "$", r"\$")
 
-    oneagentctl_template = get_file_content(resource_dir / oneagentctl_bin_name)
+    oneagentctl_template = get_file_content(INSTALLERS_RESOURCE_DIR / "oneagentctl.sh")
     oneagentctl_code = replace_tag(oneagentctl_template, "$", r"\$")
 
-    installer_template = get_file_content(resource_dir / f"{installer_partial_name}.sh")
-    installer_template = replace_tag(installer_template, uninstall_code_tag, "".join(uninstall_code))
-    installer_template = replace_tag(installer_template, oneagentctl_code_tag, "".join(oneagentctl_code))
+    installer_partial_name = "Dynatrace-OneAgent-Linux"
+    installer_template = get_file_content(INSTALLERS_RESOURCE_DIR / f"{installer_partial_name}.sh")
+    installer_template = replace_tag(installer_template, "##UNINSTALL_CODE##", "".join(uninstall_code))
+    installer_template = replace_tag(installer_template, "##ONEAGENTCTL_CODE##", "".join(oneagentctl_code))
 
     timestamp = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
     # Minimal supported version is 1.199
     for version in ["1.199.0", "1.300.0"]:
         full_version = f"{version}.{timestamp}"
-        installer_code = replace_tag(installer_template, version_tag, full_version)
-        with open(INSTALLERS_DIR / f"{installer_partial_name}-{full_version}.sh", "w") as f:
-            f.writelines(installer_code)
+        installer_code = replace_tag(installer_template, "##VERSION##", full_version)
+        installer_code = sign_installer(installer_code)
+
+        save_file(installer_code, INSTALLERS_DEST_DIR / f"{installer_partial_name}-{full_version}.sh")
+
+
+def assign_localhost_to_ca_provider() -> None:
+    with open("/etc/hosts", "a+") as f:
+        if any(SIGNATURE_FILE_NAME in line for line in f.read()):
+            return
+        f.write("\n# For orchestration tests purposes\n")
+        f.write(f"127.0.0.1\t{SIGNATURE_FILE_NAME}\n")
 
 
 def prepare_environment() -> None:
@@ -132,9 +153,12 @@ def prepare_environment() -> None:
         format="%(asctime)s [server] %(levelname)s: %(message)s", datefmt="%H:%M:%S", level=logging.INFO
     )
     shutil.rmtree(TEST_DIR, ignore_errors=True)
-    os.makedirs(INSTALLERS_DIR, exist_ok=True)
+    os.makedirs(INSTALLERS_DEST_DIR, exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
+    shutil.copyfile(INSTALLERS_RESOURCE_DIR / SIGNATURE_FILE_NAME, INSTALLERS_DEST_DIR / SIGNATURE_FILE_NAME)
+
     prepare_installers()
+    assign_localhost_to_ca_provider()
 
 
 def parse_args() -> dict[str, Any]:

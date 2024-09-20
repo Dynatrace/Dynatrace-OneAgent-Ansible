@@ -35,7 +35,5 @@ jobs:
         uses: ./.github/actions/setup-build-environment
       - name: Build the collection
         uses: ./.github/actions/build-collection
-      - name: Debug
-        run: ls -alR
       - name: Run tests
         uses: ./.github/actions/run-tests

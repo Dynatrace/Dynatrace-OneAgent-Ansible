@@ -25,7 +25,7 @@ parseParams() {
 	while [ $# -gt 0 ]; do
 		local param="${1}"
 		if [ "${param}" = "--version" ]; then
-			printf "%s" "${INSTALLER_VERSION}"
+			printf "%s\n" "${INSTALLER_VERSION}"
 			exit 0
 		elif [ "${param}" = "INSTALL_PATH" ]; then
 			INSTALL_DIR="$(printf "%s" "${param}" | cut -d "=" -f "2-")"
@@ -68,6 +68,7 @@ main() {
 	deployOneagentCtl
 	deployUninstallScript
 	applyConfig
+	exit 0
 }
 
 ##################

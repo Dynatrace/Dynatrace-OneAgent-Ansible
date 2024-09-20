@@ -2,23 +2,27 @@ import shutil
 from typing import Any
 
 from technology.constants import (
-    PLAYBOOK_TEMPLATE_FILE_NAME,
-    HOSTS_TEMPLATE_FILE_NAME,
-    ANSIBLE_USER_KEY,
     ANSIBLE_CONNECTION_KEY,
-    ANSIBLE_RESOURCE_DIR,
-    COLLECTION_DIR,
-    COLLECTION_NAME,
-    PLAYBOOK_FILE,
-    INVENTORY_FILE,
-    CREDENTIALS_FILE_NAME,
     ANSIBLE_PASS_KEY,
+    ANSIBLE_RESOURCE_DIR,
+    ANSIBLE_USER_KEY,
+    COLLECTION_NAME,
+    CREDENTIALS_FILE_NAME,
+    HOSTS_TEMPLATE_FILE_NAME,
+    INSTALLED_COLLECTIONS_DIR,
+    INVENTORY_FILE,
+    PLAYBOOK_FILE,
+    PLAYBOOK_TEMPLATE_FILE_NAME,
 )
 from technology.deployment_config import DeploymentConfig
 from util.common_utils import read_yaml_file, write_yaml_file
 from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY
 from util.test_data_types import DeploymentPlatform, PlatformCollection
 
+
+def _prepare_collection() -> None:
+    shutil.rmtree(TEST_DIRECTORY / "collections", ignore_errors=True)
+    shutil.copytree(INSTALLED_COLLECTIONS_DIR, TEST_DIRECTORY / "collections")
 
 def _prepare_playbook_file() -> None:
     shutil.copy(
@@ -80,6 +84,7 @@ class AnsibleConfig(DeploymentConfig):
         _prepare_playbook_file()
         _prepare_inventory_file(self.user, self.platforms)
         _prepare_credentials_file(self.user, self.password)
+        _prepare_collection()
 
     def set_common_parameter(self, key: str, value: Any) -> None:
         data = read_yaml_file(PLAYBOOK_FILE)

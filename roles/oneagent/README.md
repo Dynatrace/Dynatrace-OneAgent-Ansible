@@ -40,7 +40,7 @@ For full list of suitable parameters, see [OneAgent configuration via command-li
 The following variables are available in `defaults/main/` and can be overridden:
 
 | Name | Default | Description
-|------|-|-
+|-|-|-
 | `oneagent_environment_url` | `-` | The URL of the target Dynatrace environment (see [Direct download from your environment](#direct-download-from-your-environment)).
 | `oneagent_paas_token` | `-` | The [PaaS Token] retrieved from the "Deploy Dynatrace" installer page.
 | `oneagent_local_installer` | `-` | The Path to OneAgent installer stored on the main node.
@@ -53,7 +53,7 @@ The following variables are available in `defaults/main/` and can be overridden:
 | `oneagent_package_state` | `present` | OneAgent package state; use `present` or `latest` to make sure it's installed, or `absent` in order to uninstall.
 | `oneagent_reboot_host` | `false` | Reboot the secondary machine after OneAgent installation
 | `oneagent_validate_certs` | `true` | If set to `false`, allows to download OneAgent from a server with insecure SSL certificate (expired, self-signed, etc).
-| `oneagent_verify_signature` | `true` | Allows to skip verifying the installer's signature on UNIX platforms
+| `oneagent_verify_signature` | `true` | Verifies installer's signature (available only on AIX/Linux platforms)
 | `oneagent_reboot_timeout` | `3600` | Set the timeout for rebooting secondary machine in seconds
 
 For more information, see customize OneAgent installation documentation for [Linux], [Windows], and [AIX].

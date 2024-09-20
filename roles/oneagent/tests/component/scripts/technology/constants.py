@@ -23,8 +23,12 @@ CREDENTIALS_FILE_NAME = "credentials.yml"
 PLAYBOOK_TEMPLATE_FILE_NAME = "oneagent.yml"
 
 ANSIBLE_RESOURCE_DIR = RESOURCES_DIRECTORY / "ansible"
-COLLECTION_DIR = Path().home() / ".ansible" / "collections" / "ansible_collections" / COLLECTION_NAMESPACE
-ROLE_DIR = COLLECTION_DIR / COLLECTION_NAME / "roles" / ROLE_NAME
+# As tests needs to be run as root and the default install location for collection is non-root based,
+# we need to get the script's user home dir to access installed collection.
+# Parents[-3] for __file__ will return "/home/<user>"
+INSTALLED_COLLECTIONS_DIR = Path(__file__).parents[-3] / ".ansible" / "collections"
+NAMESPACE_DIR = INSTALLED_COLLECTIONS_DIR / "ansible_collections" / COLLECTION_NAMESPACE
+ROLE_DIR = NAMESPACE_DIR / COLLECTION_NAME / "roles" / ROLE_NAME
 
 PLAYBOOK_FILE = TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME
 INVENTORY_FILE = TEST_DIRECTORY / HOSTS_TEMPLATE_FILE_NAME
