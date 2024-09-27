@@ -7,22 +7,29 @@ from technology.constants import (
     ANSIBLE_RESOURCE_DIR,
     ANSIBLE_USER_KEY,
     COLLECTION_NAME,
+    COLLECTION_NAMESPACE,
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     INSTALLED_COLLECTIONS_DIR,
     INVENTORY_FILE,
     PLAYBOOK_FILE,
     PLAYBOOK_TEMPLATE_FILE_NAME,
+    ROLE_NAME,
+    TEST_COLLECTIONS_DIR,
+    TEST_SIGNATURE_FILE,
 )
+
 from technology.deployment_config import DeploymentConfig
 from util.common_utils import read_yaml_file, write_yaml_file
-from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY
+from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY, SIGNATURE_FILE_NAME, INSTALLERS_RESOURCE_DIR
 from util.test_data_types import DeploymentPlatform, PlatformCollection
 
 
 def _prepare_collection() -> None:
-    shutil.rmtree(TEST_DIRECTORY / "collections", ignore_errors=True)
-    shutil.copytree(INSTALLED_COLLECTIONS_DIR, TEST_DIRECTORY / "collections")
+    shutil.rmtree(TEST_COLLECTIONS_DIR, ignore_errors=True)
+    shutil.copytree(INSTALLED_COLLECTIONS_DIR, TEST_COLLECTIONS_DIR)
+    # TODO: As we are now have 2 different sources of installers and signatures, we need to cleanup the code
+    shutil.copy(INSTALLERS_RESOURCE_DIR / SIGNATURE_FILE_NAME, TEST_SIGNATURE_FILE)
 
 def _prepare_playbook_file() -> None:
     shutil.copy(

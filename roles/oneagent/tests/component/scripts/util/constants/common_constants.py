@@ -5,6 +5,7 @@ COMPONENT_TEST_BASE = Path().cwd() / "test_dir"
 TEST_DIRECTORY = COMPONENT_TEST_BASE / "working_dir"
 RESOURCES_DIRECTORY = Path().cwd() / "resources"
 INSTALLERS_DIRECTORY = COMPONENT_TEST_BASE / "installers"
+INSTALLERS_RESOURCE_DIR = RESOURCES_DIRECTORY / "installers"
 SIGNATURE_FILE_NAME = "dt-root.cert.pem"
 
 INSTALLER_PARTIAL_NAME = "Dynatrace-OneAgent"

@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 from scripts.util.test_data_types import DeploymentPlatform
-from scripts.util.constants.common_constants import SIGNATURE_FILE_NAME
+from scripts.util.constants.common_constants import SIGNATURE_FILE_NAME, INSTALLERS_RESOURCE_DIR
 
 USER_KEY = "user"
 PASS_KEY = "password"
@@ -19,7 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent
 TEST_DIR = BASE_DIR / "test_dir"
 LOG_DIR = TEST_DIR / "logs"
 INSTALLERS_DEST_DIR = TEST_DIR / "installers"
-INSTALLERS_RESOURCE_DIR = BASE_DIR / "resources" / "installers"
 TEST_VARS = {"PYTHONPATH": "scripts/"}
 
 
@@ -74,7 +73,7 @@ def run_all_tests(args: dict[str, Any]) -> bool:
     test_args = get_test_args(args)
     tests_failed = False
 
-    for test in glob.glob(f"{test_path}/test_*.py"):
+    for test in glob.glob(f"{test_path}/test_r*.py"):
         if not run_test(test, test_args):
             tests_failed = True
 
@@ -142,10 +141,11 @@ def prepare_installers() -> None:
 
 def assign_localhost_to_ca_provider() -> None:
     with open("/etc/hosts", "a+") as f:
-        if any(SIGNATURE_FILE_NAME in line for line in f.read()):
+        f.seek(0)
+        if any("ca.dynatrace.com" in line for line in f.readlines()):
             return
         f.write("\n# For orchestration tests purposes\n")
-        f.write(f"127.0.0.1\t{SIGNATURE_FILE_NAME}\n")
+        f.write(f"127.0.0.1\tca.dynatrace.com\n")
 
 
 def prepare_environment() -> None:

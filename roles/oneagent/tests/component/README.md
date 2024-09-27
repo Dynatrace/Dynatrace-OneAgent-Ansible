@@ -30,11 +30,3 @@ $ ansible-galaxy collection install -vvv dynatrace-oneagent*
 $ cd roles/oneagent/tests/component
 $ python run.py --linux_x86=localhost
 ```
-
-
-- repo: https://github.com/ansible/ansible-lint
-  rev: v24.2.2
-  hooks:
-    - id: ansible-lint
-      pass_filenames: false
-      args: ['--exclude', 'roles/oneagent/examples']

@@ -3,7 +3,7 @@ import re
 
 import pytest
 
-from technology.constants import INSTALLER_SIGNATURE_FILE
+from technology.constants import TEST_SIGNATURE_FILE
 from util.test_data_types import DeploymentResult
 from util.test_helpers import run_deployment, set_installer_download_params, enable_for_system_family
 
@@ -156,7 +156,7 @@ def test_failed_signature_verification(_error_messages, runner, configurator, co
 
     set_installer_download_params(configurator)
 
-    with INSTALLER_SIGNATURE_FILE.open("w") as signature:
+    with TEST_SIGNATURE_FILE.open("w") as signature:
         signature.write("break signature by writing some text")
 
     universal_message = _error_messages.get(SIGNATURE_VERIFICATION_FAILED_KEY)

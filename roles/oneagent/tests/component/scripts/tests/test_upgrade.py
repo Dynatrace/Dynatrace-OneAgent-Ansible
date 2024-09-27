@@ -32,7 +32,6 @@ def test_versioned_installation(_set_up, runner, configurator, platforms, wrappe
     logging.info("Running versioned installation test")
 
     set_installer_download_params(configurator)
-    configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)
 
     versions = _get_versions_for_platforms(platforms, False)
     for platform, version in versions.items():
@@ -53,7 +52,6 @@ def test_upgrade(_set_up, runner, configurator, platforms, wrapper, _tear_down):
     configurator.clear_parameters_section()
     set_installer_download_params(configurator)
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
-    configurator.set_common_parameter(configurator.VERIFY_SIGNATURE_KEY, False)
 
     versions = _get_versions_for_platforms(platforms, True)
 
