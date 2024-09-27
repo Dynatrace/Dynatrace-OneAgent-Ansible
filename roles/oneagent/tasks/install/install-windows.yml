@@ -1,6 +1,6 @@
 ---
 - name: Install Dynatrace OneAgent
-  win_package:
+  ansible.windows.win_package:
     path: "{{ oneagent_installer_path }}"
     creates_path: "{{ oneagent_ctl_bin_path }}"
     creates_version: "{{ _oneagent_new_agent_version.stdout }}"

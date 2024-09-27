@@ -31,5 +31,8 @@ oneagent_reboot_host: false
 # Set the need of validating certs during installer download
 oneagent_validate_certs: true
 
+# Set the need of verifying the installer signature
+oneagent_verify_signature: true
+
 # Set the timeout for platform reboot
 oneagent_reboot_timeout: 3600
