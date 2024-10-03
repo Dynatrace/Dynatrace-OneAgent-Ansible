@@ -27,7 +27,7 @@ ANSIBLE_RESOURCE_DIR = RESOURCES_DIRECTORY / "ansible"
 # As tests needs to be run as root and the default install location for collection is non-root based,
 # we need to get the script's user home dir to access installed collection.
 # Parents[-3] for __file__ will return "/home/<user>"
-INSTALLED_COLLECTIONS_DIR = Path(__file__).parents[-3] / ".ansible" / "collections"
+INSTALLED_COLLECTIONS_DIR = Path.home() / ".ansible" / "collections"
 NAMESPACE_DIR = INSTALLED_COLLECTIONS_DIR / "ansible_collections" / COLLECTION_NAMESPACE
 ROLE_DIR = NAMESPACE_DIR / COLLECTION_NAME / "roles" / ROLE_NAME
 

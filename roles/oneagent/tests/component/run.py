@@ -58,7 +58,7 @@ def get_test_args(args: dict[str, Any]) -> list[str]:
 def run_test(test: str, test_args: list[str]) -> bool:
     test_name = Path(test).stem
     logging.info(f"Test: {test_name}")
-    proc = subprocess.run(["pytest", test] + test_args, env=get_env_vars(), encoding="utf-8",
+    proc = subprocess.run([sys.executable, "-m", "pytest", test] + test_args, env=get_env_vars(), encoding="utf-8",
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     save_file(proc.stdout, LOG_DIR / f"{test_name}.log")
     success = proc.returncode == 0
@@ -83,7 +83,7 @@ def run_all_tests(args: dict[str, Any]) -> bool:
 def run_server() -> subprocess.Popen:
     logging.info("Running server...")
     server_path = BASE_DIR / "scripts" / "server" / "server.py"
-    return subprocess.Popen(["python", server_path], env=get_env_vars(),
+    return subprocess.Popen([sys.executable, server_path], env=get_env_vars(),
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8")
 
 
