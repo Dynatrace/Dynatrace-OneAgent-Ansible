@@ -49,7 +49,7 @@ def _check_deployment_failure(results: DeploymentResult, expected_message: str, 
         assert re.search(expected_message, result.stdout + result.stderr)
 
 
-def test_invalid_required_parameters(_error_messages, runner, configurator, constants):
+def test_invalid_required_parameters(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running missing required parameters test")
 
     logging.debug("Removing required parameter - direct download scenario")
@@ -63,7 +63,7 @@ def test_invalid_required_parameters(_error_messages, runner, configurator, cons
     )
 
 
-def test_invalid_architecture(_error_messages, runner, configurator, constants):
+def test_invalid_architecture(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running invalid architecture test")
 
     set_installer_download_params(configurator)
@@ -74,7 +74,7 @@ def test_invalid_architecture(_error_messages, runner, configurator, constants):
     )
 
 
-def test_missing_local_installer(_error_messages, runner, configurator, constants):
+def test_missing_local_installer(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running missing local installer test")
 
     configurator.set_common_parameter(configurator.LOCAL_INSTALLER_KEY, "non_existing_installer")
@@ -87,7 +87,7 @@ def test_missing_local_installer(_error_messages, runner, configurator, constant
 
 
 @enable_for_system_family(family="unix")
-def test_directories_contain_spaces(_error_messages, runner, configurator, constants):
+def test_directories_contain_spaces(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running directories contain spaces test")
 
     logging.debug("Space in directory path - INSTALL_PATH scenario")
@@ -113,7 +113,7 @@ def test_directories_contain_spaces(_error_messages, runner, configurator, const
     )
 
 
-def test_version_parameter_too_low(_error_messages, runner, configurator, constants):
+def test_version_parameter_too_low(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running version parameter too low test")
 
     set_installer_download_params(configurator)
@@ -126,7 +126,7 @@ def test_version_parameter_too_low(_error_messages, runner, configurator, consta
     )
 
 
-def test_multiple_install_path_arguments(_error_messages, runner, configurator, constants):
+def test_multiple_install_path_arguments(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running multiple install path arguments test")
 
     set_installer_download_params(configurator)
@@ -138,7 +138,7 @@ def test_multiple_install_path_arguments(_error_messages, runner, configurator, 
     )
 
 
-def test_failed_download(_error_messages, runner, configurator, constants):
+def test_failed_download(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running failed download test")
 
     set_installer_download_params(configurator)
@@ -151,7 +151,7 @@ def test_failed_download(_error_messages, runner, configurator, constants):
 
 # noinspection PyUnusedLocal
 @enable_for_system_family(family="unix")
-def test_failed_signature_verification(_error_messages, runner, configurator, constants):
+def test_failed_signature_verification(_set_up, _tear_down, _error_messages, runner, configurator, constants):
     logging.info("Running failed signature verification test")
 
     set_installer_download_params(configurator)

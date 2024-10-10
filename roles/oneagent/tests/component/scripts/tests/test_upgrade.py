@@ -28,8 +28,8 @@ def _check_agent_version(
     assert installed_version.stdout.strip() == versions[platform]
 
 
-def test_versioned_installation(_set_up, runner, configurator, platforms, wrapper):
-    logging.info("Running versioned installation test")
+def test_upgrade(_set_up, _tear_down, runner, configurator, platforms, wrapper):
+    logging.info("Running upgrade test")
 
     set_installer_download_params(configurator)
 
