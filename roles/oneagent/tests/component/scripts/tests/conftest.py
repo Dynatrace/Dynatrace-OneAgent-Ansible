@@ -1,7 +1,7 @@
 # PYTEST CONFIGURATION FILE
 import logging
-
 import pytest
+import shutil
 
 import technology.constants as AnsibleConstants
 import technology.util as AnsibleUtil
@@ -11,6 +11,8 @@ from technology.config import AnsibleConfig
 from technology.runner import AnsibleRunner
 from util.common_utils import prepare_test_dirs
 from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult
+from util.test_helpers import check_agent_state, perform_operation_on_platforms
+
 
 
 USER_KEY = "user"
@@ -32,7 +34,7 @@ def set_up(runner, configurator) -> None:
 
 
 @pytest.fixture(name="_tear_down")
-def tear_down(runner, configurator) -> None:
+def tear_down(runner, configurator, platforms, wrapper) -> None:
     # Fixtures are executed one by one after injection
     # Yield prevents cleaning up environment before the actual test is executed
     yield
@@ -41,10 +43,15 @@ def tear_down(runner, configurator) -> None:
 
     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
 
+    logging.info("Check if agent is uninstalled")
+    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
+
     results: DeploymentResult = runner.run_deployment()
     for result in results:
         if result.returncode != 0:
             logging.error("Failed to clean up environment, output: %s", result.stdout)
+
+    shutil.rmtree("/var/lib/dynatrace", ignore_errors=True)
 
     configurator.clear_parameters_section()
 
