@@ -5,12 +5,11 @@ import os
 import shutil
 import subprocess
 import sys
-from datetime import datetime
 
 from pathlib import Path
 from typing import Any
 from scripts.util.test_data_types import DeploymentPlatform
-from scripts.util.constants.common_constants import SIGNATURE_FILE_NAME, INSTALLERS_RESOURCE_DIR
+from scripts.util.constants.common_constants import SIGNATURE_FILE_NAME, INSTALLERS_RESOURCE_DIR, InstallerVersion
 
 USER_KEY = "user"
 PASS_KEY = "password"
@@ -115,6 +114,13 @@ def sign_installer(installer: list[str]) -> list[str]:
     return [ f"{l}\n" if not l.startswith(delimiter) else f"{l.replace(delimiter, custom_delimiter)}\n" for l in signed_installer]
 
 
+def prepend(filename, line):
+    with open(filename, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(line + '\n' + content)
+
+
 def prepare_installers() -> None:
     logging.info("Preparing installers...")
 
@@ -129,23 +135,12 @@ def prepare_installers() -> None:
     installer_template = replace_tag(installer_template, "##UNINSTALL_CODE##", "".join(uninstall_code))
     installer_template = replace_tag(installer_template, "##ONEAGENTCTL_CODE##", "".join(oneagentctl_code))
 
-    timestamp = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
-    # Minimal supported version is 1.199
-    for version in ["1.199.0", "1.300.0"]:
-        full_version = f"{version}.{timestamp}"
-        installer_code = replace_tag(installer_template, "##VERSION##", full_version)
+    for version in InstallerVersion:
+        installer_code = replace_tag(installer_template, "##VERSION##", version.value)
         installer_code = sign_installer(installer_code)
+        save_file(installer_code, INSTALLERS_DEST_DIR / f"{installer_partial_name}-{version.value}.sh")
 
-        save_file(installer_code, INSTALLERS_DEST_DIR / f"{installer_partial_name}-{full_version}.sh")
-
-
-def assign_localhost_to_ca_provider() -> None:
-    with open("/etc/hosts", "a+") as f:
-        f.seek(0)
-        if any("ca.dynatrace.com" in line for line in f.readlines()):
-            return
-        f.write("\n# For orchestration tests purposes\n")
-        f.write(f"127.0.0.1\tca.dynatrace.com\n")
+    prepend(INSTALLERS_DEST_DIR / f"{installer_partial_name}-{InstallerVersion.MALFORMED.value}.sh", "Malformed line")
 
 
 def prepare_environment() -> None:

@@ -10,22 +10,13 @@ from util.test_helpers import (
     set_installer_download_params,
     run_deployment,
 )
-
-
-def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
-    versions: dict[DeploymentPlatform, str] = {}
-    for platform, _ in platforms.items():
-        installers = get_installers(platform.system(), platform.arch())
-        versioned_installer = installers[-1 if latest else 0]
-        versions[platform] = re.search(r"\d.\d+.\d+.\d+-\d+", str(versioned_installer)).group()
-    return versions
+from util.constants.common_constants import InstallerVersion
 
 
 def _check_agent_version(
-    platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, versions: dict[DeploymentPlatform, str]
-) -> None:
+    platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, version:  str) -> None:
     installed_version = wrapper.run_command(platform, address, f"{get_oneagentctl_path(platform)}", "--version")
-    assert installed_version.stdout.strip() == versions[platform]
+    assert installed_version.stdout.strip() == version
 
 
 def test_upgrade(_set_up, _tear_down, runner, configurator, platforms, wrapper):
@@ -33,9 +24,8 @@ def test_upgrade(_set_up, _tear_down, runner, configurator, platforms, wrapper):
 
     set_installer_download_params(configurator)
 
-    versions = _get_versions_for_platforms(platforms, False)
-    for platform, version in versions.items():
-        configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, version)
+    for platform in platforms:
+        configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, InstallerVersion.OLD.value)
 
     run_deployment(runner)
 
@@ -43,22 +33,14 @@ def test_upgrade(_set_up, _tear_down, runner, configurator, platforms, wrapper):
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
 
     logging.info("Check if agent has proper version")
-    perform_operation_on_platforms(platforms, _check_agent_version, wrapper, versions)
+    perform_operation_on_platforms(platforms, _check_agent_version, wrapper, InstallerVersion.OLD.value)
 
-
-def test_upgrade(_set_up, runner, configurator, platforms, wrapper, _tear_down):
-    logging.info("Running upgrade test")
-
-    configurator.clear_parameters_section()
-    set_installer_download_params(configurator)
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
 
-    versions = _get_versions_for_platforms(platforms, True)
-
     run_deployment(runner)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
 
     logging.info("Check if agent has proper version")
-    perform_operation_on_platforms(platforms, _check_agent_version, wrapper, versions)
+    perform_operation_on_platforms(platforms, _check_agent_version, wrapper, InstallerVersion.LATEST.value)
