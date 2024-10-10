@@ -17,6 +17,9 @@
     url: "{{ oneagent_ca_cert_download_url }}"
     dest: "{{ oneagent_ca_cert_dest_path }}"
     mode: "0644"
+    validate_certs: "{{ oneagent_validate_certs | bool }}"
+  environment:
+    SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
   when: not _oneagent_ca_cert_state.stat.exists
 
 - name: Validate installer signature

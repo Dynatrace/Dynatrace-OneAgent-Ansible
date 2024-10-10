@@ -9,7 +9,9 @@ import sys
 from pathlib import Path
 from typing import Any
 from scripts.util.test_data_types import DeploymentPlatform
-from scripts.util.constants.common_constants import SIGNATURE_FILE_NAME, INSTALLERS_RESOURCE_DIR, InstallerVersion
+from scripts.util.constants.common_constants import (INSTALLER_CERTIFICATE_FILE_NAME, INSTALLER_PRIVATE_KEY_FILE_NAME,
+                                                     INSTALLERS_RESOURCE_DIR, InstallerVersion)
+from scripts.util.ssl_certificate_generator import SSLCertificateGenerator
 
 USER_KEY = "user"
 PASS_KEY = "password"
@@ -18,6 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent
 TEST_DIR = BASE_DIR / "test_dir"
 LOG_DIR = TEST_DIR / "logs"
 INSTALLERS_DEST_DIR = TEST_DIR / "installers"
+SERVER_DEST_DIR = TEST_DIR / "server"
 TEST_VARS = {"PYTHONPATH": "scripts/"}
 
 
@@ -57,12 +60,15 @@ def get_test_args(args: dict[str, Any]) -> list[str]:
 def run_test(test: str, test_args: list[str]) -> bool:
     test_name = Path(test).stem
     logging.info(f"Test: {test_name}")
-    proc = subprocess.run([sys.executable, "-m", "pytest", test] + test_args, env=get_env_vars(), encoding="utf-8",
+    proc = subprocess.run([sys.executable, "-m", "pytest", "-o", "log_cli=true", test] + test_args, env=get_env_vars(), encoding="utf-8",
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     save_file(proc.stdout, LOG_DIR / f"{test_name}.log")
-    success = proc.returncode == 0
-    logging.info("PASSED" if success else "FAILED")
-    return success
+    result = proc.returncode == 0
+    if result:
+        logging.info("PASSED")
+    else:
+        logging.error(f"FAILED")
+    return result
 
 
 def run_all_tests(args: dict[str, Any]) -> bool:
@@ -72,7 +78,7 @@ def run_all_tests(args: dict[str, Any]) -> bool:
     test_args = get_test_args(args)
     tests_failed = False
 
-    for test in glob.glob(f"{test_path}/test_r*.py"):
+    for test in glob.glob(f"{test_path}/test_*.py"):
         if not run_test(test, test_args):
             tests_failed = True
 
@@ -97,8 +103,8 @@ def replace_tag(source: list[str], old: str, new: str) -> list[str]:
 
 def sign_installer(installer: list[str]) -> list[str]:
     cmd = ["openssl", "cms", "-sign",
-           "-signer", f"{INSTALLERS_RESOURCE_DIR / SIGNATURE_FILE_NAME}",
-           "-inkey", f"{INSTALLERS_RESOURCE_DIR / 'private.key'}"]
+           "-signer", f"{INSTALLERS_DEST_DIR / INSTALLER_CERTIFICATE_FILE_NAME}",
+           "-inkey", f"{INSTALLERS_DEST_DIR / INSTALLER_PRIVATE_KEY_FILE_NAME}"]
 
     proc = subprocess.run(cmd, input=f"{''.join(installer)}", encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     if proc.returncode != 0:
@@ -110,7 +116,7 @@ def sign_installer(installer: list[str]) -> list[str]:
     index = signed_installer.index(delimiter)
     signed_installer = signed_installer[index + 1:]
 
-    custom_delimiter = "----SIGNED_INSTALLER"
+    custom_delimiter = "----SIGNED-INSTALLER"
     return [ f"{l}\n" if not l.startswith(delimiter) else f"{l.replace(delimiter, custom_delimiter)}\n" for l in signed_installer]
 
 
@@ -135,6 +141,16 @@ def prepare_installers() -> None:
     installer_template = replace_tag(installer_template, "##UNINSTALL_CODE##", "".join(uninstall_code))
     installer_template = replace_tag(installer_template, "##ONEAGENTCTL_CODE##", "".join(oneagentctl_code))
 
+    generator = SSLCertificateGenerator(
+        country_name="US",
+        state_name="California",
+        locality_name="San Francisco",
+        organization_name="Dynatrace",
+        common_name="localhost"
+    )
+    generator.generate_and_save(f"{INSTALLERS_DEST_DIR / INSTALLER_PRIVATE_KEY_FILE_NAME}",
+                                f"{INSTALLERS_DEST_DIR / INSTALLER_CERTIFICATE_FILE_NAME}")
+
     for version in InstallerVersion:
         installer_code = replace_tag(installer_template, "##VERSION##", version.value)
         installer_code = sign_installer(installer_code)
@@ -149,11 +165,10 @@ def prepare_environment() -> None:
     )
     shutil.rmtree(TEST_DIR, ignore_errors=True)
     os.makedirs(INSTALLERS_DEST_DIR, exist_ok=True)
+    os.makedirs(SERVER_DEST_DIR, exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
-    shutil.copyfile(INSTALLERS_RESOURCE_DIR / SIGNATURE_FILE_NAME, INSTALLERS_DEST_DIR / SIGNATURE_FILE_NAME)
 
     prepare_installers()
-    assign_localhost_to_ca_provider()
 
 
 def parse_args() -> dict[str, Any]:

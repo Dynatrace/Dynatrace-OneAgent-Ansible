@@ -21,15 +21,13 @@ from technology.constants import (
 
 from technology.deployment_config import DeploymentConfig
 from util.common_utils import read_yaml_file, write_yaml_file
-from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY, SIGNATURE_FILE_NAME, INSTALLERS_RESOURCE_DIR
+from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY, INSTALLER_CERTIFICATE_FILE_NAME
 from util.test_data_types import DeploymentPlatform, PlatformCollection
 
 
 def _prepare_collection() -> None:
     shutil.rmtree(TEST_COLLECTIONS_DIR, ignore_errors=True)
     shutil.copytree(INSTALLED_COLLECTIONS_DIR, TEST_COLLECTIONS_DIR)
-    # TODO: As we are now have 2 different sources of installers and signatures, we need to cleanup the code
-    shutil.copy(INSTALLERS_RESOURCE_DIR / SIGNATURE_FILE_NAME, TEST_SIGNATURE_FILE)
 
 def _prepare_playbook_file() -> None:
     shutil.copy(
@@ -75,6 +73,9 @@ class AnsibleConfig(DeploymentConfig):
     INSTALLER_VERSION_KEY = "oneagent_version"
     PRESERVE_INSTALLER_KEY = "oneagent_preserve_installer"
     VALIDATE_DOWNLOAD_CERTS_KEY = "oneagent_validate_certs"
+    CA_CERT_DOWNLOAD_URL_KEY = "oneagent_ca_cert_download_url"
+    CA_CERT_DOWNLOAD_CERT_KEY = "oneagent_ca_cert_download_cert"
+    INSTALLER_DOWNLOAD_CERT_KEY = "oneagent_installer_download_cert"
 
     # Platform-specific
     DOWNLOAD_DIR_KEY = "oneagent_download_dir"
