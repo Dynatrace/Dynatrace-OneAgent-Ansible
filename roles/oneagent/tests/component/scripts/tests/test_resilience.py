@@ -6,6 +6,7 @@ import pytest
 from technology.constants import TEST_SIGNATURE_FILE
 from util.test_data_types import DeploymentResult
 from util.test_helpers import run_deployment, set_installer_download_params, enable_for_system_family
+from util.constants.common_constants import InstallerVersion
 
 MISSING_REQUIRED_PARAMETERS_KEY = "missing_mandatory_params"
 UNKNOWN_ARCHITECTURE_KEY = "unknown_arch"
@@ -155,6 +156,7 @@ def test_failed_signature_verification(_set_up, _tear_down, _error_messages, run
     logging.info("Running failed signature verification test")
 
     set_installer_download_params(configurator)
+    configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, InstallerVersion.MALFORMED.value)
 
     with TEST_SIGNATURE_FILE.open("w") as signature:
         signature.write("break signature by writing some text")
