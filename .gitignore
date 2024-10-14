@@ -1,2 +1,4 @@
-dynatrace-oneagent-*
+dynatrace-oneagent-*.tar.gz
 **/.idea/
+**/__pycache__/
+**/test_dir/
