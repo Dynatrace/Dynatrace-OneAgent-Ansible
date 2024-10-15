@@ -36,6 +36,7 @@ runs:
            sudo python run.py --linux_x86=localhost
     - name: Upload logs
       uses: actions/upload-artifact@v4
+      if: ${{ always() }}
       with:
         name: component-tests-${{ github.sha }}
         retention-days: 1
