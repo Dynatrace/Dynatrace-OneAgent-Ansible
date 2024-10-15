@@ -27,13 +27,14 @@ runs:
     - name: Prepare component tests
       id: prepare-component-tests
       shell: bash
-      run: python -m virtualenv venv && source venv/bin/activate &&
+      run: python -m virtualenv roles/oneagent/tests/component/venv && 
+           source roles/oneagent/tests/component/venv/bin/activate &&
            pip install -r roles/oneagent/tests/component/resources/requirements.txt
     - name: Run component tests
       id: component-tests
       shell: bash
-      run: source venv/bin/activate && cd roles/oneagent/tests/component && 
-           sudo python run.py --linux_x86=localhost
+      run: cd roles/oneagent/tests/component && 
+           sudo bash -c "source venv/bin/activate; python run.py --linux_x86=localhost"
     - name: Upload logs
       uses: actions/upload-artifact@v4
       if: ${{ always() }}
