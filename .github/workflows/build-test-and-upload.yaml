@@ -28,7 +28,9 @@ jobs:
         uses: ./.github/actions/setup-build-environment
       - name: Build the collection
         uses: ./.github/actions/build-collection
-      - name: Run tests
-        uses: ./.github/actions/run-tests
+      - name: Run sanity tests
+        uses: ./.github/actions/run-sanity-tests
+      - name: Run component tests
+        uses: ./.github/actions/run-component-tests
       - name: Upload the collection
         uses: ./.github/actions/upload-collection
