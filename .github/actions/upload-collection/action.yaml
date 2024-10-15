@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: upload-collection
+name: "Upload collection"
 description: Uploads the collection locally
 
 runs:
   using: composite
   steps:
-    - name: Publish artifact
+    - name: "Publish artifact"
       uses: actions/upload-artifact@v4
       with:
         name: dynatrace-oneagent-${{ github.sha }}

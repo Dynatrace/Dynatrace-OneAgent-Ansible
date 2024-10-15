@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: publish-to-ansible-galaxy
+name: "Publish to Ansible Galaxy"
 description: Publish to Ansible Galaxy
 
 inputs:
@@ -23,6 +23,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Publish the Ansible collection
+    - name: "Publish the Ansible collection"
       shell: bash
       run: ansible-galaxy collection publish dynatrace-oneagent* --token ${{ inputs.ansible-galaxy-api-token }}

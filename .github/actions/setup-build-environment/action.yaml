@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: setup-build-environment
-description: Prepares build environment
+name: "Prepare build environment"
+description: "Prepares build environment"
 
 runs:
   using: composite
@@ -21,6 +21,6 @@ runs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-    - name: Install dependencies
+    - name: "Install dependencies"
       shell: bash
       run: pip install virtualenv ansible

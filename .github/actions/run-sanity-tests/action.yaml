@@ -13,15 +13,15 @@
 # limitations under the License.
 
 name: run-sanity-tests
-description: Runs sanity tests
+description: "Runs sanity tests"
 
 runs:
   using: composite
   steps:
-    - name: Install the collection
+    - name: "Install the collection"
       shell: bash
       run: ansible-galaxy collection install -vvv dynatrace-oneagent*
 
-    - name: Run sanity test
+    - name: "Run sanity test"
       shell: bash
       run: pushd ~/.ansible/collections/ansible_collections/dynatrace/oneagent && ansible-test sanity && popd
