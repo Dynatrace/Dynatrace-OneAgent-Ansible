@@ -14,19 +14,16 @@ Upon downloading the collection
 $ apt-get install -y python3-venv python3-pip
 
 # Create virtual environment
-$ cd Dynatrace-OneAgent-Ansible && python -m venv venv && source venv/bin/activate
+$ python -m venv venv
+$ source venv/bin/activate
 
 # Install requirements
-$ pip install -r roles/oneagent/tests/component/resources/requirements.txt
-
-# Download CA certificate
-$ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pem -P roles/oneagent/files
+$ pip install -r roles/oneagent/tests/requirements.txt
 
 # Build and install the collection
 $ ansible-galaxy collection build . -vvv
-$ ansible-galaxy collection install -vvv dynatrace-oneagent*
+$ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
 
 # Run tests (eg. For linux_x86 platform)
-$ cd roles/oneagent/tests/component
-$ python run.py --linux_x86=localhost
+$ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost"
 ```

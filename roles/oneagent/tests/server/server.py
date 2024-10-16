@@ -69,7 +69,3 @@ def main() -> None:
     app.register_blueprint(installer_bp, url_prefix="/api/v1/deployment/installer/agent")
     app.register_blueprint(certificate_bp)
     app.run(host="0.0.0.0", debug=True, ssl_context=context, port=HOST_SERVER_PORT)
-
-
-if __name__ == "__main__":
-    main()
