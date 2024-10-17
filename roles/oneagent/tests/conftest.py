@@ -11,7 +11,7 @@ import technology.constants as AnsibleConstants
 import technology.util as AnsibleUtil
 
 from command.platform_command_wrapper import PlatformCommandWrapper
-from technology.config import AnsibleConfig
+from technology.ansible_config import AnsibleConfig
 from technology.ansible_runner import AnsibleRunner
 from util.common_utils import prepare_test_dirs
 from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult

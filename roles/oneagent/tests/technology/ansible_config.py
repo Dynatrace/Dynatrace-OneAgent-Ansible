@@ -19,7 +19,6 @@ from technology.constants import (
     TEST_SIGNATURE_FILE,
 )
 
-from technology.deployment_config import DeploymentConfig
 from util.common_utils import read_yaml_file, write_yaml_file
 from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY, INSTALLER_CERTIFICATE_FILE_NAME
 from util.test_data_types import DeploymentPlatform, PlatformCollection
@@ -60,7 +59,7 @@ def _prepare_credentials_file(user: str, password: str) -> None:
     write_yaml_file(credentials_file, data)
 
 
-class AnsibleConfig(DeploymentConfig):
+class AnsibleConfig:
     HOSTS_PARAM_KEY = "hosts"
     PARAM_SECTION_KEY = "vars"
 

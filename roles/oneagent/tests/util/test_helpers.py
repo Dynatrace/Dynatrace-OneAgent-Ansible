@@ -5,7 +5,7 @@ from typing import Callable, Any
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 
-from technology.deployment_config import DeploymentConfig
+from technology.ansible_config import AnsibleConfig
 from technology.ansible_runner import AnsibleRunner
 from util.common_utils import get_oneagentctl_path, get_platform_argument
 from util.constants.common_constants import (INSTALLER_PARTIAL_NAME, HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN,
@@ -24,7 +24,7 @@ def enable_for_system_family(family: str):
     def func_wrapper(func):
         @functools.wraps(func)
         def params_wrapper(*args, **kwargs):
-            config: DeploymentConfig = _get_param_by_name("configurator", **kwargs)
+            config: AnsibleConfig = _get_param_by_name("configurator", **kwargs)
             config.set_deployment_hosts(family)
             func(*args, **kwargs)
 
@@ -39,11 +39,11 @@ def perform_operation_on_platforms(platforms: PlatformCollection, operation: Cal
             operation(platform, address, *args)
 
 
-def set_ca_cert_download_params(config: DeploymentConfig) -> None:
+def set_ca_cert_download_params(config: AnsibleConfig) -> None:
     config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{HOST_SERVER_ADDRESS}/{INSTALLER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
 
-def set_installer_download_params(config: DeploymentConfig) -> None:
+def set_installer_download_params(config: AnsibleConfig) -> None:
     config.set_common_parameter(config.ENVIRONMENT_URL_KEY, HOST_SERVER_ADDRESS)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, HOST_SERVER_TOKEN)
     config.set_common_parameter(config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
