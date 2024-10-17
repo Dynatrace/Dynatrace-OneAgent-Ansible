@@ -23,14 +23,10 @@ VERSION_LOWER_THAN_INSTALLED_KEY = "version_lower_than_installed"
 
 def _prepare_test_data(constants, data: dict[str, str]) -> dict[str, str]:
     parsed_data = {}
-    prefix_length = len(constants.VARIABLE_PREFIX)
     for key, value in data.items():
-        # Remove oneagent_ prefix
         key = key.strip().removeprefix(constants.VARIABLE_PREFIX)
-        # Replace all parentheses with its escaped version
         value = value.strip().strip('"')
         value = value.replace("(", "\\(").replace(")", "\\)")
-        # Replace all formatting strings with .*
         parsed_data[key] = re.sub("%\\w", ".*", value)
     return parsed_data
 
