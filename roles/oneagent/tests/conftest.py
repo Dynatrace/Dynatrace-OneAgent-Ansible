@@ -34,6 +34,14 @@ PLATFORMS_KEY = "platforms"
 CONFIGURATOR_KEY = "configurator"
 
 
+@pytest.fixture(scope="session", autouse=True)
+def create_test_directories() -> None:
+    shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
+    os.makedirs(INSTALLERS_DIRECTORY, exist_ok=True)
+    os.makedirs(SERVER_DIRECTORY, exist_ok=True)
+    os.makedirs(LOG_DIRECTORY, exist_ok=True)
+
+
 def get_file_content(path: Path) -> list[str]:
     with path.open("r") as f:
         return f.readlines()
@@ -73,7 +81,7 @@ def save_file(data: list[str], path: Path) -> None:
     with path.open("w") as log:
         log.writelines(data)
 
-
+@pytest.fixture(scope="session", autouse=True)
 def prepare_installers() -> None:
     logging.info("Preparing installers...")
 
@@ -104,16 +112,6 @@ def prepare_installers() -> None:
         save_file(installer_code, INSTALLERS_DIRECTORY / f"{installer_partial_name}-{version.value}.sh")
 
     prepend(INSTALLERS_DIRECTORY / f"{installer_partial_name}-{InstallerVersion.MALFORMED.value}.sh", "Malformed line")
-
-
-@pytest.fixture(scope="session", autouse=True)
-def prepare_environment() -> None:
-    shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
-    os.makedirs(INSTALLERS_DIRECTORY, exist_ok=True)
-    os.makedirs(SERVER_DIRECTORY, exist_ok=True)
-    os.makedirs(LOG_DIRECTORY, exist_ok=True)
-
-    prepare_installers()
 
 
 @pytest.fixture(scope="session", autouse=True)
