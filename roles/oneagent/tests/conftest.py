@@ -70,7 +70,7 @@ def sign_installer(installer: list[str]) -> list[str]:
     return [ f"{l}\n" if not l.startswith(delimiter) else f"{l.replace(delimiter, custom_delimiter)}\n" for l in signed_installer]
 
 
-def prepend(filename, line):
+def prepend(filename, line) -> None:
     with open(filename, 'r+') as f:
         content = f.read()
         f.seek(0, 0)
@@ -115,7 +115,7 @@ def prepare_installers() -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def run_server(request) -> subprocess.Popen:
+def run_server(request) -> None:
     logging.info(f"Running server...")
     proc = subprocess.Popen([sys.executable, "-m", "server"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8", env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"})
 
@@ -152,7 +152,7 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
     configurator.clear_parameters_section()
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser) -> None:
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
 
@@ -162,7 +162,7 @@ def pytest_addoption(parser):
         )
 
 
-def pytest_configure():
+def pytest_configure() -> None:
     logging.basicConfig(
         format="%(asctime)s [deploymentTest] %(levelname)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -170,7 +170,7 @@ def pytest_configure():
     )
 
 
-def pytest_generate_tests(metafunc):
+def pytest_generate_tests(metafunc) -> None:
     options = vars(metafunc.config.option)
     for key in [USER_KEY, PASS_KEY]:
         if key in metafunc.fixturenames:
@@ -210,5 +210,5 @@ def pytest_generate_tests(metafunc):
 
 def _create_technology_classes(
     user: str, password: str, platforms: PlatformCollection, wrapper: PlatformCommandWrapper
-):
+) -> None:
     return AnsibleConfig(user, password, platforms), AnsibleRunner(user, password), AnsibleUtil, AnsibleConstants
