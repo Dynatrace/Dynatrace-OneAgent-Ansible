@@ -1,7 +1,7 @@
 import subprocess
 import logging
 
-from technology.constants import HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME, CREDENTIALS_FILE_NAME, TEST_DIRECTORY
+from ansible.constants import HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME, CREDENTIALS_FILE_NAME, TEST_DIRECTORY
 from util.test_data_types import CommandResult, DeploymentResult
 
 

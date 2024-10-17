@@ -5,8 +5,8 @@ from typing import Callable, Any
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 
-from technology.ansible_config import AnsibleConfig
-from technology.ansible_runner import AnsibleRunner
+from ansible.config import AnsibleConfig
+from ansible.runner import AnsibleRunner
 from util.common_utils import get_oneagentctl_path, get_platform_argument
 from util.constants.common_constants import (INSTALLER_PARTIAL_NAME, HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN,
                                              INSTALLER_CERTIFICATE_FILE_NAME, SERVER_DIRECTORY, SERVER_CERTIFICATE_FILE_NAME)

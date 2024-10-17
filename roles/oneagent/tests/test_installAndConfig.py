@@ -41,7 +41,7 @@ def _assert_oneagentctl_getter(
 
 
 def _check_install_args(
-    platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, technology: str) -> None:
+    platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, ansible: str) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
 
     oneagentctl = f"{get_oneagentctl_path(platform)}"
@@ -51,7 +51,7 @@ def _check_install_args(
     params = dict(kv.split("=") for kv in metadata.stdout.strip().splitlines())
     assert params[TECH_VERSION_KEY] is not None
     assert params[TECH_SCRIPT_VERSION_KEY] is not None
-    assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == technology
+    assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == ansible
 
 
 def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, expected_tags: set[str],

@@ -7,12 +7,12 @@ import sys
 import os
 from pathlib import Path
 
-import technology.constants as AnsibleConstants
-import technology.util as AnsibleUtil
+import ansible.constants as AnsibleConstants
+import ansible.util as AnsibleUtil
 
 from command.platform_command_wrapper import PlatformCommandWrapper
-from technology.ansible_config import AnsibleConfig
-from technology.ansible_runner import AnsibleRunner
+from ansible.config import AnsibleConfig
+from ansible.runner import AnsibleRunner
 from util.common_utils import prepare_test_dirs
 from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult
 from util.test_helpers import check_agent_state, perform_operation_on_platforms
@@ -186,8 +186,10 @@ def pytest_generate_tests(metafunc) -> None:
             platforms[DeploymentPlatform.from_str(platform)] = hosts
 
     wrapper = PlatformCommandWrapper(user, password)
-
-    configurator, runner, util, constants = _create_technology_classes(user, password, platforms, wrapper)
+    configurator = AnsibleConfig(user, password, platforms)
+    runner = AnsibleRunner(user, password)
+    util = AnsibleUtil
+    constants = AnsibleConstants
 
     if CONFIGURATOR_KEY in metafunc.fixturenames:
         metafunc.parametrize(CONFIGURATOR_KEY, [configurator])
@@ -206,9 +208,3 @@ def pytest_generate_tests(metafunc) -> None:
 
     if WRAPPER_KEY in metafunc.fixturenames:
         metafunc.parametrize(WRAPPER_KEY, [wrapper])
-
-
-def _create_technology_classes(
-    user: str, password: str, platforms: PlatformCollection, wrapper: PlatformCommandWrapper
-) -> None:
-    return AnsibleConfig(user, password, platforms), AnsibleRunner(user, password), AnsibleUtil, AnsibleConstants

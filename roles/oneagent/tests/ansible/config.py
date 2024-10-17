@@ -1,7 +1,7 @@
 import shutil
 from typing import Any
 
-from technology.constants import (
+from ansible.constants import (
     ANSIBLE_CONNECTION_KEY,
     ANSIBLE_PASS_KEY,
     ANSIBLE_RESOURCE_DIR,
