@@ -13,7 +13,7 @@ from util.test_helpers import (
 
 
 @disable_for_localhost()
-def test_local_installer(_set_up, runner, configurator, constants, platforms, wrapper, _tear_down):
+def test_local_installer(runner, configurator, constants, platforms, wrapper):
     logging.info("Running local installer test")
 
     for platform, _ in platforms.items():

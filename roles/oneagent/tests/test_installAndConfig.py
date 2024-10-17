@@ -68,7 +68,7 @@ def _check_output_for_secrets(result: DeploymentResult) -> None:
         assert HOST_SERVER_ADDRESS not in out.stderr
 
 
-def test_basic_installation(_set_up, _tear_down, runner, configurator, constants, platforms, wrapper):
+def test_basic_installation(runner, configurator, constants, platforms, wrapper):
     logging.info("Running basic installation test")
 
     dummy_common_tag = "dummy_common_tag"

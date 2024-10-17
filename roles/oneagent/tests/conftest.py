@@ -128,18 +128,14 @@ def run_server(request) -> subprocess.Popen:
         log.writelines(proc.stdout)
 
 
-@pytest.fixture(name="_set_up")
-def set_up(runner, configurator) -> None:
+@pytest.fixture(autouse=True)
+def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
     logging.info("Preparing test environment")
     prepare_test_dirs()
     configurator.prepare_test_environment()
 
-
-@pytest.fixture(name="_tear_down")
-def tear_down(runner, configurator, platforms, wrapper) -> None:
-    # Fixtures are executed one by one after injection
-    # Yield prevents cleaning up environment before the actual test is executed
     yield
+
     logging.info("Cleaning up environment")
     configurator.clear_parameters_section()
 

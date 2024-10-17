@@ -19,7 +19,7 @@ def _check_agent_version(
     assert installed_version.stdout.strip() == version
 
 
-def test_upgrade(_set_up, _tear_down, runner, configurator, platforms, wrapper):
+def test_upgrade(runner, configurator, platforms, wrapper):
     logging.info("Running upgrade test")
 
     set_installer_download_params(configurator)
