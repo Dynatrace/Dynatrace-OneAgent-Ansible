@@ -20,21 +20,6 @@ def _get_param_by_name(name: str, **kwargs) -> Any:
     return kwargs[name]
 
 
-def disable_for_localhost():
-    def func_wrapper(func):
-        @functools.wraps(func)
-        def platforms_wrapper(*args, **kwargs):
-            platforms: DeploymentConfig = _get_param_by_name("platforms", **kwargs)
-            for _, hosts in platforms.items():
-                if any(host == "localhost" for host in hosts):
-                    return
-            func(*args, **kwargs)
-
-        return platforms_wrapper
-
-    return func_wrapper
-
-
 def enable_for_system_family(family: str):
     def func_wrapper(func):
         @functools.wraps(func)
@@ -54,14 +39,18 @@ def perform_operation_on_platforms(platforms: PlatformCollection, operation: Cal
             operation(platform, address, *args)
 
 
+def set_ca_cert_download_params(config: DeploymentConfig) -> None:
+    config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{HOST_SERVER_ADDRESS}/{INSTALLER_CERTIFICATE_FILE_NAME}")
+    config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
+
 def set_installer_download_params(config: DeploymentConfig) -> None:
     config.set_common_parameter(config.ENVIRONMENT_URL_KEY, HOST_SERVER_ADDRESS)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, HOST_SERVER_TOKEN)
-    config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{HOST_SERVER_ADDRESS}/{INSTALLER_CERTIFICATE_FILE_NAME}")
-    config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
     for platform in DeploymentPlatform:
         config.set_platform_parameter(platform, config.INSTALLER_ARCH_KEY, platform.arch())
+
+    set_ca_cert_download_params(config)
 
 
 def run_deployment(runner: DeploymentRunner, ignore_errors: bool = False) -> DeploymentResult:
