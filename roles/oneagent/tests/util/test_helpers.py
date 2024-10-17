@@ -6,7 +6,7 @@ from typing import Callable, Any
 from command.platform_command_wrapper import PlatformCommandWrapper
 
 from technology.deployment_config import DeploymentConfig
-from technology.deployment_runner import DeploymentRunner
+from technology.ansible_runner import AnsibleRunner
 from util.common_utils import get_oneagentctl_path, get_platform_argument
 from util.constants.common_constants import (INSTALLER_PARTIAL_NAME, HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN,
                                              INSTALLER_CERTIFICATE_FILE_NAME, SERVER_DIRECTORY, SERVER_CERTIFICATE_FILE_NAME)
@@ -53,7 +53,7 @@ def set_installer_download_params(config: DeploymentConfig) -> None:
     set_ca_cert_download_params(config)
 
 
-def run_deployment(runner: DeploymentRunner, ignore_errors: bool = False) -> DeploymentResult:
+def run_deployment(runner: AnsibleRunner, ignore_errors: bool = False) -> DeploymentResult:
     results = runner.run_deployment()
     logging.info("Deployment finished")
     for result in results:

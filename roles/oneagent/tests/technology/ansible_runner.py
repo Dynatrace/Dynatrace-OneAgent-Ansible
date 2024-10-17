@@ -2,11 +2,10 @@ import subprocess
 import logging
 
 from technology.constants import HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME, CREDENTIALS_FILE_NAME, TEST_DIRECTORY
-from technology.deployment_runner import DeploymentRunner, DeploymentResult
-from util.test_data_types import CommandResult
+from util.test_data_types import CommandResult, DeploymentResult
 
 
-class AnsibleRunner(DeploymentRunner):
+class AnsibleRunner:
     def __init__(self, user: str, password: str):
         self.user = user
         self.password = password
