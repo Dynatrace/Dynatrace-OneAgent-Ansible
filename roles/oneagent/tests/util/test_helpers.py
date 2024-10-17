@@ -20,7 +20,7 @@ def _get_param_by_name(name: str, **kwargs) -> Any:
     return kwargs[name]
 
 
-def enable_for_system_family(family: str):
+def enable_for_system_family(family: str) -> Callable:
     def func_wrapper(func):
         @functools.wraps(func)
         def params_wrapper(*args, **kwargs):
