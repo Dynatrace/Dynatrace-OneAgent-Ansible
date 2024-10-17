@@ -2,6 +2,8 @@
 
 # This file simulates deployment functionalities of oneagentctl binary, used to configure installation.
 
+set -e
+
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
 
