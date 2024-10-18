@@ -12,35 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: update-version
-description: Update version
+name: "Update version"
+description: "Updates version"
 
 runs:
   using: composite
   steps:
-    - name: Get latest tag
+    - name: "Get latest tag"
       shell: bash
       run: printf "LATEST_TAG=%s\n" "$(git describe --tags --abbrev=0 --always)" >> $GITHUB_ENV
 
-    - name: Extract version
+    - name: "Extract version"
       shell: bash
       run: |
         latestTag="${{ env.LATEST_TAG }}"
         printf "LATEST_VERSION=%s\n" "${latestTag#v}" >> $GITHUB_ENV
 
-    - name: Update galaxy.yml version
+    - name: "Update galaxy.yml version"
       shell: bash
       run: |
         latestVersion="${{ env.LATEST_VERSION }}"
         sed -i "s/version: .*/version: ${latestVersion}/" galaxy.yml
     
-    - name: Configure git
+    - name: "Configure git"
       shell: bash
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
     
-    - name: Commit and push changes
+    - name: "Commit and push changes"
       shell: bash
       run: |
         git checkout master

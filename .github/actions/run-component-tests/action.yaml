@@ -1,0 +1,42 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: "Run component tests"
+description: "Runs component tests"
+
+runs:
+  using: composite
+  steps:
+    - name: "Prepare Python environment"
+      shell: bash
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r roles/oneagent/tests/requirements.txt
+
+    - name: "Install the collection"
+      shell: bash
+      run: sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
+
+    - name: "Run component tests"
+      shell: bash
+      run: sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost"
+
+    - name: "Upload logs"
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: component-tests-${{ github.sha }}
+        retention-days: 1
+        path: test_dir/logs

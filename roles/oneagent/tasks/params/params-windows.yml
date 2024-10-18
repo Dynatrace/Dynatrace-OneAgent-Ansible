@@ -1,5 +1,5 @@
 ---
 - name: Validate if download directory is available
-  win_stat:
+  ansible.windows.win_stat:
     path: "{{ oneagent_download_path }}"
   register: _oneagent_download_path_state
