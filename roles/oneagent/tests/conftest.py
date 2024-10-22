@@ -7,9 +7,6 @@ import sys
 import os
 from pathlib import Path
 
-import ansible.constants as AnsibleConstants
-import ansible.util as AnsibleUtil
-
 from command.platform_command_wrapper import PlatformCommandWrapper
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
@@ -26,7 +23,6 @@ from util.ssl_certificate_generator import SSLCertificateGenerator
 USER_KEY = "user"
 PASS_KEY = "password"
 
-UTIL_KEY = "util"
 RUNNER_KEY = "runner"
 WRAPPER_KEY = "wrapper"
 CONSTANTS_KEY = "constants"
@@ -188,20 +184,12 @@ def pytest_generate_tests(metafunc) -> None:
     wrapper = PlatformCommandWrapper(user, password)
     configurator = AnsibleConfig(user, password, platforms)
     runner = AnsibleRunner(user, password)
-    util = AnsibleUtil
-    constants = AnsibleConstants
 
     if CONFIGURATOR_KEY in metafunc.fixturenames:
         metafunc.parametrize(CONFIGURATOR_KEY, [configurator])
 
     if RUNNER_KEY in metafunc.fixturenames:
         metafunc.parametrize(RUNNER_KEY, [runner])
-
-    if UTIL_KEY in metafunc.fixturenames:
-        metafunc.parametrize(UTIL_KEY, [util])
-
-    if CONSTANTS_KEY in metafunc.fixturenames:
-        metafunc.parametrize(CONSTANTS_KEY, [constants])
 
     if PLATFORMS_KEY in metafunc.fixturenames:
         metafunc.parametrize(PLATFORMS_KEY, [platforms])

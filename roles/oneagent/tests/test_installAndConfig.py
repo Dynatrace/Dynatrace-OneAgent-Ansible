@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path, PureWindowsPath
 
+from ansible.constants import TECH_NAME
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
 from util.constants.common_constants import HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN
@@ -68,7 +69,7 @@ def _check_output_for_secrets(result: DeploymentResult) -> None:
         assert HOST_SERVER_ADDRESS not in out.stderr
 
 
-def test_basic_installation(runner, configurator, constants, platforms, wrapper):
+def test_basic_installation(runner, configurator, platforms, wrapper):
     logging.info("Running basic installation test")
 
     dummy_common_tag = "dummy_common_tag"
@@ -111,7 +112,7 @@ def test_basic_installation(runner, configurator, constants, platforms, wrapper)
                                    {dummy_common_property, dummy_platform_property})
 
     logging.info("Check if installer args were passed correctly")
-    perform_operation_on_platforms(platforms, _check_install_args, wrapper, constants.TECH_NAME)
+    perform_operation_on_platforms(platforms, _check_install_args, wrapper, TECH_NAME)
 
 
 
