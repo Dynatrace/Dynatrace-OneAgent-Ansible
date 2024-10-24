@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import sys
 import os
+import socket
 from pathlib import Path
 
 from command.platform_command_wrapper import PlatformCommandWrapper
@@ -111,11 +112,19 @@ def prepare_installers() -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def run_server(request) -> None:
-    logging.info(f"Running server...")
-    proc = subprocess.Popen([sys.executable, "-m", "server"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8", env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"})
+def server(request) -> None:
+    port = 8021
+    ip_address = "localhost"
+    url = f"https://{ip_address}:{port}"
+    logging.info(f"Running server on {url}...")
 
-    yield
+    proc = subprocess.Popen([sys.executable, "-m", "server", "--port", f"{port}", "--ip-address", ip_address],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            encoding="utf-8",
+                            env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"})
+
+    yield url
 
     proc.terminate()
     with Path(LOG_DIRECTORY / "server.log").open("a") as log:

@@ -4,7 +4,7 @@ from pathlib import Path, PureWindowsPath
 from ansible.constants import TECH_NAME
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from util.constants.common_constants import HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN
+from util.constants.common_constants import HOST_SERVER_TOKEN
 from util.test_data_types import DeploymentPlatform, DeploymentResult
 from util.test_helpers import (
     check_agent_state,
@@ -63,13 +63,13 @@ def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: Plat
     _assert_oneagentctl_getter(platform, address, wrapper, CTL_OPTION_GET_HOST_PROPERTIES, expected_properties)
 
 
-def _check_output_for_secrets(result: DeploymentResult) -> None:
+def _check_output_for_secrets(result: DeploymentResult, host_server_url) -> None:
     for out in result:
         assert HOST_SERVER_TOKEN not in out.stdout
-        assert HOST_SERVER_ADDRESS not in out.stderr
+        assert host_server_url not in out.stderr
 
 
-def test_basic_installation(runner, configurator, platforms, wrapper):
+def test_basic_installation(runner, configurator, platforms, wrapper, server):
     logging.info("Running basic installation test")
 
     dummy_common_tag = "dummy_common_tag"
@@ -77,7 +77,7 @@ def test_basic_installation(runner, configurator, platforms, wrapper):
     dummy_common_property = "dummy_common_key=dummy_common_value"
     dummy_platform_property = "dummy_platform_key=dummy_platform_value"
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, True)
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY,
                                       [f"{CTL_OPTION_SET_HOST_TAG}={dummy_common_tag}",
@@ -93,7 +93,7 @@ def test_basic_installation(runner, configurator, platforms, wrapper):
     result = run_deployment(runner)
 
     logging.info("Check if output contains secrets")
-    _check_output_for_secrets(result)
+    _check_output_for_secrets(result, server)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)

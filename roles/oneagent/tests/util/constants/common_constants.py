@@ -18,8 +18,6 @@ SERVER_PRIVATE_KEY_FILE_NAME = "server.key"
 INSTALLER_PARTIAL_NAME = "Dynatrace-OneAgent"
 INSTALLER_SYSTEM_NAME_TYPE_MAP = {"linux": "linux", "unix": "linux", "aix": "aix", "windows": "windows"}
 
-HOST_SERVER_PORT = 8021
-HOST_SERVER_ADDRESS = f"https://localhost:{HOST_SERVER_PORT}"
 HOST_SERVER_TOKEN = "abcdefghijk1234567890"
 
 class InstallerVersion(Enum):

@@ -8,8 +8,8 @@ from command.platform_command_wrapper import PlatformCommandWrapper
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from util.constants.common_constants import (INSTALLER_PARTIAL_NAME, HOST_SERVER_ADDRESS, HOST_SERVER_TOKEN,
-                                             INSTALLER_CERTIFICATE_FILE_NAME, SERVER_DIRECTORY, SERVER_CERTIFICATE_FILE_NAME)
+from util.constants.common_constants import (INSTALLER_PARTIAL_NAME, HOST_SERVER_TOKEN, INSTALLER_CERTIFICATE_FILE_NAME,
+                                             SERVER_DIRECTORY, SERVER_CERTIFICATE_FILE_NAME)
 from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
 
 CallableOperation = Callable[[DeploymentPlatform, str, Any], None]
@@ -39,18 +39,18 @@ def perform_operation_on_platforms(platforms: PlatformCollection, operation: Cal
             operation(platform, address, *args)
 
 
-def set_ca_cert_download_params(config: AnsibleConfig) -> None:
-    config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{HOST_SERVER_ADDRESS}/{INSTALLER_CERTIFICATE_FILE_NAME}")
+def set_ca_cert_download_params(config: AnsibleConfig, host_server_url: str) -> None:
+    config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{host_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
 
-def set_installer_download_params(config: AnsibleConfig) -> None:
-    config.set_common_parameter(config.ENVIRONMENT_URL_KEY, HOST_SERVER_ADDRESS)
+def set_installer_download_params(config: AnsibleConfig, host_server_url: str) -> None:
+    config.set_common_parameter(config.ENVIRONMENT_URL_KEY, host_server_url)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, HOST_SERVER_TOKEN)
     config.set_common_parameter(config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
     for platform in DeploymentPlatform:
         config.set_platform_parameter(platform, config.INSTALLER_ARCH_KEY, platform.arch())
 
-    set_ca_cert_download_params(config)
+    set_ca_cert_download_params(config, host_server_url)
 
 
 def run_deployment(runner: AnsibleRunner, ignore_errors: bool = False) -> DeploymentResult:

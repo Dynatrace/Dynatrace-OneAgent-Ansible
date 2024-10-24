@@ -51,11 +51,11 @@ def _check_deployment_failure(results: DeploymentResult, expected_message: str, 
         assert re.search(expected_message, result.stdout + result.stderr)
 
 
-def test_invalid_required_parameters(_error_messages, runner, configurator):
+def test_invalid_required_parameters(_error_messages, runner, configurator, server):
     logging.info("Running missing required parameters test")
 
     logging.debug("Removing required parameter - direct download scenario")
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.ENVIRONMENT_URL_KEY, "")
 
     _check_deployment_failure(
@@ -65,10 +65,10 @@ def test_invalid_required_parameters(_error_messages, runner, configurator):
     )
 
 
-def test_invalid_architecture(_error_messages, runner, configurator):
+def test_invalid_architecture(_error_messages, runner, configurator, server):
     logging.info("Running invalid architecture test")
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.INSTALLER_ARCH_KEY, "unknown_arch")
 
     _check_deployment_failure(
@@ -89,11 +89,11 @@ def test_missing_local_installer(_error_messages, runner, configurator):
 
 
 @enable_for_system_family(family="unix")
-def test_directories_contain_spaces(_error_messages, runner, configurator):
+def test_directories_contain_spaces(_error_messages, runner, configurator, server):
     logging.info("Running directories contain spaces test")
 
     logging.debug("Space in directory path - INSTALL_PATH scenario")
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     installer_args = ["INSTALL_PATH=/path with spaces"]
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY, installer_args)
 
@@ -105,7 +105,7 @@ def test_directories_contain_spaces(_error_messages, runner, configurator):
 
     logging.debug("Space in directory path - download dir scenario")
     configurator.clear_parameters_section()
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.DOWNLOAD_DIR_KEY, "/path with spaces")
 
     _check_deployment_failure(
@@ -115,10 +115,10 @@ def test_directories_contain_spaces(_error_messages, runner, configurator):
     )
 
 
-def test_version_parameter_too_low(_error_messages, runner, configurator):
+def test_version_parameter_too_low(_error_messages, runner, configurator, server):
     logging.info("Running version parameter too low test")
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "0.0.0")
 
     _check_deployment_failure(
@@ -128,10 +128,10 @@ def test_version_parameter_too_low(_error_messages, runner, configurator):
     )
 
 
-def test_multiple_install_path_arguments(_error_messages, runner, configurator):
+def test_multiple_install_path_arguments(_error_messages, runner, configurator, server):
     logging.info("Running multiple install path arguments test")
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY, ["INSTALL_PATH=/path1"])
     configurator.set_common_parameter(configurator.INSTALLER_PLATFORM_ARGS_KEY, ["INSTALL_PATH=/path2"])
 
@@ -140,10 +140,10 @@ def test_multiple_install_path_arguments(_error_messages, runner, configurator):
     )
 
 
-def test_failed_download(_error_messages, runner, configurator):
+def test_failed_download(_error_messages, runner, configurator, server):
     logging.info("Running failed download test")
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.ENVIRONMENT_URL_KEY, "0.0.0.0")
 
     _check_deployment_failure(
@@ -153,10 +153,10 @@ def test_failed_download(_error_messages, runner, configurator):
 
 # noinspection PyUnusedLocal
 @enable_for_system_family(family="unix")
-def test_failed_signature_verification(_error_messages, runner, configurator):
+def test_failed_signature_verification(_error_messages, runner, configurator, server):
     logging.info("Running failed signature verification test")
 
-    set_installer_download_params(configurator)
+    set_installer_download_params(configurator, server)
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, InstallerVersion.MALFORMED.value)
 
     with TEST_SIGNATURE_FILE.open("w") as signature:
