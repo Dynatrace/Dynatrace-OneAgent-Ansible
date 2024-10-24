@@ -112,7 +112,7 @@ def prepare_installers() -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def server(request) -> None:
+def installer_server_url(request) -> None:
     port = 8021
     ip_address = "localhost"
     url = f"https://{ip_address}:{port}"

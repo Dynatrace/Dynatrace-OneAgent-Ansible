@@ -18,7 +18,7 @@ SERVER_PRIVATE_KEY_FILE_NAME = "server.key"
 INSTALLER_PARTIAL_NAME = "Dynatrace-OneAgent"
 INSTALLER_SYSTEM_NAME_TYPE_MAP = {"linux": "linux", "unix": "linux", "aix": "aix", "windows": "windows"}
 
-HOST_SERVER_TOKEN = "abcdefghijk1234567890"
+INSTALLER_SERVER_TOKEN = "abcdefghijk1234567890"
 
 class InstallerVersion(Enum):
     OLD = "1.199.0.20241008-150308"

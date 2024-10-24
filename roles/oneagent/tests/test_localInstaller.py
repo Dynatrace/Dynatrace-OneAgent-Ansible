@@ -13,10 +13,10 @@ from util.test_helpers import (
 )
 
 
-def test_local_installer(runner, configurator, platforms, wrapper, server):
+def test_local_installer(runner, configurator, platforms, wrapper, installer_server_url):
     logging.info("Running local installer test")
 
-    set_ca_cert_download_params(configurator, server)
+    set_ca_cert_download_params(configurator, installer_server_url)
 
     for platform, _ in platforms.items():
         installers_location = LOCAL_INSTALLERS_LOCATION
