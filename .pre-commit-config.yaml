@@ -1,9 +1,8 @@
 ---
-
 repos:
   - repo: https://github.com/ansible/ansible-lint
     rev: v24.2.2
     hooks:
       - id: ansible-lint
         pass_filenames: false
-        args: ['--exclude', 'roles/oneagent/examples']
+        args: ['--exclude', 'roles/oneagent/examples', 'tests/component/resources/ansible/oneagent.yml']

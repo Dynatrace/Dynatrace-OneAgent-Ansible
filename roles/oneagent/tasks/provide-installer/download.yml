@@ -9,7 +9,8 @@
     "#VER": "{{ (oneagent_version == 'latest') | ternary('', 'version/') + oneagent_version }}"
     "#ARCH": "{{ oneagent_download_arch }}"
 
-- ansible.builtin.include_tasks: provide-installer/download-{{ oneagent_system_family }}.yml
+- name: Include system-specific download tasks
+  ansible.builtin.include_tasks: provide-installer/download-{{ oneagent_system_family }}.yml
 
 - name: Verify download result
   ansible.builtin.fail:
