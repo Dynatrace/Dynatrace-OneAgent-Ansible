@@ -98,7 +98,7 @@ def prepare_installers() -> None:
         state_name="California",
         locality_name="San Francisco",
         organization_name="Dynatrace",
-        common_name="localhost"
+        common_name="127.0.0.1"
     )
     generator.generate_and_save(f"{INSTALLERS_DIRECTORY / INSTALLER_PRIVATE_KEY_FILE_NAME}",
                                 f"{INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME}")
@@ -114,8 +114,9 @@ def prepare_installers() -> None:
 @pytest.fixture(scope="session", autouse=True)
 def installer_server_url(request) -> None:
     port = 8021
-    ip_address = "localhost"
+    ip_address = socket.gethostbyname(socket.gethostname())
     url = f"https://{ip_address}:{port}"
+
     logging.info(f"Running server on {url}...")
 
     proc = subprocess.Popen([sys.executable, "-m", "server", "--port", f"{port}", "--ip-address", ip_address],

@@ -1,11 +1,14 @@
+import ipaddress
+import logging
+import uuid
+
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from datetime import datetime, timedelta
-import uuid
-import logging
+
 
 class SSLCertificateGenerator:
     def __init__(self, country_name, state_name, locality_name, organization_name, common_name, validity_days=365):
@@ -43,8 +46,9 @@ class SSLCertificateGenerator:
         builder = builder.not_valid_after(datetime.utcnow() + timedelta(days=self.validity_days))
         builder = builder.serial_number(int(uuid.uuid4()))
         builder = builder.public_key(public_key)
+
         builder = builder.add_extension(
-            x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
+            x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(self.common_name))]),
             critical=False,
         )
         return builder.sign(
