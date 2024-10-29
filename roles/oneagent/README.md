@@ -52,7 +52,6 @@ The following variables are available in `defaults/main/` and can be overridden:
 | `oneagent_preserve_installer` | `false` | Preserve installers on secondary machines after deployment.
 | `oneagent_package_state` | `present` | OneAgent package state; use `present` or `latest` to make sure it's installed, or `absent` in order to uninstall.
 | `oneagent_reboot_host` | `false` | Reboot the secondary machine after OneAgent installation
-| `oneagent_validate_certs` | `true` | If set to `false`, allows to download OneAgent from a server with insecure SSL certificate (expired, self-signed, etc).
 | `oneagent_verify_signature` | `true` | Verifies installer's signature (available only on AIX/Linux platforms)
 | `oneagent_reboot_timeout` | `3600` | Set the timeout for rebooting secondary machine in seconds
 

@@ -45,7 +45,7 @@ def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
         # TODO: Add condition to fail test if localhost is used with multiple platforms
         # We assume that localhost is used only with single platform
         if "localhost" in hosts:
-            family_vars = group_data = data["all"]["children"][platform.family()]["vars"]
+            group_data = data["all"]["children"][platform.family()]["vars"]
             group_data[ANSIBLE_CONNECTION_KEY] = "local"
     write_yaml_file(INVENTORY_FILE, data)
 
@@ -71,9 +71,10 @@ class AnsibleConfig:
     VERIFY_SIGNATURE_KEY = "oneagent_verify_signature"
     INSTALLER_VERSION_KEY = "oneagent_version"
     PRESERVE_INSTALLER_KEY = "oneagent_preserve_installer"
-    VALIDATE_DOWNLOAD_CERTS_KEY = "oneagent_validate_certs"
     CA_CERT_DOWNLOAD_URL_KEY = "oneagent_ca_cert_download_url"
     CA_CERT_DOWNLOAD_CERT_KEY = "oneagent_ca_cert_download_cert"
+    # Internal parameters
+    VALIDATE_DOWNLOAD_CERTS_KEY = "oneagent_validate_certs"
     INSTALLER_DOWNLOAD_CERT_KEY = "oneagent_installer_download_cert"
 
     # Platform-specific
