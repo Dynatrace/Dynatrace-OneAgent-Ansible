@@ -50,6 +50,7 @@ def _check_install_args(
     assert metadata.returncode == 0
 
     params = dict(kv.split("=") for kv in metadata.stdout.strip().splitlines())
+
     assert params[TECH_VERSION_KEY] is not None
     assert params[TECH_SCRIPT_VERSION_KEY] is not None
     assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == ansible
@@ -78,6 +79,7 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
     dummy_platform_property = "dummy_platform_key=dummy_platform_value"
 
     set_installer_download_params(configurator, installer_server_url)
+    configurator.set_common_parameter(configurator.VALIDATE_DOWNLOAD_CERTS_KEY, False)
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, True)
     configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY,
                                       [f"{CTL_OPTION_SET_HOST_TAG}={dummy_common_tag}",
@@ -102,7 +104,6 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
     perform_operation_on_platforms(
         platforms, check_download_directory, wrapper, True, UNIX_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH
     )
-
 
     logging.info("Check if config args were applied correctly")
     perform_operation_on_platforms(platforms,

@@ -1,6 +1,7 @@
 ---
 - name: Check installers info
   ansible.builtin.include_tasks: install/install-check.yml
+
 - name: Combine installation parameters
   ansible.builtin.set_fact:
     _oneagent_all_install_args: "{{ (oneagent_passed_install_args + oneagent_additional_reporting_params) | map('regex_replace', '(.*)', '\"\\1\"') | list }}"

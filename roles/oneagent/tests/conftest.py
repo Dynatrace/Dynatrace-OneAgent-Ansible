@@ -78,6 +78,7 @@ def save_file(data: list[str], path: Path) -> None:
     with path.open("w") as log:
         log.writelines(data)
 
+
 @pytest.fixture(scope="session", autouse=True)
 def prepare_installers() -> None:
     logging.info("Preparing installers...")
@@ -185,7 +186,7 @@ def pytest_generate_tests(metafunc) -> None:
     user = options[USER_KEY]
     password = options[PASS_KEY]
 
-    platforms = {}
+    platforms: PlatformCollection = {}
     deployment_platforms = [e.value for e in DeploymentPlatform]
     for platform, hosts in options.items():
         if platform in deployment_platforms and hosts:

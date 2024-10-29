@@ -23,6 +23,7 @@ def test_upgrade(runner, configurator, platforms, wrapper, installer_server_url)
     logging.info("Running upgrade test")
 
     set_installer_download_params(configurator, installer_server_url)
+    configurator.set_common_parameter(configurator.VALIDATE_DOWNLOAD_CERTS_KEY, False)
 
     for platform in platforms:
         configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, InstallerVersion.OLD.value)

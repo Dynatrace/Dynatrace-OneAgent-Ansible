@@ -25,8 +25,12 @@ def enable_for_system_family(family: str) -> Callable:
         @functools.wraps(func)
         def params_wrapper(*args, **kwargs):
             config: AnsibleConfig = _get_param_by_name("configurator", **kwargs)
-            config.set_deployment_hosts(family)
-            func(*args, **kwargs)
+            platforms: PlatformCollection = _get_param_by_name("platforms", **kwargs)
+            if any(p.family() == family for p in platforms.keys()):
+                config.set_deployment_hosts(family)
+                func(*args, **kwargs)
+            else:
+                logging.info(f"Skipping test for specified platform")
 
         return params_wrapper
 

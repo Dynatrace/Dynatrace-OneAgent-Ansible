@@ -89,7 +89,7 @@ def test_missing_local_installer(_error_messages, runner, configurator):
 
 
 @enable_for_system_family(family="unix")
-def test_directories_contain_spaces(_error_messages, runner, configurator, installer_server_url):
+def test_directories_contain_spaces(_error_messages, runner, configurator, platforms, installer_server_url):
     logging.info("Running directories contain spaces test")
 
     logging.debug("Space in directory path - INSTALL_PATH scenario")
@@ -153,7 +153,7 @@ def test_failed_download(_error_messages, runner, configurator, installer_server
 
 # noinspection PyUnusedLocal
 @enable_for_system_family(family="unix")
-def test_failed_signature_verification(_error_messages, runner, configurator, installer_server_url):
+def test_failed_signature_verification(_error_messages, runner, configurator, platforms, installer_server_url):
     logging.info("Running failed signature verification test")
 
     set_installer_download_params(configurator, installer_server_url)
