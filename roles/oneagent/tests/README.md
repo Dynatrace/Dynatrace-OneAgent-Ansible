@@ -13,7 +13,7 @@ Upon downloading the collection
 
 ```commandline
 # Install dependencies
-$ apt-get install -y python3-venv python3-pip
+$ apt-get install -y python3-venv python3-pip sshpass
 
 # Create virtual environment
 $ python -m venv venv
@@ -23,6 +23,7 @@ $ source venv/bin/activate
 $ pip install -r roles/oneagent/tests/requirements.txt
 
 # Build and install the collection
+$ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pem -P roles/oneagent/files
 $ ansible-galaxy collection build . -vvv
 $ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
 
