@@ -1,6 +1,6 @@
 ---
 - name: Check if OneAgent is uninstalled
-  win_command: wmic product where name='{{ oneagent_service_name }}' get IdentifyingNumber
+  ansible.windows.win_command: wmic product where name='{{ oneagent_service_name }}' get IdentifyingNumber
   register: _oneagent_wmic_output
 
 - name: Search for product code
@@ -15,7 +15,7 @@
   when: _oneagent_product_code_list|length > 0
 
 - name: Uninstall OneAgent
-  win_package:
+  ansible.windows.win_package:
     product_id: "{{ _oneagent_product_code }}"
     state: absent
     log_path: "{{ oneagent_uninstall_log_path }}"

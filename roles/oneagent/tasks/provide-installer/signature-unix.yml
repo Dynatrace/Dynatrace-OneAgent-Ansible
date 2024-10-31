@@ -17,11 +17,15 @@
     url: "{{ oneagent_ca_cert_download_url }}"
     dest: "{{ oneagent_ca_cert_dest_path }}"
     mode: "0644"
+    validate_certs: "{{ oneagent_validate_certs | default(true) }}"
+  environment:
+    SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
   when: not _oneagent_ca_cert_state.stat.exists
 
 - name: Validate installer signature
   ansible.builtin.shell: >
-    ( printf "%s" "{{ oneagent_certificate_verification_header }}"; cat "{{ oneagent_installer_path }}" ) |
+    ( printf '%s\n' '{{ oneagent_certificate_verification_header }}';
+    printf '\n\n----SIGNED-INSTALLER\n'; cat "{{ oneagent_installer_path }}" ) |
     openssl cms -verify -CAfile "{{ oneagent_ca_cert_dest_path }}" > /dev/null
   no_log: true
   ignore_errors: true

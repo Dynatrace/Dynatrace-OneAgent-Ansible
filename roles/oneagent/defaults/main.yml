@@ -28,8 +28,11 @@ oneagent_preserve_installer: false
 # Set the need of rebooting machine after installation
 oneagent_reboot_host: false
 
-# Set the need of validating certs during installer download
-oneagent_validate_certs: true
+# Set the need of verifying the installer signature
+oneagent_verify_signature: true
 
 # Set the timeout for platform reboot
 oneagent_reboot_timeout: 3600
+
+# Set CA certificate download url
+oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem

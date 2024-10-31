@@ -9,4 +9,4 @@
 
 - name: Verify OneAgent installer signature
   ansible.builtin.include_tasks: provide-installer/signature-{{ oneagent_system_family }}.yml
-  when: oneagent_system_is_unix
+  when: oneagent_system_is_unix and oneagent_verify_signature

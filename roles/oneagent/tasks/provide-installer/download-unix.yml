@@ -10,10 +10,12 @@
   ansible.builtin.get_url:
     url: "{{ _oneagent_installer_url }}"
     dest: "{{ oneagent_installer_path }}"
-    validate_certs: "{{ oneagent_validate_certs | bool }}"
+    validate_certs: "{{ oneagent_validate_certs | default(true) }}"
     mode: "0755"
     headers:
       Authorization: Api-Token {{ oneagent_paas_token }}
+  environment:
+    SSL_CERT_FILE: "{{ oneagent_installer_download_cert | default(omit) }}"
   no_log: true
   ignore_errors: true
   register: _oneagent_download_result

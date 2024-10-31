@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: build-collection
-description: Builds the collection
+name: "Build collection"
+description: "Builds collection"
 
 runs:
   using: composite
   steps:
-    - name: Download certificate
+    - name: "Download certificate"
       shell: bash
       run: mkdir -p $FILES_DIR && wget https://ca.dynatrace.com/dt-root.cert.pem -P $FILES_DIR
-    - name: Build the collection
+    - name: "Build the collection"
       shell: bash
       run: ansible-galaxy collection build . -vvv
