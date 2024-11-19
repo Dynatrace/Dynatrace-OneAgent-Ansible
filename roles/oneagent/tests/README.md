@@ -27,6 +27,10 @@ $ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pe
 $ ansible-galaxy collection build . -vvv
 $ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
 
-# Run tests (eg. For linux_x86 platform)
+# Run tests (eg. For linux_x86 platform on localhost)
 $ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost"
+
+# Run tests with regular installer
+$ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --windows_x86=<IP> --tenant=https://abc123456.com --tenant_token=<TOKEN>"
+
 ```

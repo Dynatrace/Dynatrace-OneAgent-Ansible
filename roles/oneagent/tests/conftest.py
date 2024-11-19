@@ -1,12 +1,15 @@
 # PYTEST CONFIGURATION FILE
 import logging
 import pytest
+import requests
 import shutil
 import subprocess
 import sys
 import os
+import glob
 import socket
 from pathlib import Path
+from typing import Any
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 from ansible.config import AnsibleConfig
@@ -16,27 +19,21 @@ from util.test_data_types import DeploymentPlatform, PlatformCollection, Deploym
 from util.test_helpers import check_agent_state, perform_operation_on_platforms
 from util.constants.common_constants import (TEST_DIRECTORY, INSTALLERS_DIRECTORY, INSTALLER_CERTIFICATE_FILE_NAME,
                                              INSTALLER_PRIVATE_KEY_FILE_NAME, INSTALLERS_RESOURCE_DIR,
-                                             COMPONENT_TEST_BASE, SERVER_DIRECTORY, LOG_DIRECTORY, InstallerVersion)
+                                             COMPONENT_TEST_BASE, SERVER_DIRECTORY, LOG_DIRECTORY, InstallerStaticVersion)
 from util.ssl_certificate_generator import SSLCertificateGenerator
-
 
 
 USER_KEY = "user"
 PASS_KEY = "password"
+TENANT_KEY = "tenant"
+TENANT_TOKEN_KEY = "tenant_token"
+PRESERVE_INSTALLERS_KEY = "preserve_installers"
 
 RUNNER_KEY = "runner"
 WRAPPER_KEY = "wrapper"
 CONSTANTS_KEY = "constants"
 PLATFORMS_KEY = "platforms"
 CONFIGURATOR_KEY = "configurator"
-
-
-@pytest.fixture(scope="session", autouse=True)
-def create_test_directories() -> None:
-    shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
-    os.makedirs(INSTALLERS_DIRECTORY, exist_ok=True)
-    os.makedirs(SERVER_DIRECTORY, exist_ok=True)
-    os.makedirs(LOG_DIRECTORY, exist_ok=True)
 
 
 def get_file_content(path: Path) -> list[str]:
@@ -79,10 +76,7 @@ def save_file(data: list[str], path: Path) -> None:
         log.writelines(data)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def prepare_installers() -> None:
-    logging.info("Preparing installers...")
-
+def generate_installers() -> None:
     uninstall_template = get_file_content(INSTALLERS_RESOURCE_DIR / "uninstall.sh")
     uninstall_code = replace_tag(uninstall_template, "$", r"\$")
 
@@ -104,12 +98,120 @@ def prepare_installers() -> None:
     generator.generate_and_save(f"{INSTALLERS_DIRECTORY / INSTALLER_PRIVATE_KEY_FILE_NAME}",
                                 f"{INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME}")
 
-    for version in InstallerVersion:
+    # REMOVE INSTALLER VERSION
+    for version in InstallerStaticVersion:
         installer_code = replace_tag(installer_template, "##VERSION##", version.value)
         installer_code = sign_installer(installer_code)
         save_file(installer_code, INSTALLERS_DIRECTORY / f"{installer_partial_name}-{version.value}.sh")
 
-    prepend(INSTALLERS_DIRECTORY / f"{installer_partial_name}-{InstallerVersion.MALFORMED.value}.sh", "Malformed line")
+
+def is_local_deployment(platforms: PlatformCollection) -> bool:
+    return any("localhost" in hosts for _, hosts in platforms.items())
+
+
+def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
+    platforms: PlatformCollection = {}
+    deployment_platforms = [e.value for e in DeploymentPlatform]
+
+    for key, hosts in options.items():
+        if key in deployment_platforms and hosts:
+            if "localhost" in hosts:
+                logging.info(f"Local deployment detected for {key}, only this host will be used")
+                return {DeploymentPlatform.from_str(key): hosts}
+            platforms[DeploymentPlatform.from_str(key)] = hosts
+    return platforms
+
+
+def get_installers_versions_from_tenant(tenant: str, tenant_token: str, system_family: str) -> list[str]:
+    url = f"/api/v1/deployment/installer/agent/versions/{system_family}/default"
+    headers = {"accept": "application/json", "Authorization":  f"Api-Token {tenant_token}"}
+
+    resp = requests.get(tenant + url, headers=headers)
+
+    try:
+        versions = resp.json()["availableVersions"]
+        if len(versions) < 2:
+            logging.error("List of installers is too short")
+        else:
+            return [versions[0], versions[-1]]
+    except KeyError:
+        logging.error(f"Failed to get installer versions: {resp.json()}")
+    return []
+
+
+def download_and_save(path: Path, url: str, headers: dict[str, str] = {}) -> bool:
+    resp = requests.get(url, headers=headers)
+
+    if not resp.ok:
+        logging.error("Failed to download file: %s", resp.text)
+        return False
+
+    with path.open("wb") as f:
+        f.write(resp.content)
+    return True
+
+def download_signature() -> bool:
+    url = "https://ca.dynatrace.com/dt-root.cert.pem"
+    path = INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME
+    return download_and_save(path, url)
+
+
+def download_installer(tenant, tenant_token, version: str, platform: DeploymentPlatform) -> bool:
+    family = platform.family()
+    url= f"{tenant}/api/v1/deployment/installer/agent/{family}/default/version/{version}"
+    headers = {"accept": "application/octet-stream", "Authorization":  f"Api-Token {tenant_token}"}
+
+    ext = "exe" if family == "windows" else "sh"
+    path = INSTALLERS_DIRECTORY / f"Dynatrace-OneAgent-{family}_{platform.arch()}-{version}.{ext}"
+
+    return download_and_save(path, url, headers)
+
+
+def download_installers(tenant, tenant_token, platforms: PlatformCollection) -> bool:
+    for platform, _ in platforms.items():
+        versions = get_installers_versions_from_tenant(tenant, tenant_token, platform.family())
+        if not versions:
+            return False
+        for version in versions:
+            if not download_installer(tenant, tenant_token, version, platform):
+                return False
+    return True
+
+
+@pytest.fixture(scope="session", autouse=True)
+def create_test_directories(request) -> None:
+    if request.config.getoption(PRESERVE_INSTALLERS_KEY):
+        logging.info("Installers will be preserved, no installers will be generated")
+        shutil.rmtree(SERVER_DIRECTORY, ignore_errors=True)
+        shutil.rmtree(LOG_DIRECTORY, ignore_errors=True)
+        shutil.rmtree(TEST_DIRECTORY, ignore_errors=True)
+    else:
+        shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
+
+    os.makedirs(INSTALLERS_DIRECTORY, exist_ok=True)
+    os.makedirs(SERVER_DIRECTORY, exist_ok=True)
+    os.makedirs(LOG_DIRECTORY, exist_ok=True)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def prepare_installers(request) -> None:
+    logging.info("Preparing installers...")
+    tenant = request.config.getoption(TENANT_KEY)
+    tenant_token = request.config.getoption(TENANT_TOKEN_KEY)
+    preserve_installers = request.config.getoption(PRESERVE_INSTALLERS_KEY)
+    platforms = parse_platforms_from_options(vars(request.config.option))
+
+    if preserve_installers:
+        logging.info("Skipping installers preparation...")
+        return
+
+    if is_local_deployment(platforms):
+        logging.info("Generating installers...")
+        generate_installers()
+    else:
+        logging.info("Downloading installers...")
+        assert download_signature()
+        assert download_installers(tenant, tenant_token, platforms)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -162,6 +264,9 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
 def pytest_addoption(parser) -> None:
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
+    parser.addoption(f"--{TENANT_KEY}", type=str, help="Tenant URL for downloading installer", required=False)
+    parser.addoption(f"--{TENANT_TOKEN_KEY}", type=str, help="API key for downloading installer", required=False)
+    parser.addoption(f"--{PRESERVE_INSTALLERS_KEY}", type=bool, default=False, help="Preserve installers after test run", required=False)
 
     for platform in DeploymentPlatform:
         parser.addoption(
@@ -185,12 +290,7 @@ def pytest_generate_tests(metafunc) -> None:
 
     user = options[USER_KEY]
     password = options[PASS_KEY]
-
-    platforms: PlatformCollection = {}
-    deployment_platforms = [e.value for e in DeploymentPlatform]
-    for platform, hosts in options.items():
-        if platform in deployment_platforms and hosts:
-            platforms[DeploymentPlatform.from_str(platform)] = hosts
+    platforms = parse_platforms_from_options(options)
 
     wrapper = PlatformCommandWrapper(user, password)
     configurator = AnsibleConfig(user, password, platforms)
