@@ -7,22 +7,24 @@ import sys
 import os
 import socket
 from pathlib import Path
+from typing import Any
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
+from util.installer_provider import generate_installers, download_signature, download_installers
 from util.common_utils import prepare_test_dirs
 from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult
 from util.test_helpers import check_agent_state, perform_operation_on_platforms
-from util.constants.common_constants import (TEST_DIRECTORY, INSTALLERS_DIRECTORY, INSTALLER_CERTIFICATE_FILE_NAME,
-                                             INSTALLER_PRIVATE_KEY_FILE_NAME, INSTALLERS_RESOURCE_DIR,
-                                             COMPONENT_TEST_BASE, SERVER_DIRECTORY, LOG_DIRECTORY, InstallerVersion)
-from util.ssl_certificate_generator import SSLCertificateGenerator
-
+from util.constants.common_constants import (TEST_DIRECTORY, INSTALLERS_DIRECTORY, COMPONENT_TEST_BASE,
+                                             SERVER_DIRECTORY, LOG_DIRECTORY)
 
 
 USER_KEY = "user"
 PASS_KEY = "password"
+TENANT_KEY = "tenant"
+TENANT_TOKEN_KEY = "tenant_token"
+PRESERVE_INSTALLERS_KEY = "preserve_installers"
 
 RUNNER_KEY = "runner"
 WRAPPER_KEY = "wrapper"
@@ -31,85 +33,60 @@ PLATFORMS_KEY = "platforms"
 CONFIGURATOR_KEY = "configurator"
 
 
+def is_local_deployment(platforms: PlatformCollection) -> bool:
+    return any("localhost" in hosts for _, hosts in platforms.items())
+
+
+def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
+    platforms: PlatformCollection = {}
+    deployment_platforms = [e.value for e in DeploymentPlatform]
+
+    for key, hosts in options.items():
+        if key in deployment_platforms and hosts:
+            if "localhost" in hosts:
+                logging.info(f"Local deployment detected for {key}, only this host will be used")
+                return {DeploymentPlatform.from_str(key): hosts}
+            platforms[DeploymentPlatform.from_str(key)] = hosts
+    return platforms
+
+
 @pytest.fixture(scope="session", autouse=True)
-def create_test_directories() -> None:
-    shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
+def create_test_directories(request) -> None:
+    if request.config.getoption(PRESERVE_INSTALLERS_KEY):
+        logging.info("Installers will be preserved, no installers will be generated")
+        shutil.rmtree(SERVER_DIRECTORY, ignore_errors=True)
+        shutil.rmtree(LOG_DIRECTORY, ignore_errors=True)
+        shutil.rmtree(TEST_DIRECTORY, ignore_errors=True)
+    else:
+        shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
+
     os.makedirs(INSTALLERS_DIRECTORY, exist_ok=True)
     os.makedirs(SERVER_DIRECTORY, exist_ok=True)
     os.makedirs(LOG_DIRECTORY, exist_ok=True)
 
 
-def get_file_content(path: Path) -> list[str]:
-    with path.open("r") as f:
-        return f.readlines()
-
-
-def replace_tag(source: list[str], old: str, new: str) -> list[str]:
-    return [line.replace(old, new) for line in source]
-
-
-def sign_installer(installer: list[str]) -> list[str]:
-    cmd = ["openssl", "cms", "-sign",
-           "-signer", f"{INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME}",
-           "-inkey", f"{INSTALLERS_DIRECTORY / INSTALLER_PRIVATE_KEY_FILE_NAME}"]
-
-    proc = subprocess.run(cmd, input=f"{''.join(installer)}", encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    if proc.returncode != 0:
-        logging.error(f"Failed to sign installer: {proc.stdout}")
-        sys.exit(1)
-
-    signed_installer = proc.stdout.splitlines()
-    delimiter = next(l for l in signed_installer if l.startswith("----"))
-    index = signed_installer.index(delimiter)
-    signed_installer = signed_installer[index + 1:]
-
-    custom_delimiter = "----SIGNED-INSTALLER"
-    return [ f"{l}\n" if not l.startswith(delimiter) else f"{l.replace(delimiter, custom_delimiter)}\n" for l in signed_installer]
-
-
-def prepend(filename, line) -> None:
-    with open(filename, 'r+') as f:
-        content = f.read()
-        f.seek(0, 0)
-        f.write(line + '\n' + content)
-
-
-def save_file(data: list[str], path: Path) -> None:
-    with path.open("w") as log:
-        log.writelines(data)
-
-
 @pytest.fixture(scope="session", autouse=True)
-def prepare_installers() -> None:
+def prepare_installers(request) -> None:
     logging.info("Preparing installers...")
+    tenant = request.config.getoption(TENANT_KEY)
+    tenant_token = request.config.getoption(TENANT_TOKEN_KEY)
+    preserve_installers = request.config.getoption(PRESERVE_INSTALLERS_KEY)
+    platforms = parse_platforms_from_options(vars(request.config.option))
 
-    uninstall_template = get_file_content(INSTALLERS_RESOURCE_DIR / "uninstall.sh")
-    uninstall_code = replace_tag(uninstall_template, "$", r"\$")
+    if preserve_installers:
+        logging.info("Skipping installers preparation...")
+        return
 
-    oneagentctl_template = get_file_content(INSTALLERS_RESOURCE_DIR / "oneagentctl.sh")
-    oneagentctl_code = replace_tag(oneagentctl_template, "$", r"\$")
-
-    installer_partial_name = "Dynatrace-OneAgent-Linux"
-    installer_template = get_file_content(INSTALLERS_RESOURCE_DIR / f"{installer_partial_name}.sh")
-    installer_template = replace_tag(installer_template, "##UNINSTALL_CODE##", "".join(uninstall_code))
-    installer_template = replace_tag(installer_template, "##ONEAGENTCTL_CODE##", "".join(oneagentctl_code))
-
-    generator = SSLCertificateGenerator(
-        country_name="US",
-        state_name="California",
-        locality_name="San Francisco",
-        organization_name="Dynatrace",
-        common_name="127.0.0.1"
-    )
-    generator.generate_and_save(f"{INSTALLERS_DIRECTORY / INSTALLER_PRIVATE_KEY_FILE_NAME}",
-                                f"{INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME}")
-
-    for version in InstallerVersion:
-        installer_code = replace_tag(installer_template, "##VERSION##", version.value)
-        installer_code = sign_installer(installer_code)
-        save_file(installer_code, INSTALLERS_DIRECTORY / f"{installer_partial_name}-{version.value}.sh")
-
-    prepend(INSTALLERS_DIRECTORY / f"{installer_partial_name}-{InstallerVersion.MALFORMED.value}.sh", "Malformed line")
+    if is_local_deployment(platforms):
+        logging.info("Generating installers...")
+        generate_installers()
+    elif tenant and tenant_token:
+        logging.info("Downloading installers...")
+        assert download_signature()
+        assert download_installers(tenant, tenant_token, platforms)
+    else:
+        logging.error("No tenant or tenant token provided, cannot download installers")
+        sys.exit(-1)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -162,6 +139,9 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
 def pytest_addoption(parser) -> None:
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
+    parser.addoption(f"--{TENANT_KEY}", type=str, help="Tenant URL for downloading installer", required=False)
+    parser.addoption(f"--{TENANT_TOKEN_KEY}", type=str, help="API key for downloading installer", required=False)
+    parser.addoption(f"--{PRESERVE_INSTALLERS_KEY}", type=bool, default=False, help="Preserve installers after test run", required=False)
 
     for platform in DeploymentPlatform:
         parser.addoption(
@@ -185,12 +165,7 @@ def pytest_generate_tests(metafunc) -> None:
 
     user = options[USER_KEY]
     password = options[PASS_KEY]
-
-    platforms: PlatformCollection = {}
-    deployment_platforms = [e.value for e in DeploymentPlatform]
-    for platform, hosts in options.items():
-        if platform in deployment_platforms and hosts:
-            platforms[DeploymentPlatform.from_str(platform)] = hosts
+    platforms = parse_platforms_from_options(options)
 
     wrapper = PlatformCommandWrapper(user, password)
     configurator = AnsibleConfig(user, password, platforms)

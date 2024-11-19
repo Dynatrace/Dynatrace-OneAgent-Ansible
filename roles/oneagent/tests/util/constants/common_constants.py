@@ -20,8 +20,6 @@ INSTALLER_SYSTEM_NAME_TYPE_MAP = {"linux": "linux", "unix": "linux", "aix": "aix
 
 INSTALLER_SERVER_TOKEN = "abcdefghijk1234567890"
 
-
 class InstallerVersion(Enum):
     OLD = "1.199.0.20241008-150308"
-    MALFORMED = "1.259.0.20241008-150308"
     LATEST = "1.300.0.20241008-150308"
