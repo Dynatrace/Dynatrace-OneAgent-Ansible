@@ -30,7 +30,7 @@ def sign_installer(installer: list[str]) -> list[str]:
     proc = subprocess.run(cmd, input=f"{''.join(installer)}", encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     if proc.returncode != 0:
         logging.error(f"Failed to sign installer: {proc.stdout}")
-        sys.exit(1)
+        return []
 
     signed_installer = proc.stdout.splitlines()
     delimiter = next(l for l in signed_installer if l.startswith("----"))
@@ -41,7 +41,7 @@ def sign_installer(installer: list[str]) -> list[str]:
     return [f"{l}\n" if not l.startswith(delimiter) else f"{l.replace(delimiter, custom_delimiter)}\n" for l in signed_installer]
 
 
-def generate_installers() -> None:
+def generate_installers() -> bool:
     uninstall_template = get_file_content(INSTALLERS_RESOURCE_DIR / "uninstall.sh")
     uninstall_code = replace_tag(uninstall_template, "$", r"\$")
 
@@ -67,9 +67,12 @@ def generate_installers() -> None:
     for version in InstallerVersion:
         installer_code = replace_tag(installer_template, "##VERSION##", version.value)
         installer_code = sign_installer(installer_code)
-        installer = INSTALLERS_DIRECTORY / f"{installer_partial_name}-{version.value}.sh"
-        with installer.open("w") as f:
+        if not installer_code:
+            return False
+        with open(INSTALLERS_DIRECTORY / f"{installer_partial_name}-{version.value}.sh", "w") as f:
             f.writelines(installer_code)
+
+    return True
 
 
 def get_installers_versions_from_tenant(tenant: str, tenant_token: str, system_family: str) -> list[str]:
@@ -85,15 +88,15 @@ def get_installers_versions_from_tenant(tenant: str, tenant_token: str, system_f
         else:
             return [versions[0], versions[-1]]
     except KeyError:
-        logging.error(f"Failed to get installer versions: {resp.content}")
+        logging.error(f"Failed to get list of installer versions: {resp.content}")
     return []
 
 
-def download_and_save(path: Path, url: str, headers: dict[str, str] = {}) -> bool:
+def download_and_save(path: Path, url: str, headers: dict[str, str]) -> bool:
     resp = requests.get(url, headers=headers)
 
     if not resp.ok:
-        logging.error("Failed to download file: %s", resp.text)
+        logging.error(f"Failed to download file {path}: {resp.text}")
         return False
 
     with path.open("wb") as f:
@@ -104,7 +107,7 @@ def download_and_save(path: Path, url: str, headers: dict[str, str] = {}) -> boo
 def download_signature() -> bool:
     url = "https://ca.dynatrace.com/dt-root.cert.pem"
     path = INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME
-    return download_and_save(path, url)
+    return download_and_save(path, url, {})
 
 
 def download_installer(tenant, tenant_token, version: str, platform: DeploymentPlatform) -> bool:

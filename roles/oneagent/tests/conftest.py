@@ -79,14 +79,14 @@ def prepare_installers(request) -> None:
 
     if is_local_deployment(platforms):
         logging.info("Generating installers...")
-        generate_installers()
+        if not generate_installers():
+            pytest.exit("Generating installers failed")
     elif tenant and tenant_token:
-        logging.info("Downloading installers...")
-        assert download_signature()
-        assert download_installers(tenant, tenant_token, platforms)
+        logging.info("Downloading installers and signature...")
+        if not download_signature() or not download_installers(tenant, tenant_token, platforms):
+            pytest.exit("Downloading installers and signature failed")
     else:
-        logging.error("No tenant or tenant token provided, cannot download installers")
-        sys.exit(-1)
+        pytest.exit("No tenant or tenant token provided, cannot download installers")
 
 
 @pytest.fixture(scope="session", autouse=True)
