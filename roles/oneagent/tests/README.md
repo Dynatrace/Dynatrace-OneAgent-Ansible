@@ -1,12 +1,24 @@
 # Component tests
 The tests support two types of deployment:
 - local  - the tests are run on the same Unix machine as main node;
-- remote - the tests are run on a remote Windows machine;
+- remote - the tests are run on a remote Windows (Unix is not supported at the moment) machine;
 Currently, there is no option to mix these two types of deployment and the tests must be run for one platform at a time.
+
+## Remote deployment
+For remote deployment, regular OneAgent installers are used, which are downloaded from the Dynatrace environment during
+the tests. To use this type of deployment, the following parameters must be provided:
+- `--user` - username for the remote machine;
+- `--password` - password for the remote machine;
+- `--tenant` - The environment URL from which the installer will be downloaded, in form of `https://abc123456.com`;
+- `--tenant_token` - Token for downloading the installer, generated in Deployment UI;
+- `--windows_x86=<IP>` - IP address of the remote Windows machine;
+Failing to provide any of these parameters will result in failure.
+
+## Local deployment
 For local deployment, the tests are using mocked version of the OneAgent installer, which simulates its basic behavior -
 returning version, deploying `uninstall.sh` script and creating `oneagentctl`, used for configuring installation.
-For remote deployment, regular OneAgent installers are used, which are downloaded from the Dynatrace environment during
-the tests.
+To use this type of deployment, the only required parameter is `--linux_x86=localhost`. In case, multiple platforms for
+local deployment are specified or any other platforms is used along with local one, only the first local platform is used.
 
 ## Requirements
 - Python 3.10+
@@ -32,7 +44,7 @@ $ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pe
 $ ansible-galaxy collection build . -vvv
 $ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
 
-# Run tests for linux_x86 platform on local machine
+# Run tests for any platform (except from Windows) on local machine
 $ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost"
 
 # Run tests with regular installer on remote Windows machine
