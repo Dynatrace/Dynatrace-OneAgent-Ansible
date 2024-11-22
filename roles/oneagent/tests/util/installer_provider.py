@@ -103,8 +103,7 @@ def download_and_save(path: Path, url: str, headers: dict[str, str]) -> bool:
     return True
 
 
-def download_signature() -> bool:
-    url = "https://ca.dynatrace.com/dt-root.cert.pem"
+def download_signature(url: str) -> bool:
     path = INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME
     return download_and_save(path, url, {})
 

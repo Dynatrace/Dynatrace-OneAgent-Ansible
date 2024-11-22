@@ -20,11 +20,15 @@ from util.constants.common_constants import (TEST_DIRECTORY, INSTALLERS_DIRECTOR
                                              SERVER_DIRECTORY, LOG_DIRECTORY)
 
 
+# Command line options
 USER_KEY = "user"
 PASS_KEY = "password"
 TENANT_KEY = "tenant"
 TENANT_TOKEN_KEY = "tenant_token"
 PRESERVE_INSTALLERS_KEY = "preserve_installers"
+
+# Ini file configuration
+CA_CERT_URL_KEY = "dynatrace_ca_cert_url"
 
 RUNNER_KEY = "runner"
 WRAPPER_KEY = "wrapper"
@@ -73,6 +77,8 @@ def prepare_installers(request) -> None:
     preserve_installers = request.config.getoption(PRESERVE_INSTALLERS_KEY)
     platforms = parse_platforms_from_options(vars(request.config.option))
 
+    cert_url = request.config.getini(CA_CERT_URL_KEY)
+
     if preserve_installers:
         logging.info("Skipping installers preparation...")
         return
@@ -83,7 +89,7 @@ def prepare_installers(request) -> None:
             pytest.exit("Generating installers failed")
     elif tenant and tenant_token:
         logging.info("Downloading installers and signature...")
-        if not download_signature() or not download_installers(tenant, tenant_token, platforms):
+        if not download_signature(cert_url) or not download_installers(tenant, tenant_token, platforms):
             pytest.exit("Downloading installers and signature failed")
     else:
         pytest.exit("No tenant or tenant token provided, cannot download installers")
@@ -137,6 +143,8 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
 
 
 def pytest_addoption(parser) -> None:
+    parser.addini(CA_CERT_URL_KEY, "Url to CA certificate for downloading installers")
+
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
     parser.addoption(f"--{TENANT_KEY}", type=str, help="Tenant URL for downloading installer", required=False)
