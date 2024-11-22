@@ -46,6 +46,8 @@ def perform_operation_on_platforms(platforms: PlatformCollection, operation: Cal
 def set_ca_cert_download_params(config: AnsibleConfig, installer_server_url: str) -> None:
     config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{installer_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
+    config.set_common_parameter(config.FORCE_CERT_DOWNLOAD_KEY, True)
+
 
 def set_installer_download_params(config: AnsibleConfig, installer_server_url: str) -> None:
     config.set_common_parameter(config.ENVIRONMENT_URL_KEY, installer_server_url)

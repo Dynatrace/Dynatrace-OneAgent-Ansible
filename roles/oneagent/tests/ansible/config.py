@@ -28,6 +28,7 @@ def _prepare_collection() -> None:
     shutil.rmtree(TEST_COLLECTIONS_DIR, ignore_errors=True)
     shutil.copytree(INSTALLED_COLLECTIONS_DIR, TEST_COLLECTIONS_DIR)
 
+
 def _prepare_playbook_file() -> None:
     shutil.copy(
         str(ANSIBLE_RESOURCE_DIR / PLAYBOOK_TEMPLATE_FILE_NAME), str(TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME)
@@ -71,11 +72,13 @@ class AnsibleConfig:
     VERIFY_SIGNATURE_KEY = "oneagent_verify_signature"
     INSTALLER_VERSION_KEY = "oneagent_version"
     PRESERVE_INSTALLER_KEY = "oneagent_preserve_installer"
-    CA_CERT_DOWNLOAD_URL_KEY = "oneagent_ca_cert_download_url"
-    CA_CERT_DOWNLOAD_CERT_KEY = "oneagent_ca_cert_download_cert"
+
     # Internal parameters
+    FORCE_CERT_DOWNLOAD_KEY = "oneagent_force_cert_download"
+    CA_CERT_DOWNLOAD_CERT_KEY = "oneagent_ca_cert_download_cert"
     VALIDATE_DOWNLOAD_CERTS_KEY = "oneagent_validate_certs"
     INSTALLER_DOWNLOAD_CERT_KEY = "oneagent_installer_download_cert"
+    CA_CERT_DOWNLOAD_URL_KEY = "oneagent_ca_cert_download_url"
 
     # Platform-specific
     DOWNLOAD_DIR_KEY = "oneagent_download_dir"

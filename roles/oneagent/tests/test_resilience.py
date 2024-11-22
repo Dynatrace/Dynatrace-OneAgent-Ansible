@@ -156,6 +156,7 @@ def test_failed_signature_verification(_error_messages, runner, configurator, pl
     logging.info("Running failed signature verification test")
 
     set_installer_download_params(configurator, installer_server_url)
+    configurator.set_common_parameter(configurator.FORCE_CERT_DOWNLOAD_KEY, False)
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
 
     with TEST_SIGNATURE_FILE.open("w") as signature:
