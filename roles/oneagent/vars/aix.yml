@@ -17,7 +17,7 @@ oneagent_ctl_bin_path: "{{ oneagent_install_path }}/agent/tools/oneagentctl"
 oneagent_install_cmd: sh {{ oneagent_installer_path }}
 oneagent_uninstall_cmd: sh {{ oneagent_install_path }}/agent/uninstall.sh
 
-oneagent_ca_cert_src_path: files/dt-root.cert.pem
+oneagent_ca_cert_src_path: "{{ role_path }}/files/dt-root.cert.pem"
 oneagent_ca_cert_dest_path: "{{ oneagent_download_path }}/dt-root.cert.pem"
 oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem
 oneagent_certificate_verification_header: >
