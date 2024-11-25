@@ -114,6 +114,3 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
 
     logging.info("Check if installer args were passed correctly")
     perform_operation_on_platforms(platforms, _check_install_args, wrapper, TECH_NAME)
-
-
-

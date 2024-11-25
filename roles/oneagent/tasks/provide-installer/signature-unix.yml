@@ -10,7 +10,7 @@
     src: "{{ oneagent_ca_cert_src_path }}"
     dest: "{{ oneagent_ca_cert_dest_path }}"
     mode: "0644"
-  when: _oneagent_ca_cert_state.stat.exists
+  when: not (oneagent_force_cert_download | default(true)) and _oneagent_ca_cert_state.stat.exists
 
 - name: Download CA certificate
   ansible.builtin.get_url:
@@ -20,7 +20,7 @@
     validate_certs: "{{ oneagent_validate_certs | default(true) }}"
   environment:
     SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
-  when: not _oneagent_ca_cert_state.stat.exists
+  when: oneagent_force_cert_download | default(true) or not _oneagent_ca_cert_state.stat.exists
 
 - name: Validate installer signature
   ansible.builtin.shell: >
