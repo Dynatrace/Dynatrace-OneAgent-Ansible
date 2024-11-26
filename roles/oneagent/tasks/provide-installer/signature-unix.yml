@@ -21,6 +21,7 @@
   environment:
     SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
   when: oneagent_force_cert_download | default(true) or not _oneagent_ca_cert_state.stat.exists
+  changed_when: false
 
 - name: Validate installer signature
   ansible.builtin.shell: >
