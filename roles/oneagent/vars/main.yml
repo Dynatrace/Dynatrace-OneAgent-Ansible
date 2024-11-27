@@ -3,6 +3,8 @@ oneagent_script_version: 1.2.0
 oneagent_minimal_install_version: "1.199"
 oneagent_minimal_reporting_version: "1.203"
 
+oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem
+
 oneagent_system_name: "{{ ansible_system | lower }}"
 oneagent_system_is_unix: "{{ oneagent_system_name in ['aix', 'linux'] }}"
 oneagent_system_is_windows: "{{ oneagent_system_name == 'win32nt' }}"
