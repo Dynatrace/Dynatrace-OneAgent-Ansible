@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - Added parameter `oneagent_verify_signature` controlling signature verification step
 - Removed `oneagent_validate_certs` parameter
 - Fixed problem with `dt-root.cert.pem` not being copied to the target host
-- Added ability for downloading installer's certificate if certificate is not embedded in the collection
+- Added ability for downloading installer's certificate if the certificate is not embedded in the collection
 
 ## [1.1.0] - 2021-10-06
 
