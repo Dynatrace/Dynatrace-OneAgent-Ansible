@@ -32,7 +32,6 @@ uses provided installation parameters and runs `oneagentctl` with them, skipping
 - In case no `environment_url`, `paas_token` and `local_installer` parameters are provided, 
 the script runs `oneagentctl` with provided parameters directly.
 
-Script does not supply `--restart-service` option to `oneagentctl` by itself.
 For full list of suitable parameters, see [OneAgent configuration via command-line interface].
 
 ## Variables
