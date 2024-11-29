@@ -27,6 +27,8 @@ jobs:
           fetch-depth: 0
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
+      - name: Verify version
+        uses: ./.github/actions/verify-version
       - name: Set up environment
         uses: ./.github/actions/setup-build-environment
       - name: Build the collection

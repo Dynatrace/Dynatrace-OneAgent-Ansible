@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Update version"
-description: "Updates version"
+name: "Verify version"
+description: "Verifies version in galaxy.yml and <role_dir>/vars/main against latest tag"
 
 runs:
   using: composite
@@ -22,28 +22,24 @@ runs:
       shell: bash
       run: printf "LATEST_TAG=%s\n" "$(git describe --tags --abbrev=0 --always)" >> $GITHUB_ENV
 
-    - name: "Extract version"
+    - name: "Extract version from tag"
       shell: bash
       run: |
         latestTag="${{ env.LATEST_TAG }}"
         printf "LATEST_VERSION=%s\n" "${latestTag#v}" >> $GITHUB_ENV
 
-    - name: "Update galaxy.yml version"
+    - name: "Verify galaxy.yml version"
       shell: bash
       run: |
         latestVersion="${{ env.LATEST_VERSION }}"
-        sed -i "s/version: .*/version: ${latestVersion}/" galaxy.yml
-    
-    - name: "Configure git"
+        galaxyVersion="$(sed -n "s/version: \(.*\)/\1/p" galaxy.yml)"
+        printf "Latest version: %s, galaxy version: %s" "${latestVersion}" "${galaxyVersion}"
+        [ "${latestVersion}" = "${galaxyVersion}" ]
+
+    - name: "Verify vars/main.yml version"
       shell: bash
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-    
-    - name: "Commit and push changes"
-      shell: bash
-      run: |
-        git checkout master
-        git add galaxy.yml
-        git commit -m "Update galaxy.yaml version to ${{ env.LATEST_VERSION }}"
-        git push origin master
+        latestVersion="${{ env.LATEST_VERSION }}"
+        roleVersion="$(sed -n "s/oneagent_script_version: \(.*\)/\1/p" roles/oneagent/vars/main.yml)"
+        printf "Latest version: %s, role version: %s" "${latestVersion}" "${roleVersion}"
+        [ "${latestVersion}" = "${roleVersion}" ]
