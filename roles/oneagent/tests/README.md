@@ -31,7 +31,7 @@ local deployment are specified or any other platforms is used along with local o
 
 Upon downloading the collection
 
-```commandline
+```console
 # Install dependencies
 $ apt-get install -y python3-venv python3-pip sshpass
 
@@ -52,7 +52,7 @@ $ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -v
 
 Running tests with regular manner requires one of the following commands:
 
-```commandline
+```console
 # Run tests for any platform (except from Windows) on local machine
 $ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost"
 
@@ -68,7 +68,7 @@ Also, the installers certificate must be downloaded for successful run. </br>
 To run tests in this mode, download 2 versions of installers you want along with the certificate and place them in 
 `test_dir/installers` directory. Then, you can run the tests.
 
-```commandline
+```console
 # Create directory `test_dir/installers` and place the installers and certificate in it
 $ mkdir -p test_dir/installers
 $ cp /path/and/name/of/both/installers test_dir/installers
