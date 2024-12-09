@@ -1,31 +1,75 @@
-# Dynatrace OneAgent collection
-In its current state, the collection consists of a single role that deploys Dynatrace OneAgent on Linux and Windows operating systems using dedicated configuration and ensures the OneAgent service maintains a running state.
+# Dynatrace OneAgent Ansible collection
+
+Ansible collection for deploying Dynatrace OneAgent.
+
+## Description
+
+Dynatrace OneAgent is responsible for collecting all monitoring data within your monitored environment. A single
+OneAgent per host is required to collect all relevant monitoring data—even if your hosts are deployed within Docker
+containers, microservices architectures, or cloud-based infrastructure. This collection consists of a single role that
+deploys Dynatrace OneAgent on Linux and Windows operating systems using dedicated configuration and ensures the OneAgent
+service maintains a running state.
 
 ## Requirements
-### General
+
 * Ansible >= 2.15.0
-### Windows
-* pywinrm >= 0.4.1
-
-## Setup
-`pip install -r requirements.txt`
-
-## Build
-`ansible-galaxy collection build .`
+* pywinrm >= 0.4.1 (Windows only)
 
 ## Installation
-To install the latest stable release of the collection on your system, call:
 
-`ansible-galaxy collection install dynatrace.oneagent`
+Before using this collection, you need to install it with the Ansible Galaxy command-line tool:
 
-To install the locally built collection on your system, call:
+```
+ansible-galaxy collection install dynatrace.oneagent
+```
 
-`ansible-galaxy collection install dynatrace-oneagent-<version>.tar.gz`
+You can also include it in a requirements.yml file and install it with ansible-galaxy collection install -r
+requirements.yml, using the format:
 
-## License
-Licensed under the MIT License.
+```yaml
+collections:
+  - name: dynatrace.oneagent
+```
+
+Note that if you install any collections from Ansible Galaxy, they will not be upgraded automatically when you upgrade
+the Ansible package.
+To upgrade the collection to the latest available version, run the following command:
+
+```
+ansible-galaxy collection install dynatrace.oneagent --upgrade
+```
+
+You can also install a specific version of the collection, for example, if you need to downgrade when something is
+broken in the latest version (please report an issue in this repository). Use the following syntax to install version
+1.0.0:
+
+```
+ansible-galaxy collection install dynatrace.oneagent:==1.0.0
+```
+
+See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more
+details.
+
+## Use Cases
+
+See [OneAgent role README](roles/oneagent/README.md) for more details.
+
+## Testing
+
+See [OneAgent role tests README](roles/oneagent/tests/README.md) for more details.
 
 ## Support
-In case of difficulties, contact our [SUPPORT].
 
-[SUPPORT]: https://www.dynatrace.com/support/contact-support/
+You can submit a support request [here](https://www.dynatrace.com/support/contact-support).
+
+## Release Notes and Roadmap
+
+For release notes see [CHANGELOG](CHANGELOG.md).
+
+## Related Information
+
+See more on https://docs.dynatrace.com/docs/shortlink/oneagent-ansible.
+
+## License Information
+
+This Ansible collection is published under Apache 2.0 license. See [LICENSE](LICENSE) for more details.
