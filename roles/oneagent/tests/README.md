@@ -65,6 +65,10 @@ There is also an option to run tests with placed-in installers using `--preserve
 In this mode, the test environment won't be fully cleaned. It requires that both installers differs in version and have 
 the naming schema from tenant, e.g. `Dynatrace-OneAgent-Linux-1.301.0.sh`, `Dynatrace-OneAgent-Linux-arm-1.302.0.sh`.
 Also, the installers certificate must be downloaded for successful run. </br>
+You can refer to [this documentation](https://docs.dynatrace.com/docs/shortlink/api-deployment-get-versions) on how to
+list available installers.
+For downloading the specific version of the OneAgent, visit
+[this documentation](https://docs.dynatrace.com/docs/shortlink/api-deployment-get-oneagent-version). </br>
 To run tests in this mode, download 2 versions of installers you want along with the certificate and place them in 
 `test_dir/installers` directory. Then, you can run the tests.
 
