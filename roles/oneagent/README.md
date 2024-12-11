@@ -81,11 +81,6 @@ There are several ways to achieve that using ansible's configuration setting:
 The verbosity of the logs can be controlled with the command line option `-v`.
 Repeating the option multiple times gets maximal verbosity up to the connection debugging level: `-vvvv`.
 
-## Support
-
-In case of difficulties, contact our [SUPPORT].
-
-[SUPPORT]: https://www.dynatrace.com/support/contact-support/
 [PaaS token]: https://www.dynatrace.com/support/help/shortlink/token#paas-token-
 [Deployment API]: https://www.dynatrace.com/support/help/shortlink/api-deployment
 [Deployment API - GET available versions of OneAgent]: https://www.dynatrace.com/support/help/shortlink/api-deployment-get-versions
