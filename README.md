@@ -4,11 +4,8 @@ Ansible collection for deploying Dynatrace OneAgent.
 
 ## Description
 
-Dynatrace OneAgent is responsible for collecting all monitoring data within your monitored environment. A single
-OneAgent per host is required to collect all relevant monitoring data—even if your hosts are deployed within Docker
-containers, microservices architectures, or cloud-based infrastructure. This collection consists of a single role that
-deploys Dynatrace OneAgent on Linux and Windows operating systems using dedicated configuration and ensures the OneAgent
-service maintains a running state.
+The Dynatrace OneAgent Ansible collection is a collection consisting of a single role that handles the installation and
+configuration of OneAgent and ensures the OneAgent service remains in a running state.
 
 ## Requirements
 
