@@ -16,8 +16,12 @@ from util.installer_provider import generate_installers, download_signature, dow
 from util.common_utils import prepare_test_dirs
 from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult
 from util.test_helpers import check_agent_state, perform_operation_on_platforms
-from util.constants.common_constants import (TEST_DIRECTORY, INSTALLERS_DIRECTORY, COMPONENT_TEST_BASE,
-                                             SERVER_DIRECTORY, LOG_DIRECTORY)
+from util.constants.common_constants import (
+    TEST_DIRECTORY,
+    INSTALLERS_DIRECTORY,
+    COMPONENT_TEST_BASE,
+    SERVER_DIRECTORY,
+    LOG_DIRECTORY)
 
 
 # Command line options
@@ -41,14 +45,16 @@ def is_local_deployment(platforms: PlatformCollection) -> bool:
     return any("localhost" in hosts for _, hosts in platforms.items())
 
 
-def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
+def parse_platforms_from_options(
+        options: dict[str, Any]) -> PlatformCollection:
     platforms: PlatformCollection = {}
     deployment_platforms = [e.value for e in DeploymentPlatform]
 
     for key, hosts in options.items():
         if key in deployment_platforms and hosts:
             if "localhost" in hosts:
-                logging.info(f"Local deployment detected for {key}, only this host will be used")
+                logging.info(
+                    f"Local deployment detected for {key}, only this host will be used")
                 return {DeploymentPlatform.from_str(key): hosts}
             platforms[DeploymentPlatform.from_str(key)] = hosts
     return platforms
@@ -57,7 +63,8 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
 @pytest.fixture(scope="session", autouse=True)
 def create_test_directories(request) -> None:
     if request.config.getoption(PRESERVE_INSTALLERS_KEY):
-        logging.info("Installers will be preserved, no installers will be generated")
+        logging.info(
+            "Installers will be preserved, no installers will be generated")
         shutil.rmtree(SERVER_DIRECTORY, ignore_errors=True)
         shutil.rmtree(LOG_DIRECTORY, ignore_errors=True)
         shutil.rmtree(TEST_DIRECTORY, ignore_errors=True)
@@ -89,10 +96,12 @@ def prepare_installers(request) -> None:
             pytest.exit("Generating installers failed")
     elif tenant and tenant_token:
         logging.info("Downloading installers and signature...")
-        if not download_signature(cert_url) or not download_installers(tenant, tenant_token, platforms):
+        if not download_signature(cert_url) or not download_installers(
+                tenant, tenant_token, platforms):
             pytest.exit("Downloading installers and signature failed")
     else:
-        pytest.exit("No tenant or tenant token provided, cannot download installers")
+        pytest.exit(
+            "No tenant or tenant token provided, cannot download installers")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -103,7 +112,13 @@ def installer_server_url(request) -> None:
 
     logging.info(f"Running server on {url}...")
 
-    proc = subprocess.Popen([sys.executable, "-m", "server", "--port", f"{port}", "--ip-address", ip_address],
+    proc = subprocess.Popen([sys.executable,
+                             "-m",
+                             "server",
+                             "--port",
+                             f"{port}",
+                             "--ip-address",
+                             ip_address],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
                             encoding="utf-8",
@@ -130,12 +145,15 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
 
     logging.info("Check if agent is uninstalled")
-    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
+    perform_operation_on_platforms(
+        platforms, check_agent_state, wrapper, False)
 
     results: DeploymentResult = runner.run_deployment()
     for result in results:
         if result.returncode != 0:
-            logging.error("Failed to clean up environment, output: %s", result.stdout)
+            logging.error(
+                "Failed to clean up environment, output: %s",
+                result.stdout)
 
     shutil.rmtree("/var/lib/dynatrace", ignore_errors=True)
 
@@ -143,18 +161,43 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
 
 
 def pytest_addoption(parser) -> None:
-    parser.addini(CA_CERT_URL_KEY, "Url to CA certificate for downloading installers")
+    parser.addini(
+        CA_CERT_URL_KEY,
+        "Url to CA certificate for downloading installers")
 
-    parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
-    parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
-    parser.addoption(f"--{TENANT_KEY}", type=str, help="Tenant URL for downloading installer", required=False)
-    parser.addoption(f"--{TENANT_TOKEN_KEY}", type=str, help="API key for downloading installer", required=False)
-    parser.addoption(f"--{PRESERVE_INSTALLERS_KEY}", type=bool, default=False, help="Preserve installers after test run", required=False)
+    parser.addoption(
+        f"--{USER_KEY}",
+        type=str,
+        help="Name of the user",
+        required=False)
+    parser.addoption(
+        f"--{PASS_KEY}",
+        type=str,
+        help="Password of the user",
+        required=False)
+    parser.addoption(
+        f"--{TENANT_KEY}",
+        type=str,
+        help="Tenant URL for downloading installer",
+        required=False)
+    parser.addoption(
+        f"--{TENANT_TOKEN_KEY}",
+        type=str,
+        help="API key for downloading installer",
+        required=False)
+    parser.addoption(
+        f"--{PRESERVE_INSTALLERS_KEY}",
+        type=bool,
+        default=False,
+        help="Preserve installers after test run",
+        required=False)
 
     for platform in DeploymentPlatform:
-        parser.addoption(
-            f"--{platform.value}", type=str, nargs="+", default=[], help="List of IPs for specified platform"
-        )
+        parser.addoption(f"--{platform.value}",
+                         type=str,
+                         nargs="+",
+                         default=[],
+                         help="List of IPs for specified platform")
 
 
 def pytest_configure() -> None:

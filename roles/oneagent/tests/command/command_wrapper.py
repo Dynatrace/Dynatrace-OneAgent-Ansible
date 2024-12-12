@@ -22,5 +22,9 @@ class CommandWrapper:
         raise NotImplementedError
 
     @abstractmethod
-    def run_command(self, address: str, command: str, *args: str) -> CommandResult:
+    def run_command(
+            self,
+            address: str,
+            command: str,
+            *args: str) -> CommandResult:
         raise NotImplementedError

@@ -30,17 +30,18 @@ def _prepare_collection() -> None:
 
 
 def _prepare_playbook_file() -> None:
-    shutil.copy(
-        str(ANSIBLE_RESOURCE_DIR / PLAYBOOK_TEMPLATE_FILE_NAME), str(TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME)
-    )
+    shutil.copy(str(ANSIBLE_RESOURCE_DIR / PLAYBOOK_TEMPLATE_FILE_NAME),
+                str(TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME))
 
 
 def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
     host_file = TEST_DIRECTORY / HOSTS_TEMPLATE_FILE_NAME
-    shutil.copy(str(ANSIBLE_RESOURCE_DIR / HOSTS_TEMPLATE_FILE_NAME), str(host_file))
+    shutil.copy(str(ANSIBLE_RESOURCE_DIR /
+                    HOSTS_TEMPLATE_FILE_NAME), str(host_file))
     data = read_yaml_file(INVENTORY_FILE)
     for platform, hosts in platforms.items():
-        group_data = data["all"]["children"][platform.family()]["children"][platform.value]
+        group_data = data["all"]["children"][platform.family()
+                                             ]["children"][platform.value]
         group_data["hosts"] = {k: None for k in hosts}
         group_data["vars"][ANSIBLE_USER_KEY] = user
         # TODO: Add condition to fail test if localhost is used with multiple platforms
@@ -53,7 +54,8 @@ def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
 
 def _prepare_credentials_file(user: str, password: str) -> None:
     credentials_file = TEST_DIRECTORY / CREDENTIALS_FILE_NAME
-    shutil.copy(str(ANSIBLE_RESOURCE_DIR / CREDENTIALS_FILE_NAME), str(credentials_file))
+    shutil.copy(str(ANSIBLE_RESOURCE_DIR / CREDENTIALS_FILE_NAME),
+                str(credentials_file))
     data = read_yaml_file(credentials_file)
     data[ANSIBLE_USER_KEY] = user
     data[ANSIBLE_PASS_KEY] = password
@@ -86,7 +88,8 @@ class AnsibleConfig:
     INSTALLER_ARCH_KEY = "oneagent_installer_arch"
     INSTALLER_PLATFORM_ARGS_KEY = "oneagent_platform_install_args"
 
-    def __init__(self, user: str, password: str, platforms: PlatformCollection):
+    def __init__(self, user: str, password: str,
+                 platforms: PlatformCollection):
         self.user = user
         self.password = password
         self.platforms = platforms
@@ -102,9 +105,14 @@ class AnsibleConfig:
         data[0][AnsibleConfig.PARAM_SECTION_KEY][key] = value
         write_yaml_file(PLAYBOOK_FILE, data)
 
-    def set_platform_parameter(self, platform: DeploymentPlatform, key: str, value: Any) -> None:
+    def set_platform_parameter(
+            self,
+            platform: DeploymentPlatform,
+            key: str,
+            value: Any) -> None:
         data = read_yaml_file(INVENTORY_FILE)
-        group_data = data["all"]["children"][platform.family()]["children"][platform.value]
+        group_data = data["all"]["children"][platform.family()
+                                             ]["children"][platform.value]
         group_data[self.PARAM_SECTION_KEY][key] = value
         write_yaml_file(INVENTORY_FILE, data)
 
@@ -119,6 +127,7 @@ class AnsibleConfig:
         write_yaml_file(PLAYBOOK_FILE, data)
         data = read_yaml_file(INVENTORY_FILE)
         for platform in DeploymentPlatform:
-            group_data = data["all"]["children"][platform.family()]["children"][platform.value]
+            group_data = data["all"]["children"][platform.family(
+            )]["children"][platform.value]
             group_data[self.PARAM_SECTION_KEY] = {}
         write_yaml_file(INVENTORY_FILE, data)
