@@ -28,7 +28,10 @@ def prepare_test_dirs() -> None:
 def remove_if_exists(path: Path) -> None:
     if path.exists():
         try:
-            shutil.rmtree(str(path)) if os.path.isdir(str(path)) else os.remove(str(path))
+            shutil.rmtree(
+                str(path)) if os.path.isdir(
+                str(path)) else os.remove(
+                str(path))
         except OSError as os_error:
             logging.error("Failed to remove %s: %s", path, os_error)
 
@@ -45,10 +48,16 @@ def write_yaml_file(file: Path, data: ParsedYaml) -> None:
 
 
 def get_oneagentctl_path(platform: DeploymentPlatform) -> Path:
-    return get_platform_argument(platform, UNIX_ONEAGENTCTL_PATH, WINDOWS_ONEAGENTCTL_PATH)
+    return get_platform_argument(
+        platform,
+        UNIX_ONEAGENTCTL_PATH,
+        WINDOWS_ONEAGENTCTL_PATH)
 
 
-def get_platform_argument(platform: DeploymentPlatform, unix_arg: Any, windows_arg: Any) -> Any:
+def get_platform_argument(
+        platform: DeploymentPlatform,
+        unix_arg: Any,
+        windows_arg: Any) -> Any:
     return windows_arg if platform == DeploymentPlatform.WINDOWS_X86 else unix_arg
 
 
@@ -58,32 +67,42 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
         if platform.arch() in name and platform.system() in name:
             return platform
 
-    # Special handling for Linux_x86 and Windows as the installer does not contain architecture in its name
+    # Special handling for Linux_x86 and Windows as the installer does not
+    # contain architecture in its name
     if DeploymentPlatform.WINDOWS_X86.system() in name:
         return DeploymentPlatform.WINDOWS_X86
     return DeploymentPlatform.LINUX_X86
 
 
 def _get_available_installers() -> dict[DeploymentPlatform, list[Path]]:
-    installers: dict[DeploymentPlatform, list[Path]] = {k: [] for k in DeploymentPlatform}
-    for installer in sorted(INSTALLERS_DIRECTORY.glob(f"{INSTALLER_PARTIAL_NAME}*")):
+    installers: dict[DeploymentPlatform, list[Path]] = {
+        k: [] for k in DeploymentPlatform}
+    for installer in sorted(
+            INSTALLERS_DIRECTORY.glob(
+            f"{INSTALLER_PARTIAL_NAME}*")):
         platform = _get_platform_by_installer(installer)
         installers[platform].append(installer)
     return installers
 
 
-def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> list[Path | str]:
+def get_installers(system: str, arch: str, version: str = "",
+                   include_paths: bool = False) -> list[Path | str]:
     try:
-        # Special handling for mocking server behavior as URL for Linux installers contains "unix" instead of linux
+        # Special handling for mocking server behavior as URL for Linux
+        # installers contains "unix" instead of linux
         system = INSTALLER_SYSTEM_NAME_TYPE_MAP[system]
-        platform_installers = _get_available_installers()[DeploymentPlatform.from_system_and_arch(system, arch)]
-        installers = platform_installers if include_paths else [ins.name for ins in platform_installers]
+        platform_installers = _get_available_installers(
+        )[DeploymentPlatform.from_system_and_arch(system, arch)]
+        installers = platform_installers if include_paths else [
+            ins.name for ins in platform_installers]
         if not version:
             return installers
         if version == "latest":
             return [installers[-1]]
-        return [installer for installer in installers if version in str(installer)]
+        return [
+            installer for installer in installers if version in str(installer)]
 
     except Exception as ex:
-        logging.error(f"Failed to get installer for {system}_{arch} in {version} version: {ex}")
+        logging.error(
+            f"Failed to get installer for {system}_{arch} in {version} version: {ex}")
         return []
