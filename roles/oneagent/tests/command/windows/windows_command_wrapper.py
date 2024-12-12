@@ -15,12 +15,15 @@ class WindowsCommandWrapper(CommandWrapper):
     def file_exists(self, address: str, file: Path) -> CommandResult:
         # Windows needs double quoting for passing paths containing
         # containing spaces, single quotes don't work
-        return self.executor.execute(address, f'if exist "{file}" (exit 0) else (exit 1)')
+        return self.executor.execute(
+            address, f'if exist "{file}" (exit 0) else (exit 1)')
 
     def directory_exists(self, address: str, directory: Path) -> CommandResult:
-        return self.executor.execute(address, f'if exist "{directory}\\*" (exit 0) else (exit 1)')
+        return self.executor.execute(
+            address, f'if exist "{directory}\\*" (exit 0) else (exit 1)')
 
-    def _run_directory_creation_command(self, address: str, directory: Path) -> CommandResult:
+    def _run_directory_creation_command(
+            self, address: str, directory: Path) -> CommandResult:
         result = CommandResult(0, "", "")
         if self.directory_exists(address, directory).returncode == 1:
             result = self.executor.execute(address, "md", str(directory))
@@ -33,5 +36,9 @@ class WindowsCommandWrapper(CommandWrapper):
                 return result
         return self._run_directory_creation_command(address, directory)
 
-    def run_command(self, address: str, command: str, *args: str) -> CommandResult:
+    def run_command(
+            self,
+            address: str,
+            command: str,
+            *args: str) -> CommandResult:
         return self.executor.execute(address, f'"{command}"', *args)
