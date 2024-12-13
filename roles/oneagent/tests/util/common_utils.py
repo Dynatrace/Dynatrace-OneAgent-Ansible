@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 import yaml
 
@@ -74,7 +74,7 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
     return DeploymentPlatform.LINUX_X86
 
 
-def _get_available_installers() -> dict[DeploymentPlatform, list[Path]]:
+def _get_available_installers() -> Dict[DeploymentPlatform, list[Path]]:
     installers: dict[DeploymentPlatform, list[Path]] = {
         k: [] for k in DeploymentPlatform}
     for installer in sorted(
@@ -104,5 +104,5 @@ def get_installers(system: str, arch: str, version: str = "",
 
     except Exception as ex:
         logging.error(
-            f"Failed to get installer for {system}_{arch} in {version} version: {ex}")
+            "Failed to get installer for %s_%s in %s version: %s", system, arch, version, ex)
         return []

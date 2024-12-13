@@ -24,7 +24,7 @@ TransferResult = Any | tuple[str, HTTPStatus]
 
 def get_installer(system: str, arch: str, version: str) -> TransferResult:
     logging.info(
-        f"Getting installer for system {system}_{arch} in {version} version")
+        "Getting installer for system %s_%s in %s version", system, arch, version)
 
     installers = get_installers(system, arch, version, True)
 
@@ -41,7 +41,7 @@ def get_installer(system: str, arch: str, version: str) -> TransferResult:
 def get_ca_certificate() -> TransferResult:
     cert_file = INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME
     if not cert_file.exists():
-        logging.warning(f"{cert_file} not found")
+        logging.warning("%s not found", cert_file)
         return f"{cert_file} not found", HTTPStatus.NOT_FOUND
     return send_file(cert_file)
 
@@ -78,9 +78,8 @@ def main() -> None:
         organization_name="Dynatrace",
         common_name=args.ip_address
     )
-    generator.generate_and_save(f"{SERVER_DIRECTORY /
-                                   SERVER_PRIVATE_KEY_FILE_NAME}", f"{SERVER_DIRECTORY /
-                                                                      SERVER_CERTIFICATE_FILE_NAME}")
+    generator.generate_and_save(f"{SERVER_DIRECTORY /SERVER_PRIVATE_KEY_FILE_NAME}",
+                                f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
 
     context = (f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}",
                f"{SERVER_DIRECTORY / SERVER_PRIVATE_KEY_FILE_NAME}")

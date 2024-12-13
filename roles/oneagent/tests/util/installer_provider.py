@@ -35,13 +35,13 @@ def sign_installer(installer: list[str]) -> list[str]:
 
     proc = subprocess.run(
         cmd,
-        input=f"{
-            ''.join(installer)}",
+        input=f"{''.join(installer)}",
         encoding="utf-8",
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+        stderr=subprocess.STDOUT,
+        check=False)
     if proc.returncode != 0:
-        logging.error(f"Failed to sign installer: {proc.stdout}")
+        logging.error("Failed to sign installer: %s")
         return []
 
     signed_installer = proc.stdout.splitlines()
@@ -50,11 +50,10 @@ def sign_installer(installer: list[str]) -> list[str]:
     signed_installer = signed_installer[index + 1:]
 
     custom_delimiter = "----SIGNED-INSTALLER"
-    return [
-        f"{l}\n" if not l.startswith(delimiter) else f"{
-            l.replace(
-                delimiter,
-                custom_delimiter)}\n" for l in signed_installer]
+
+    return [f"{l}\n" if not l.startswith(delimiter)
+            else f"{l.replace(delimiter, custom_delimiter)}\n"
+            for l in signed_installer]
 
 
 def generate_installers() -> bool:
@@ -86,9 +85,8 @@ def generate_installers() -> bool:
         organization_name="Dynatrace",
         common_name="127.0.0.1"
     )
-    generator.generate_and_save(f"{INSTALLERS_DIRECTORY /
-                                   INSTALLER_PRIVATE_KEY_FILE_NAME}", f"{INSTALLERS_DIRECTORY /
-                                                                         INSTALLER_CERTIFICATE_FILE_NAME}")
+    generator.generate_and_save(f"{INSTALLERS_DIRECTORY /INSTALLER_PRIVATE_KEY_FILE_NAME}",
+                                f"{INSTALLERS_DIRECTORY /INSTALLER_CERTIFICATE_FILE_NAME}")
 
     # REMOVE INSTALLER VERSION
     for version in InstallerVersion:
@@ -117,13 +115,12 @@ def get_installers_versions_from_tenant(
         versions = resp.json()["availableVersions"]
         if len(versions) < 2:
             logging.error(
-                f"List of available installers is too short: {versions}")
+                "List of available installers is too short: %s", versions)
         else:
             return [versions[0], versions[-1]]
     except KeyError:
         logging.error(
-            f"Failed to get list of installer versions: {
-                resp.content}")
+            "Failed to get list of installer versions: %s", resp.content)
     return []
 
 
@@ -131,7 +128,7 @@ def download_and_save(path: Path, url: str, headers: dict[str, str]) -> bool:
     resp = requests.get(url, headers=headers)
 
     if not resp.ok:
-        logging.error(f"Failed to download file {path}: {resp.text}")
+        logging.error("Failed to download file %s: %s", path, resp.text)
         return False
 
     with path.open("wb") as f:
@@ -165,7 +162,7 @@ def download_installers(
         tenant,
         tenant_token,
         platforms: PlatformCollection) -> bool:
-    for platform, _ in platforms.items():
+    for platform, hosts in platforms.items():
         versions = get_installers_versions_from_tenant(
             tenant, tenant_token, platform.family())
         if not versions:

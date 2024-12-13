@@ -6,21 +6,17 @@ from ansible.constants import (
     ANSIBLE_PASS_KEY,
     ANSIBLE_RESOURCE_DIR,
     ANSIBLE_USER_KEY,
-    COLLECTION_NAME,
-    COLLECTION_NAMESPACE,
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     INSTALLED_COLLECTIONS_DIR,
     INVENTORY_FILE,
     PLAYBOOK_FILE,
     PLAYBOOK_TEMPLATE_FILE_NAME,
-    ROLE_NAME,
     TEST_COLLECTIONS_DIR,
-    TEST_SIGNATURE_FILE,
 )
 
 from util.common_utils import read_yaml_file, write_yaml_file
-from util.constants.common_constants import TEST_DIRECTORY, INSTALLERS_DIRECTORY, INSTALLER_CERTIFICATE_FILE_NAME
+from util.constants.common_constants import TEST_DIRECTORY
 from util.test_data_types import DeploymentPlatform, PlatformCollection
 
 
