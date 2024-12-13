@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -eu
 
 # This file simulates the basic behavior of the uninstall.sh script
 
