@@ -42,7 +42,7 @@ CONFIGURATOR_KEY = "configurator"
 
 
 def is_local_deployment(platforms: PlatformCollection) -> bool:
-    return any("localhost" in hosts for _, hosts in platforms.items())
+    return any("localhost" in hosts for platform, hosts in platforms.items())
 
 
 def parse_platforms_from_options(
@@ -54,7 +54,7 @@ def parse_platforms_from_options(
         if key in deployment_platforms and hosts:
             if "localhost" in hosts:
                 logging.info(
-                    f"Local deployment detected for {key}, only this host will be used")
+                    "Local deployment detected for %s, only this host will be used", key)
                 return {DeploymentPlatform.from_str(key): hosts}
             platforms[DeploymentPlatform.from_str(key)] = hosts
     return platforms
@@ -107,10 +107,10 @@ def prepare_installers(request) -> None:
 @pytest.fixture(scope="session", autouse=True)
 def installer_server_url(request) -> None:
     port = 8021
-    ip_address = socket.gethostbyname(socket.gethostname())
-    url = f"https://{ip_address}:{port}"
+    ipaddress = socket.gethostbyname(socket.gethostname())
+    url = f"https://{ipaddress}:{port}"
 
-    logging.info(f"Running server on {url}...")
+    logging.info("Running server on %s...", url)
 
     proc = subprocess.Popen([sys.executable,
                              "-m",
@@ -118,7 +118,7 @@ def installer_server_url(request) -> None:
                              "--port",
                              f"{port}",
                              "--ip-address",
-                             ip_address],
+                             ipaddress],
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
                             encoding="utf-8",

@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Dict
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_installers
@@ -15,7 +16,7 @@ from util.test_helpers import (
 def _get_versions_for_platforms(
         platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
     versions: Dict[DeploymentPlatform, str] = {}
-    for platform, _ in platforms.items():
+    for platform, hosts in platforms.items():
         installers = get_installers(platform.system(), platform.arch())
         versioned_installer = installers[-1 if latest else 0]
         versions[platform] = re.search(
@@ -27,11 +28,9 @@ def _get_versions_for_platforms(
 def _check_agent_version(platform: DeploymentPlatform,
                          address: str,
                          wrapper: PlatformCommandWrapper,
-                         versions: dict[DeploymentPlatform,
-                                        str]) -> None:
+                         versions: dict[DeploymentPlatform, str]) -> None:
     installed_version = wrapper.run_command(
-        platform, address, f"{
-            get_oneagentctl_path(platform)}", "--version")
+        platform, address, f"{get_oneagentctl_path(platform)}", "--version")
     assert installed_version.stdout.strip() == versions[platform]
 
 

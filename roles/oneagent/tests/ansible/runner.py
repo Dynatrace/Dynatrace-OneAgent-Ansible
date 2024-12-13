@@ -1,7 +1,8 @@
 import subprocess
 import logging
 
-from ansible.constants import HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME, CREDENTIALS_FILE_NAME, TEST_DIRECTORY
+from ansible.constants import (HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME, CREDENTIALS_FILE_NAME,
+                               TEST_DIRECTORY)
 from util.test_data_types import CommandResult, DeploymentResult
 
 
@@ -13,18 +14,15 @@ class AnsibleRunner:
     def run_deployment(self) -> DeploymentResult:
         with open(TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME, 'r') as f:
             logging.debug(
-                f"Running playbook ({PLAYBOOK_TEMPLATE_FILE_NAME}):\n{
-                    f.read()}")
+                "Running playbook (%s):\n%s", PLAYBOOK_TEMPLATE_FILE_NAME, f.read())
 
         with open(TEST_DIRECTORY / HOSTS_TEMPLATE_FILE_NAME, 'r') as f:
             logging.debug(
-                f"Inventory file ({HOSTS_TEMPLATE_FILE_NAME}):\n{
-                    f.read()}")
+                "Inventory file (%s):\n%s", HOSTS_TEMPLATE_FILE_NAME, f.read())
 
         with open(TEST_DIRECTORY / CREDENTIALS_FILE_NAME, 'r') as f:
             logging.debug(
-                f"Credentials file ({CREDENTIALS_FILE_NAME}):\n{
-                    f.read()}")
+                "Credentials file (%s):\n%s", CREDENTIALS_FILE_NAME, f.read())
 
         res = subprocess.run(["ansible-playbook",
                               "-i",

@@ -42,5 +42,4 @@ class UnixCommandWrapper(CommandWrapper):
             command: str,
             *args: str) -> CommandResult:
         return self._execute(
-            address, f"echo {
-                self.password} | sudo -S {command}", *args)
+            address, f"echo {self.password} | sudo -S {command}", *args)
