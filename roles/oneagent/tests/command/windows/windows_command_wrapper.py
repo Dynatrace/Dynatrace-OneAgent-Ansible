@@ -13,7 +13,7 @@ class WindowsCommandWrapper(CommandWrapper):
         return self.executor.execute(address, "type", str(file))
 
     def file_exists(self, address: str, file: Path) -> CommandResult:
-        # Windows needs double quoting for passing paths containing
+        # Windows needs double quoting for passing paths
         # containing spaces, single quotes don't work
         return self.executor.execute(
             address, f'if exist "{file}" (exit 0) else (exit 1)')

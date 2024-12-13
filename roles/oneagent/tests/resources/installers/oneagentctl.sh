@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 # This file simulates deployment functionalities of oneagentctl binary, used to configure installation.
 
