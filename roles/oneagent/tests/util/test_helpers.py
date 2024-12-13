@@ -36,7 +36,7 @@ def enable_for_system_family(family: str) -> Callable:
                 config.set_deployment_hosts(family)
                 func(*args, **kwargs)
             else:
-                logging.info(f"Skipping test for specified platform")
+                logging.info("Skipping test for specified platform")
 
         return params_wrapper
 
@@ -59,8 +59,7 @@ def set_ca_cert_download_params(
         config.CA_CERT_DOWNLOAD_URL_KEY,
         f"{installer_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(
-        config.CA_CERT_DOWNLOAD_CERT_KEY, f"{
-            SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
+        config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.FORCE_CERT_DOWNLOAD_KEY, True)
 
 
@@ -72,8 +71,7 @@ def set_installer_download_params(
         installer_server_url)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, INSTALLER_SERVER_TOKEN)
     config.set_common_parameter(
-        config.INSTALLER_DOWNLOAD_CERT_KEY, f"{
-            SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
+        config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
     for platform in DeploymentPlatform:
         config.set_platform_parameter(
             platform, config.INSTALLER_ARCH_KEY, platform.arch())
@@ -88,10 +86,7 @@ def run_deployment(
     logging.info("Deployment finished")
     for result in results:
         logging.debug(
-            f"Exit code: {
-                result.returncode}\nOutput: {
-                result.stdout}, Error: {
-                result.stderr}")
+            "Exit code: %s\nOutput: %s, Error: %s", result.returncode, result.stdout, result.stderr)
 
     if not ignore_errors:
         logging.info("Check exit codes")

@@ -117,7 +117,7 @@ def test_basic_installation(
             f"{CTL_OPTION_SET_HOST_TAG}={dummy_common_tag}",
             f"{CTL_OPTION_SET_HOST_PROPERTY}={dummy_common_property}"])
 
-    for platform, _ in platforms.items():
+    for platform, hosts in platforms.items():
         download_dir: Path = get_platform_argument(
             platform, UNIX_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH)
         configurator.set_platform_parameter(
