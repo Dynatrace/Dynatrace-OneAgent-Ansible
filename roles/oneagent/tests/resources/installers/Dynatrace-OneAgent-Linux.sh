@@ -63,7 +63,8 @@ deployUninstallScript() {
 }
 
 applyConfig() {
-	"${INSTALL_DIR}/agent/tools/${ONEAGENTCTL_BIN}" "${CTL_PARAMS}"
+	# shellcheck disable=SC2086
+	"${INSTALL_DIR}/agent/tools/${ONEAGENTCTL_BIN}" ${CTL_PARAMS}
 }
 
 main() {
