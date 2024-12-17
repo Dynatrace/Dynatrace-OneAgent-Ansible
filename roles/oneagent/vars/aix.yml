@@ -21,4 +21,5 @@ oneagent_ca_cert_src_path: "{{ role_path }}/files/dt-root.cert.pem"
 oneagent_ca_cert_dest_path: "{{ oneagent_download_path }}/dt-root.cert.pem"
 oneagent_certificate_verification_header: >
   Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="--SIGNED-INSTALLER"
+oneagent_additional_openssl_env: LDR_CNTRL=MAXDATA=0x40000000
 oneagent_service_name: oneagent

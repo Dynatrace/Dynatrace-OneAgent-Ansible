@@ -27,7 +27,7 @@
   ansible.builtin.shell: >
     ( printf '%s\n' '{{ oneagent_certificate_verification_header }}';
     printf '\n\n----SIGNED-INSTALLER\n'; cat "{{ oneagent_installer_path }}" ) |
-    openssl cms -verify -CAfile "{{ oneagent_ca_cert_dest_path }}" > /dev/null
+    {{ oneagent_additional_openssl_env | default('') }} openssl cms -verify -CAfile "{{ oneagent_ca_cert_dest_path }}" > /dev/null
   no_log: true
   ignore_errors: true
   changed_when: false
