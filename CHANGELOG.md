@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1]
+- Fix problem with installer signature verification on AIX
+
 ## [1.2.0]
 
 - Added parameter `--restart-service` parameter, once OneAgent configuration is performed
