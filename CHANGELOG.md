@@ -3,7 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.2.1]
-- Fix problem with installer signature verification on AIX
+- Fixed problem with installer signature verification on AIX
+- Added LICENSE file
 
 ## [1.2.0]
 
