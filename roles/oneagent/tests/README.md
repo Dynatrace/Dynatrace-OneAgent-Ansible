@@ -36,8 +36,7 @@ Upon downloading the collection
 $ apt-get install -y python3-venv python3-pip sshpass
 
 # Create virtual environment
-$ python -m venv venv
-$ source venv/bin/activate
+$ python -m venv venv && source venv/bin/activate
 
 # Install requirements
 $ pip install -r roles/oneagent/tests/requirements.txt
