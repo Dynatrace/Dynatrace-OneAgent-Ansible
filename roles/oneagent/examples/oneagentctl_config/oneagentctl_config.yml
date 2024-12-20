@@ -1,8 +1,6 @@
 ---
 - name: Apply host level configuration with oneagentctl
   hosts: linux_other
-  collections:
-    - dynatrace.oneagent
   vars:
     oneagent_install_args:
       - --set-host-name=new_host_name
@@ -12,4 +10,4 @@
   tasks:
     - name: Import Dynatrace OneAgent role
       ansible.builtin.import_role:
-        name: oneagent
+        name: dynatrace.oneagent.oneagent
