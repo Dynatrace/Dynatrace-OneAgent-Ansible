@@ -3,8 +3,6 @@
     Download OneAgent installer in specific version to a custom directory with additional OneAgent install parameters.
     Both linux_other and linux_arm have different user specified by platform args parameter.
   hosts: linux_other,linux_arm
-  collections:
-    - dynatrace.oneagent
   # credentials.yml file contains oneagent_environment_url and
   # oneagent_paas_token variables that needs to be stored securely
   vars_files:
@@ -22,4 +20,4 @@
   tasks:
     - name: Import Dynatrace OneAgent role
       ansible.builtin.import_role:
-        name: oneagent
+        name: dynatrace.oneagent.oneagent
