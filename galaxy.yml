@@ -10,8 +10,12 @@ license_file: LICENSE
 tags:
   - dynatrace
   - oneagent
-  - monitoring
+  - agent
   - deployment
+  - monitoring
+  - infrastructure
+  - linux
+  - windows
 repository: https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible
 documentation: https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible
 build_ignore:

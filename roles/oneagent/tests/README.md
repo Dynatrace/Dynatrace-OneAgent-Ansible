@@ -1,10 +1,12 @@
 # Component tests
+
 The tests support two types of deployment:
 - local  - the tests are run on the same Unix machine as main node;
 - remote - the tests are run on a remote Windows (Unix is not supported at the moment) machine;
 Currently, there is no option to mix these two types of deployment and the tests must be run for one platform at a time.
 
 ## Remote deployment
+
 For remote deployment, regular OneAgent installers are used, which are downloaded from the Dynatrace environment during
 the tests. To use this type of deployment, the following parameters must be provided:
 - `--user` - username for the remote machine;
@@ -15,12 +17,14 @@ the tests. To use this type of deployment, the following parameters must be prov
 Failing to provide any of these parameters will result in failure.
 
 ## Local deployment
+
 For local deployment, the tests are using mocked version of the OneAgent installer, which simulates its basic behavior -
 returning version, deploying `uninstall.sh` script and creating `oneagentctl`, used for configuring installation.
 To use this type of deployment, the only required parameter is `--linux_x86=localhost`. In case, multiple platforms for
 local deployment are specified or any other platforms is used along with local one, only the first local platform is used.
 
 ## Requirements
+
 - Python 3.10+
 - pip 21.0+
 - venv 20.0+
