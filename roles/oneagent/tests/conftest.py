@@ -42,7 +42,7 @@ CONFIGURATOR_KEY = "configurator"
 
 
 def is_local_deployment(platforms: PlatformCollection) -> bool:
-    return any("localhost" in hosts for platform, hosts in platforms.items())
+    return any("localhost" in hosts for _, hosts in platforms.items())
 
 
 def parse_platforms_from_options(
@@ -54,7 +54,7 @@ def parse_platforms_from_options(
         if key in deployment_platforms and hosts:
             if "localhost" in hosts:
                 logging.info(
-                    "Local deployment detected for %s, only this host will be used", key)
+                    f"Local deployment detected for {key}, only this host will be used")
                 return {DeploymentPlatform.from_str(key): hosts}
             platforms[DeploymentPlatform.from_str(key)] = hosts
     return platforms

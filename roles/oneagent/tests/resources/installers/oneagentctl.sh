@@ -18,8 +18,7 @@ saveToConfig() {
 	while [ $# -gt 0 ]; do
 		# example command: --set-host-property=TENANT=tenant1
 		# setter: --set-host-property
-		local setter
-		setter="$(cutVariable "${1}" "=" 1)"
+		local setter="$(cutVariable "${1}" "=" 1)"
 		# setterType: property
 		local setterType
 		setterType="$(cutVariable "${setter}" "-" "5-")"
