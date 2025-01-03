@@ -9,8 +9,8 @@ configuration of OneAgent and ensures the OneAgent service remains in a running 
 
 ## Requirements
 
-* Ansible >= 2.15.0
-* pywinrm >= 0.4.3 (Windows only)
+- Ansible >= 2.15.0
+- pywinrm >= 0.4.3 (Windows only)
 
 ## Installation
 
@@ -52,7 +52,7 @@ See [OneAgent role README](roles/oneagent/README.md) for more details.
 
 ## Testing
 
-The collection was tested against Ansible sanity tests and component tests. The latter runs regular deployment with 
+The collection was tested against Ansible sanity tests and component tests. The latter runs regular deployment with
 the installer and checks veriety of installation scenarios.
 See [OneAgent role tests README](roles/oneagent/tests/README.md) for more details.
 
