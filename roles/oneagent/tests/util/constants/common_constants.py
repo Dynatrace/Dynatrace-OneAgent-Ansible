@@ -4,9 +4,9 @@ from pathlib import Path
 # TODO: is cwd() correct?
 COMPONENT_TEST_BASE = Path().cwd() / "test_dir"
 INSTALLERS_DIRECTORY = COMPONENT_TEST_BASE / "installers"
+RESOURCES_DIRECTORY = Path(__file__).resolve().parent.parent.parent / "resources"
 INSTALLERS_RESOURCE_DIR = RESOURCES_DIRECTORY / "installers"
 LOG_DIRECTORY = COMPONENT_TEST_BASE / "logs"
-RESOURCES_DIRECTORY = Path(__file__).resolve().parent.parent.parent / "resources"
 SERVER_DIRECTORY = COMPONENT_TEST_BASE / "server"
 TEST_DIRECTORY = COMPONENT_TEST_BASE / "working_dir"
 
