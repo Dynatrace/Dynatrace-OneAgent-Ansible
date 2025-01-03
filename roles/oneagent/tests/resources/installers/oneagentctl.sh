@@ -1,9 +1,6 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 # This file simulates deployment functionalities of oneagentctl binary, used to configure installation.
-
-set -e
-
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
 
@@ -14,6 +11,7 @@ cutVariable() {
 	printf "%s" "${variable}" | cut -d "${delimiter}" -f "${fields}"
 }
 
+# shellcheck disable=SC2155
 saveToConfig() {
 	while [ $# -gt 0 ]; do
 		# example command: --set-host-property=TENANT=tenant1
@@ -36,6 +34,7 @@ saveToConfig() {
 }
 
 readFromConfig() {
+	# shellcheck disable=SC2155
 	local getterType="$(cutVariable "${1}" "-" "5-")"
 
 	if [ "${getterType}" = "properties" ]; then
@@ -49,7 +48,7 @@ main() {
 	if [ "${1}" = '--version' ]; then
 		printf '%s\n' "${INSTALLER_VERSION}"
 	elif printf "%s" "${1}" | grep -q "^--get"; then
-		readFromConfig ${1}
+		readFromConfig "${1}"
 	elif printf "%s" "${1}" | grep -q "^--set"; then
 		saveToConfig "$@"
 	fi

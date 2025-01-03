@@ -1,20 +1,20 @@
-#!/bin/sh
+#!/bin/bash -eu
 
 # This script acts as a self contained installer of the procuct
-
-set -e
 
 readonly DEFAULT_INSTALL_DIR="/opt/dynatrace/oneagent"
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
 
 readonly UNINSTALL_SCRIPT="uninstall.sh"
+# shellcheck disable=SC2155
 readonly UNINSTALL_CODE="$(cat <<-ENDUNINSTALL
 ##UNINSTALL_CODE##
 ENDUNINSTALL
 )"
 
 readonly ONEAGENTCTL_BIN="oneagentctl"
+# shellcheck disable=SC2155
 readonly ONEAGENTCTL_CODE="$(cat <<-ENDCTL
 ##ONEAGENTCTL_CODE##
 ENDCTL
@@ -61,6 +61,7 @@ deployUninstallScript() {
 }
 
 applyConfig() {
+	# shellcheck disable=SC2086
 	"${INSTALL_DIR}/agent/tools/${ONEAGENTCTL_BIN}" ${CTL_PARAMS}
 }
 
