@@ -16,5 +16,7 @@ tags:
 repository: https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible
 documentation: https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible
 build_ignore:
-  - roles/oneagent/tests
-  - roles/oneagent/examples
+  - .github
+  - .pre-commit-config.yaml
+  - .gitignore
+  - venv
