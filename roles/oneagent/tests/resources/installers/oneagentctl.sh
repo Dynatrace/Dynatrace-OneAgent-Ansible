@@ -1,8 +1,8 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
 
-# This file simulates deployment functionalities of oneagentctl binary, used to configure installation.
+# This script simulates deployment functionalities of oneagentctl binary, used to configure installation.
 
-set -e
+set -eu
 
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
@@ -20,21 +20,26 @@ saveToConfig() {
 		# setter: --set-host-property
 		local setter
 		setter="$(cutVariable "${1}" "=" 1)"
+
 		# setterType: property
 		local setterType
 		setterType="$(cutVariable "${setter}" "-" "5-")"
+
 		# value: TENANT=tenant1
 		local value
 		value="$(cutVariable "${1}" "=" "2-")"
+
 		# property: TENANT
 		local property
 		property="$(cutVariable "${value}" "=" "1")"
+
 		local setterFile="${DEPLOYMENT_CONF_PATH}/${setterType}"
 		if grep -q "${property}" "${setterFile}"; then
 			sed -i "s/${property}.*/${value}/" "${setterFile}"
 		else
 			printf '%s\n' "${value}" >>"${setterFile}"
 		fi
+
 		shift
 	done
 }
@@ -46,6 +51,7 @@ readFromConfig() {
 	if [ "${getterType}" = "properties" ]; then
 		getterType="property"
 	fi
+
 	getterType="$(cutVariable "${getterType}" "s" "1")"
 	cat "${DEPLOYMENT_CONF_PATH}/${getterType}"
 }
