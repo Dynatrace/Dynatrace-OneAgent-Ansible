@@ -24,7 +24,7 @@ repos:
         additional_dependencies: [mvdan.cc/sh/v3/cmd/shfmt@v3.8.0]
         entry: shfmt
         language: golang
-        exclude: gradlew
+        exclude: roles/oneagent/tests/resources/installers/Dynatrace-OneAgent-Linux.sh
         args:
           - "-s"
           - "-w"
