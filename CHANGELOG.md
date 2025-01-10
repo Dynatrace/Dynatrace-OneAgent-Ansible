@@ -2,11 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.1]
+## [1.2.2] - 2025-10-1
+- Fixed linters issues
+
+## [1.2.1] - 2024-12-19
 - Fixed problem with installer signature verification on AIX
 - Added LICENSE file
 
-## [1.2.0]
+## [1.2.0] - 2024-11-29
 
 - Added parameter `--restart-service` parameter, once OneAgent configuration is performed
 - Fixed problem with `Invalid version string` during collection install
