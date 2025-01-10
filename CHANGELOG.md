@@ -32,7 +32,7 @@ All notable changes to this project will be documented in this file.
 - Removed `oneagent_remove_signature` parameter.
 - Added ability to configure installation using `oneagentctl`.
 - Removed the need to provide the required parameters in case of uninstallation.
-- Added node restart option. 
+- Added node restart option.
 
 ## [0.3.0] - 2021-02-12
 

@@ -1,24 +1,26 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # This script acts as a self contained installer of the procuct
 
-set -e
+set -eu
 
 readonly DEFAULT_INSTALL_DIR="/opt/dynatrace/oneagent"
 readonly INSTALLER_VERSION="##VERSION##"
 readonly DEPLOYMENT_CONF_PATH="/var/lib/dynatrace/oneagent/agent/config"
 
 readonly UNINSTALL_SCRIPT="uninstall.sh"
-readonly UNINSTALL_CODE="$(cat <<-ENDUNINSTALL
+UNINSTALL_CODE="$(cat <<-ENDUNINSTALL
 ##UNINSTALL_CODE##
 ENDUNINSTALL
 )"
+readonly UNINSTALL_CODE
 
 readonly ONEAGENTCTL_BIN="oneagentctl"
-readonly ONEAGENTCTL_CODE="$(cat <<-ENDCTL
+ONEAGENTCTL_CODE="$(cat <<-ENDCTL
 ##ONEAGENTCTL_CODE##
 ENDCTL
 )"
+readonly ONEAGENTCTL_CODE
 
 CTL_PARAMS=
 INSTALL_DIR="${DEFAULT_INSTALL_DIR}"
@@ -49,17 +51,18 @@ deployOneagentCtl() {
 	local ONEAGENTCTL_DIR="${INSTALL_DIR}/agent/tools"
 	mkdir -p "${ONEAGENTCTL_DIR}"
 	mkdir -p "${DEPLOYMENT_CONF_PATH}"
-	printf '%s' "${ONEAGENTCTL_CODE}" > "${ONEAGENTCTL_DIR}/${ONEAGENTCTL_BIN}"
+	printf '%s' "${ONEAGENTCTL_CODE}" >"${ONEAGENTCTL_DIR}/${ONEAGENTCTL_BIN}"
 	chmod +x "${ONEAGENTCTL_DIR}/${ONEAGENTCTL_BIN}"
 }
 
 deployUninstallScript() {
 	local UNINSTALL_DIR="${INSTALL_DIR}/agent"
 	mkdir -p "${UNINSTALL_DIR}"
-	printf '%s' "${UNINSTALL_CODE}" > "${UNINSTALL_DIR}/${UNINSTALL_SCRIPT}"
+	printf '%s' "${UNINSTALL_CODE}" >"${UNINSTALL_DIR}/${UNINSTALL_SCRIPT}"
 	chmod +x "${UNINSTALL_DIR}/${UNINSTALL_SCRIPT}"
 }
 
+# shellcheck disable=SC2086
 applyConfig() {
 	"${INSTALL_DIR}/agent/tools/${ONEAGENTCTL_BIN}" ${CTL_PARAMS}
 }

@@ -1,8 +1,45 @@
 ---
 repos:
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.2.2
+    rev: v24.12.2
     hooks:
       - id: ansible-lint
         pass_filenames: false
-        args: ['--exclude', 'roles/oneagent/examples', 'tests/component/resources/ansible/oneagent.yml']
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+
+  - repo: local
+    hooks:
+      - id: shfmt
+        name: shfmt
+        additional_dependencies: [mvdan.cc/sh/v3/cmd/shfmt@v3.8.0]
+        entry: shfmt
+        language: golang
+        exclude: roles/oneagent/tests/resources/installers/Dynatrace-OneAgent-Linux.sh
+        args:
+          - "-s"
+          - "-w"
+        types: [shell]
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: "v0.10.0.1"
+    hooks:
+      - id: shellcheck
+        exclude: gradlew
+        args:
+          - "--external-sources"
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: "v1.35.0"
+    hooks:
+      - id: yamllint
+        files: \.(yaml|yml)

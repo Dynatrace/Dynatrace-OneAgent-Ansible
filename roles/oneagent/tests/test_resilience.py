@@ -2,23 +2,22 @@ import logging
 import re
 
 import pytest
-
-from ansible.constants import TEST_SIGNATURE_FILE, ERROR_MESSAGES_FILE, FAILED_DEPLOYMENT_EXIT_CODE, VARIABLE_PREFIX
+from ansible.constants import ERROR_MESSAGES_FILE, FAILED_DEPLOYMENT_EXIT_CODE, TEST_SIGNATURE_FILE, VARIABLE_PREFIX
 from util.common_utils import read_yaml_file
 from util.test_data_types import DeploymentResult
-from util.test_helpers import run_deployment, set_installer_download_params, enable_for_system_family
+from util.test_helpers import enable_for_system_family, run_deployment, set_installer_download_params
 
-MISSING_REQUIRED_PARAMETERS_KEY = "missing_mandatory_params"
-UNKNOWN_ARCHITECTURE_KEY = "unknown_arch"
-LOCAL_INSTALLER_NOT_AVAILABLE_KEY = "missing_local_installer"
-INSTALL_DIR_CONTAINS_SPACES_KEY = "install_dir_contains_spaces"
 DOWNLOAD_DIR_CONTAINS_SPACES_KEY = "download_dir_contains_spaces"
-MISSING_DOWNLOAD_DIRECTORY_KEY = "missing_download_dir"
-VERSION_PARAMETER_TOO_LOW_KEY = "version_lower_than_minimal"
-MULTIPLE_INSTALL_PATH_KEY = "multiple_install_dir"
 DOWNLOAD_FAILED_KEY = "failed_download"
+INSTALL_DIR_CONTAINS_SPACES_KEY = "install_dir_contains_spaces"
+LOCAL_INSTALLER_NOT_AVAILABLE_KEY = "missing_local_installer"
+MISSING_DOWNLOAD_DIRECTORY_KEY = "missing_download_dir"
+MISSING_REQUIRED_PARAMETERS_KEY = "missing_mandatory_params"
+MULTIPLE_INSTALL_PATH_KEY = "multiple_install_dir"
 SIGNATURE_VERIFICATION_FAILED_KEY = "signature_verification_failed"
+UNKNOWN_ARCHITECTURE_KEY = "unknown_arch"
 VERSION_LOWER_THAN_INSTALLED_KEY = "version_lower_than_installed"
+VERSION_PARAMETER_TOO_LOW_KEY = "version_lower_than_minimal"
 
 
 def _parse_error_messages_file() -> dict[str, str]:
@@ -71,7 +70,9 @@ def test_invalid_architecture(_error_messages, runner, configurator, installer_s
     configurator.set_common_parameter(configurator.INSTALLER_ARCH_KEY, "unknown_arch")
 
     _check_deployment_failure(
-        run_deployment(runner, True), _error_messages[UNKNOWN_ARCHITECTURE_KEY], FAILED_DEPLOYMENT_EXIT_CODE
+        run_deployment(runner, True),
+        _error_messages[UNKNOWN_ARCHITECTURE_KEY],
+        FAILED_DEPLOYMENT_EXIT_CODE,
     )
 
 
@@ -135,7 +136,9 @@ def test_multiple_install_path_arguments(_error_messages, runner, configurator, 
     configurator.set_common_parameter(configurator.INSTALLER_PLATFORM_ARGS_KEY, ["INSTALL_PATH=/path2"])
 
     _check_deployment_failure(
-        run_deployment(runner, True), _error_messages[MULTIPLE_INSTALL_PATH_KEY], FAILED_DEPLOYMENT_EXIT_CODE
+        run_deployment(runner, True),
+        _error_messages[MULTIPLE_INSTALL_PATH_KEY],
+        FAILED_DEPLOYMENT_EXIT_CODE,
     )
 
 
@@ -146,7 +149,9 @@ def test_failed_download(_error_messages, runner, configurator, installer_server
     configurator.set_common_parameter(configurator.ENVIRONMENT_URL_KEY, "0.0.0.0")
 
     _check_deployment_failure(
-        run_deployment(runner, True), _error_messages[DOWNLOAD_FAILED_KEY], FAILED_DEPLOYMENT_EXIT_CODE
+        run_deployment(runner, True),
+        _error_messages[DOWNLOAD_FAILED_KEY],
+        FAILED_DEPLOYMENT_EXIT_CODE,
     )
 
 

@@ -1,15 +1,19 @@
 import functools
 import logging
 from pathlib import Path
-from typing import Callable, Any
-
-from command.platform_command_wrapper import PlatformCommandWrapper
+from typing import Any, Callable
 
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
+from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from util.constants.common_constants import (INSTALLER_PARTIAL_NAME, INSTALLER_SERVER_TOKEN, INSTALLER_CERTIFICATE_FILE_NAME,
-                                             SERVER_DIRECTORY, SERVER_CERTIFICATE_FILE_NAME)
+from util.constants.common_constants import (
+    INSTALLER_CERTIFICATE_FILE_NAME,
+    INSTALLER_PARTIAL_NAME,
+    INSTALLER_SERVER_TOKEN,
+    SERVER_CERTIFICATE_FILE_NAME,
+    SERVER_DIRECTORY,
+)
 from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
 
 CallableOperation = Callable[[DeploymentPlatform, str, Any], None]
@@ -30,7 +34,7 @@ def enable_for_system_family(family: str) -> Callable:
                 config.set_deployment_hosts(family)
                 func(*args, **kwargs)
             else:
-                logging.info(f"Skipping test for specified platform")
+                logging.info("Skipping test for specified platform")
 
         return params_wrapper
 
@@ -44,7 +48,9 @@ def perform_operation_on_platforms(platforms: PlatformCollection, operation: Cal
 
 
 def set_ca_cert_download_params(config: AnsibleConfig, installer_server_url: str) -> None:
-    config.set_common_parameter(config.CA_CERT_DOWNLOAD_URL_KEY, f"{installer_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}")
+    config.set_common_parameter(
+        config.CA_CERT_DOWNLOAD_URL_KEY, f"{installer_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}"
+    )
     config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.FORCE_CERT_DOWNLOAD_KEY, True)
 
@@ -52,7 +58,9 @@ def set_ca_cert_download_params(config: AnsibleConfig, installer_server_url: str
 def set_installer_download_params(config: AnsibleConfig, installer_server_url: str) -> None:
     config.set_common_parameter(config.ENVIRONMENT_URL_KEY, installer_server_url)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, INSTALLER_SERVER_TOKEN)
-    config.set_common_parameter(config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
+    config.set_common_parameter(
+        config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}"
+    )
     for platform in DeploymentPlatform:
         config.set_platform_parameter(platform, config.INSTALLER_ARCH_KEY, platform.arch())
 
@@ -63,7 +71,7 @@ def run_deployment(runner: AnsibleRunner, ignore_errors: bool = False) -> Deploy
     results = runner.run_deployment()
     logging.info("Deployment finished")
     for result in results:
-        logging.debug(f"Exit code: {result.returncode}\nOutput: {result.stdout}, Error: {result.stderr}")
+        logging.debug("Exit code: %s\nOutput: %s, Error: %s", result.returncode, result.stdout, result.stderr)
 
     if not ignore_errors:
         logging.info("Check exit codes")

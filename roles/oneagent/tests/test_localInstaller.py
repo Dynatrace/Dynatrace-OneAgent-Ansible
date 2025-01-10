@@ -9,7 +9,7 @@ from util.test_helpers import (
     check_download_directory,
     perform_operation_on_platforms,
     run_deployment,
-    set_ca_cert_download_params
+    set_ca_cert_download_params,
 )
 
 
@@ -18,11 +18,13 @@ def test_local_installer(runner, configurator, platforms, wrapper, installer_ser
 
     set_ca_cert_download_params(configurator, installer_server_url)
 
-    for platform, _ in platforms.items():
+    for platform, hosts in platforms.items():
         installers_location = LOCAL_INSTALLERS_LOCATION
         latest_installer_name = get_installers(platform.system(), platform.arch(), "latest")[-1]
         configurator.set_platform_parameter(
-            platform, configurator.LOCAL_INSTALLER_KEY, f"{installers_location}/{latest_installer_name}"
+            platform,
+            configurator.LOCAL_INSTALLER_KEY,
+            f"{installers_location}/{latest_installer_name}",
         )
 
     run_deployment(runner)
@@ -32,5 +34,10 @@ def test_local_installer(runner, configurator, platforms, wrapper, installer_ser
 
     logging.info("Check if installer was removed")
     perform_operation_on_platforms(
-        platforms, check_download_directory, wrapper, False, UNIX_DEFAULT_DOWNLOAD_PATH, WINDOWS_DEFAULT_DOWNLOAD_PATH
+        platforms,
+        check_download_directory,
+        wrapper,
+        False,
+        UNIX_DEFAULT_DOWNLOAD_PATH,
+        WINDOWS_DEFAULT_DOWNLOAD_PATH,
     )

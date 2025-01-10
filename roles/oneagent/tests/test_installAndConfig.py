@@ -9,9 +9,9 @@ from util.test_data_types import DeploymentPlatform, DeploymentResult
 from util.test_helpers import (
     check_agent_state,
     check_download_directory,
-    set_installer_download_params,
     perform_operation_on_platforms,
     run_deployment,
+    set_installer_download_params,
 )
 
 UNIX_DOWNLOAD_PATH = Path("/tmp/dyna")
@@ -42,7 +42,11 @@ def _assert_oneagentctl_getter(
 
 
 def _check_install_args(
-    platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, ansible: str) -> None:
+    platform: DeploymentPlatform,
+    address: str,
+    wrapper: PlatformCommandWrapper,
+    ansible: str,
+) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
 
     oneagentctl = f"{get_oneagentctl_path(platform)}"
@@ -56,8 +60,13 @@ def _check_install_args(
     assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == ansible
 
 
-def _check_config_args(platform: DeploymentPlatform, address: str, wrapper: PlatformCommandWrapper, expected_tags: set[str],
-                       expected_properties: set[str]):
+def _check_config_args(
+    platform: DeploymentPlatform,
+    address: str,
+    wrapper: PlatformCommandWrapper,
+    expected_tags: set[str],
+    expected_properties: set[str],
+):
     logging.debug("Platform: %s, IP: %s", platform, address)
 
     _assert_oneagentctl_getter(platform, address, wrapper, CTL_OPTION_GET_HOST_TAGS, expected_tags)
@@ -81,16 +90,24 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
     set_installer_download_params(configurator, installer_server_url)
     configurator.set_common_parameter(configurator.VALIDATE_DOWNLOAD_CERTS_KEY, False)
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, True)
-    configurator.set_common_parameter(configurator.INSTALLER_ARGS_KEY,
-                                      [f"{CTL_OPTION_SET_HOST_TAG}={dummy_common_tag}",
-                                       f"{CTL_OPTION_SET_HOST_PROPERTY}={dummy_common_property}"])
+    configurator.set_common_parameter(
+        configurator.INSTALLER_ARGS_KEY,
+        [
+            f"{CTL_OPTION_SET_HOST_TAG}={dummy_common_tag}",
+            f"{CTL_OPTION_SET_HOST_PROPERTY}={dummy_common_property}",
+        ],
+    )
 
-    for platform, _ in platforms.items():
+    for platform, hosts in platforms.items():
         download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH)
         configurator.set_platform_parameter(platform, configurator.DOWNLOAD_DIR_KEY, str(download_dir))
-        configurator.set_common_parameter(configurator.INSTALLER_PLATFORM_ARGS_KEY,
-                                          [f"{CTL_OPTION_SET_HOST_TAG}={dummy_platform_tag}",
-                                           f"{CTL_OPTION_SET_HOST_PROPERTY}={dummy_platform_property}"])
+        configurator.set_common_parameter(
+            configurator.INSTALLER_PLATFORM_ARGS_KEY,
+            [
+                f"{CTL_OPTION_SET_HOST_TAG}={dummy_platform_tag}",
+                f"{CTL_OPTION_SET_HOST_PROPERTY}={dummy_platform_property}",
+            ],
+        )
 
     result = run_deployment(runner)
 
@@ -102,15 +119,22 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
 
     logging.info("Check if installer was downloaded to correct place and preserved")
     perform_operation_on_platforms(
-        platforms, check_download_directory, wrapper, True, UNIX_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH
+        platforms,
+        check_download_directory,
+        wrapper,
+        True,
+        UNIX_DOWNLOAD_PATH,
+        WINDOWS_DOWNLOAD_PATH,
     )
 
     logging.info("Check if config args were applied correctly")
-    perform_operation_on_platforms(platforms,
-                                   _check_config_args,
-                                   wrapper,
-                                   {dummy_common_tag, dummy_platform_tag},
-                                   {dummy_common_property, dummy_platform_property})
+    perform_operation_on_platforms(
+        platforms,
+        _check_config_args,
+        wrapper,
+        {dummy_common_tag, dummy_platform_tag},
+        {dummy_common_property, dummy_platform_property},
+    )
 
     logging.info("Check if installer args were passed correctly")
     perform_operation_on_platforms(platforms, _check_install_args, wrapper, TECH_NAME)

@@ -1,5 +1,4 @@
 import winrm
-
 from util.test_data_types import CommandResult
 
 

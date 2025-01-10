@@ -27,7 +27,7 @@ class DeploymentPlatform(Enum):
         return str(self.value).split("_")[1]
 
     def system(self) -> str:
-        return str(self.value).split("_")[0]
+        return str(self.value).split("_", maxsplit=1)[0]
 
     @staticmethod
     def from_str(param: str) -> "DeploymentPlatform":

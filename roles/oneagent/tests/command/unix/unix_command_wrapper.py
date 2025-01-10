@@ -1,9 +1,8 @@
+import subprocess
 from pathlib import Path
 
 from command.command_wrapper import CommandWrapper
 from util.test_data_types import CommandResult
-
-import subprocess
 
 
 class UnixCommandWrapper(CommandWrapper):
@@ -12,7 +11,12 @@ class UnixCommandWrapper(CommandWrapper):
 
     def _execute(self, address: str, command: str, *args: str) -> CommandResult:
         out = subprocess.run(
-            " ".join([command, *args]), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, check=False, shell=True
+            " ".join([command, *args]),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            check=False,
+            shell=True,
         )
         return CommandResult(out.returncode, out.stdout, out.stderr)
 

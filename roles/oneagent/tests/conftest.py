@@ -1,24 +1,28 @@
 # PYTEST CONFIGURATION FILE
 import logging
-import pytest
+import os
 import shutil
+import socket
 import subprocess
 import sys
-import os
-import socket
 from pathlib import Path
 from typing import Any
 
-from command.platform_command_wrapper import PlatformCommandWrapper
+import pytest
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
-from util.installer_provider import generate_installers, download_signature, download_installers
+from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import prepare_test_dirs
-from util.test_data_types import DeploymentPlatform, PlatformCollection, DeploymentResult
+from util.constants.common_constants import (
+    COMPONENT_TEST_BASE,
+    INSTALLERS_DIRECTORY,
+    LOG_DIRECTORY,
+    SERVER_DIRECTORY,
+    TEST_DIRECTORY,
+)
+from util.installer_provider import download_installers, download_signature, generate_installers
+from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
 from util.test_helpers import check_agent_state, perform_operation_on_platforms
-from util.constants.common_constants import (TEST_DIRECTORY, INSTALLERS_DIRECTORY, COMPONENT_TEST_BASE,
-                                             SERVER_DIRECTORY, LOG_DIRECTORY)
-
 
 # Command line options
 USER_KEY = "user"
@@ -38,7 +42,7 @@ CONFIGURATOR_KEY = "configurator"
 
 
 def is_local_deployment(platforms: PlatformCollection) -> bool:
-    return any("localhost" in hosts for _, hosts in platforms.items())
+    return any("localhost" in hosts for platform, hosts in platforms.items())
 
 
 def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
@@ -48,7 +52,7 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
     for key, hosts in options.items():
         if key in deployment_platforms and hosts:
             if "localhost" in hosts:
-                logging.info(f"Local deployment detected for {key}, only this host will be used")
+                logging.info("Local deployment detected for %s, only this host will be used", key)
                 return {DeploymentPlatform.from_str(key): hosts}
             platforms[DeploymentPlatform.from_str(key)] = hosts
     return platforms
@@ -98,16 +102,26 @@ def prepare_installers(request) -> None:
 @pytest.fixture(scope="session", autouse=True)
 def installer_server_url(request) -> None:
     port = 8021
-    ip_address = socket.gethostbyname(socket.gethostname())
-    url = f"https://{ip_address}:{port}"
+    ipaddress = socket.gethostbyname(socket.gethostname())
+    url = f"https://{ipaddress}:{port}"
 
-    logging.info(f"Running server on {url}...")
+    logging.info("Running server on %s...", url)
 
-    proc = subprocess.Popen([sys.executable, "-m", "server", "--port", f"{port}", "--ip-address", ip_address],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT,
-                            encoding="utf-8",
-                            env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"})
+    proc = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "server",
+            "--port",
+            f"{port}",
+            "--ip-address",
+            ipaddress,
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf-8",
+        env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"},
+    )
 
     yield url
 
@@ -147,13 +161,33 @@ def pytest_addoption(parser) -> None:
 
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
-    parser.addoption(f"--{TENANT_KEY}", type=str, help="Tenant URL for downloading installer", required=False)
-    parser.addoption(f"--{TENANT_TOKEN_KEY}", type=str, help="API key for downloading installer", required=False)
-    parser.addoption(f"--{PRESERVE_INSTALLERS_KEY}", type=bool, default=False, help="Preserve installers after test run", required=False)
+    parser.addoption(
+        f"--{TENANT_KEY}",
+        type=str,
+        help="Tenant URL for downloading installer",
+        required=False,
+    )
+    parser.addoption(
+        f"--{TENANT_TOKEN_KEY}",
+        type=str,
+        help="API key for downloading installer",
+        required=False,
+    )
+    parser.addoption(
+        f"--{PRESERVE_INSTALLERS_KEY}",
+        type=bool,
+        default=False,
+        help="Preserve installers after test run",
+        required=False,
+    )
 
     for platform in DeploymentPlatform:
         parser.addoption(
-            f"--{platform.value}", type=str, nargs="+", default=[], help="List of IPs for specified platform"
+            f"--{platform.value}",
+            type=str,
+            nargs="+",
+            default=[],
+            help="List of IPs for specified platform",
         )
 
 

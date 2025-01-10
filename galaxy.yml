@@ -6,15 +6,20 @@ readme: README.md
 authors:
   - Dynatrace LLC
 description: Module to install and configure Dynatrace OneAgent deployment
-license:
-  - MIT
+license_file: LICENSE
 tags:
   - dynatrace
   - oneagent
-  - monitoring
+  - agent
   - deployment
+  - monitoring
+  - infrastructure
+  - linux
+  - windows
 repository: https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible
 documentation: https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible
 build_ignore:
-  - roles/oneagent/tests
-  - roles/oneagent/examples
+  - .github
+  - .pre-commit-config.yaml
+  - .gitignore
+  - venv

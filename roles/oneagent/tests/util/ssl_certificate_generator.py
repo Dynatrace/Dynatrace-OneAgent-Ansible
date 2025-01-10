@@ -1,13 +1,12 @@
 import ipaddress
 import logging
 import uuid
+from datetime import datetime, timedelta
 
 from cryptography import x509
-from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
-from datetime import datetime, timedelta
+from cryptography.x509.oid import NameOID
 
 
 class SSLCertificateGenerator:
@@ -28,20 +27,28 @@ class SSLCertificateGenerator:
 
     def _generate_certificate(self, private_key, public_key) -> x509.Certificate:
         builder = x509.CertificateBuilder()
-        builder = builder.subject_name(x509.Name([
-            x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
-            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_name),
-            x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
-            x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
-        ]))
-        builder = builder.issuer_name(x509.Name([
-            x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
-            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_name),
-            x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
-            x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
-        ]))
+        builder = builder.subject_name(
+            x509.Name(
+                [
+                    x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
+                    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_name),
+                    x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
+                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
+                    x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
+                ]
+            )
+        )
+        builder = builder.issuer_name(
+            x509.Name(
+                [
+                    x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
+                    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_name),
+                    x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
+                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
+                    x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
+                ]
+            )
+        )
         builder = builder.not_valid_before(datetime.utcnow())
         builder = builder.not_valid_after(datetime.utcnow() + timedelta(days=self.validity_days))
         builder = builder.serial_number(int(uuid.uuid4()))
@@ -58,11 +65,13 @@ class SSLCertificateGenerator:
 
     def _save_private_key(self, filename, private_key) -> None:
         with open(filename, "wb") as f:
-            f.write(private_key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.TraditionalOpenSSL,
-                encryption_algorithm=serialization.NoEncryption(),
-            ))
+            f.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption(),
+                )
+            )
 
     def _save_certificate(self, filename, certificate) -> None:
         with open(filename, "wb") as f:

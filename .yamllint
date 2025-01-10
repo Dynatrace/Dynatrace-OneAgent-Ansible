@@ -1,0 +1,6 @@
+---
+rules:
+  document-start:
+    ignore: |
+      /.github
+  line-length: disable

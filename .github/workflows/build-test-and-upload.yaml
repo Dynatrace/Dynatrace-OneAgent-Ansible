@@ -15,7 +15,7 @@
 name: "Build, test and upload"
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
-        uses: ./.github/actions/run-sanity-tests
+        uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
       - name: Upload the collection

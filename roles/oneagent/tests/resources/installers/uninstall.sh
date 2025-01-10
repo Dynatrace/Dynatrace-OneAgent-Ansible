@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# This file simulates the basic behavior of the uninstall.sh script
+# This script simulates the basic behavior of the uninstall.sh script
 
-set -e
+set -eu
 
 main() {
 	rm -rf /opt/dynatrace

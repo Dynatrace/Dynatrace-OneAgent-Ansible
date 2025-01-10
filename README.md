@@ -9,8 +9,8 @@ configuration of OneAgent and ensures the OneAgent service remains in a running 
 
 ## Requirements
 
-* Ansible >= 2.15.0
-* pywinrm >= 0.4.3 (Windows only)
+- Ansible >= 2.15.0
+- pywinrm >= 0.4.3 (Windows only)
 
 ## Installation
 
@@ -44,8 +44,7 @@ broken in the latest version (please report an issue in this repository). Use th
 ansible-galaxy collection install dynatrace.oneagent:==1.0.0
 ```
 
-See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more
-details.
+See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
 
 ## Use Cases
 
@@ -53,6 +52,8 @@ See [OneAgent role README](roles/oneagent/README.md) for more details.
 
 ## Testing
 
+The collection was tested against Ansible sanity tests and component tests. The latter runs regular deployment with
+the installer and checks veriety of installation scenarios.
 See [OneAgent role tests README](roles/oneagent/tests/README.md) for more details.
 
 ## Support

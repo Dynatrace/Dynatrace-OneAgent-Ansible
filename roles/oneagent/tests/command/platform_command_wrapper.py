@@ -3,7 +3,7 @@ from pathlib import Path
 from command.command_wrapper import CommandWrapper
 from command.unix.unix_command_wrapper import UnixCommandWrapper
 from command.windows.windows_command_wrapper import WindowsCommandWrapper
-from util.test_data_types import DeploymentPlatform, CommandResult
+from util.test_data_types import CommandResult, DeploymentPlatform
 
 
 class PlatformCommandWrapper:
