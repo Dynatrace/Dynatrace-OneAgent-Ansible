@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2025-02-03
+- Fixed issue with skipping CA certificate transfer task
+
 ## [1.2.2] - 2025-10-1
 - Fixed linters issues
 
