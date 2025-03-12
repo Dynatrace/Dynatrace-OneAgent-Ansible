@@ -7,12 +7,12 @@ from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from util.constants.common_constants import (
+from constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
     INSTALLER_PARTIAL_NAME,
     INSTALLER_SERVER_TOKEN,
     SERVER_CERTIFICATE_FILE_NAME,
-    SERVER_DIRECTORY,
+    WORK_DIR_SERVER_PATH,
 )
 from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
 
@@ -51,7 +51,7 @@ def set_ca_cert_download_params(config: AnsibleConfig, installer_server_url: str
     config.set_common_parameter(
         config.CA_CERT_DOWNLOAD_URL_KEY, f"{installer_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}"
     )
-    config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}")
+    config.set_common_parameter(config.CA_CERT_DOWNLOAD_CERT_KEY, f"{WORK_DIR_SERVER_PATH / SERVER_CERTIFICATE_FILE_NAME}")
     config.set_common_parameter(config.FORCE_CERT_DOWNLOAD_KEY, True)
 
 
@@ -59,7 +59,7 @@ def set_installer_download_params(config: AnsibleConfig, installer_server_url: s
     config.set_common_parameter(config.ENVIRONMENT_URL_KEY, installer_server_url)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, INSTALLER_SERVER_TOKEN)
     config.set_common_parameter(
-        config.INSTALLER_DOWNLOAD_CERT_KEY, f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}"
+        config.INSTALLER_DOWNLOAD_CERT_KEY, f"{WORK_DIR_SERVER_PATH / SERVER_CERTIFICATE_FILE_NAME}"
     )
     for platform in DeploymentPlatform:
         config.set_platform_parameter(platform, config.INSTALLER_ARCH_KEY, platform.arch())

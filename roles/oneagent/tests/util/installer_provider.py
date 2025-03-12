@@ -7,9 +7,9 @@ from pathlib import Path
 
 from util.test_data_types import DeploymentPlatform, PlatformCollection
 from util.ssl_certificate_generator import SSLCertificateGenerator
-from util.constants.common_constants import (
-    INSTALLERS_RESOURCE_DIR,
-    INSTALLERS_DIRECTORY,
+from constants import (
+    INSTALLERS_RESOURCES_PATH,
+    WORK_DIR_INSTALLERS_PATH,
     INSTALLER_PRIVATE_KEY_FILE_NAME,
     INSTALLER_CERTIFICATE_FILE_NAME,
     InstallerVersion,
@@ -31,9 +31,9 @@ def sign_installer(installer: list[str]) -> list[str]:
         "cms",
         "-sign",
         "-signer",
-        f"{INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME}",
+        f"{WORK_DIR_INSTALLERS_PATH / INSTALLER_CERTIFICATE_FILE_NAME}",
         "-inkey",
-        f"{INSTALLERS_DIRECTORY / INSTALLER_PRIVATE_KEY_FILE_NAME}",
+        f"{WORK_DIR_INSTALLERS_PATH / INSTALLER_PRIVATE_KEY_FILE_NAME}",
     ]
 
     proc = subprocess.run(
@@ -62,14 +62,14 @@ def sign_installer(installer: list[str]) -> list[str]:
 
 
 def generate_installers() -> bool:
-    uninstall_template = get_file_content(INSTALLERS_RESOURCE_DIR / "uninstall.sh")
+    uninstall_template = get_file_content(INSTALLERS_RESOURCES_PATH / "uninstall.sh")
     uninstall_code = replace_tag(uninstall_template, "$", r"\$")
 
-    oneagentctl_template = get_file_content(INSTALLERS_RESOURCE_DIR / "oneagentctl.sh")
+    oneagentctl_template = get_file_content(INSTALLERS_RESOURCES_PATH / "oneagentctl.sh")
     oneagentctl_code = replace_tag(oneagentctl_template, "$", r"\$")
 
     installer_partial_name = "Dynatrace-OneAgent-Linux"
-    installer_template = get_file_content(INSTALLERS_RESOURCE_DIR / f"{installer_partial_name}.sh")
+    installer_template = get_file_content(INSTALLERS_RESOURCES_PATH / f"{installer_partial_name}.sh")
     installer_template = replace_tag(installer_template, "##UNINSTALL_CODE##", "".join(uninstall_code))
     installer_template = replace_tag(installer_template, "##ONEAGENTCTL_CODE##", "".join(oneagentctl_code))
 
@@ -81,8 +81,8 @@ def generate_installers() -> bool:
         common_name="127.0.0.1",
     )
     generator.generate_and_save(
-        f"{INSTALLERS_DIRECTORY /INSTALLER_PRIVATE_KEY_FILE_NAME}",
-        f"{INSTALLERS_DIRECTORY /INSTALLER_CERTIFICATE_FILE_NAME}",
+        f"{WORK_DIR_INSTALLERS_PATH /INSTALLER_PRIVATE_KEY_FILE_NAME}",
+        f"{WORK_DIR_INSTALLERS_PATH /INSTALLER_CERTIFICATE_FILE_NAME}",
     )
 
     # REMOVE INSTALLER VERSION
@@ -91,7 +91,7 @@ def generate_installers() -> bool:
         installer_code = sign_installer(installer_code)
         if not installer_code:
             return False
-        with open(INSTALLERS_DIRECTORY / f"{installer_partial_name}-{version.value}.sh", "w") as f:
+        with open(WORK_DIR_INSTALLERS_PATH / f"{installer_partial_name}-{version.value}.sh", "w") as f:
             f.writelines(installer_code)
 
     return True
@@ -127,7 +127,7 @@ def download_and_save(path: Path, url: str, headers: dict[str, str]) -> bool:
 
 
 def download_signature(url: str) -> bool:
-    path = INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME
+    path = WORK_DIR_INSTALLERS_PATH / INSTALLER_CERTIFICATE_FILE_NAME
     return download_and_save(path, url, {})
 
 
@@ -137,7 +137,7 @@ def download_installer(tenant, tenant_token, version: str, platform: DeploymentP
     headers = {"accept": "application/octet-stream", "Authorization": f"Api-Token {tenant_token}"}
 
     ext = "exe" if family == "windows" else "sh"
-    path = INSTALLERS_DIRECTORY / f"Dynatrace-OneAgent-{family}_{platform.arch()}-{version}.{ext}"
+    path = WORK_DIR_INSTALLERS_PATH / f"Dynatrace-OneAgent-{family}_{platform.arch()}-{version}.{ext}"
 
     return download_and_save(path, url, headers)
 

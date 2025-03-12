@@ -1,40 +1,40 @@
 import shutil
 from typing import Any
 
-from ansible.constants import (
+from constants import (
     ANSIBLE_CONNECTION_KEY,
     ANSIBLE_PASS_KEY,
-    ANSIBLE_RESOURCE_DIR,
+    ANSIBLE_RESOURCES_PATH,
     ANSIBLE_USER_KEY,
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
-    INSTALLED_COLLECTIONS_DIR,
-    INVENTORY_FILE,
-    PLAYBOOK_FILE,
+    INSTALLED_COLLECTIONS_PATH,
+    TEST_INVENTORY_FILE,
+    TEST_PLAYBOOK_FILE,
     PLAYBOOK_TEMPLATE_FILE_NAME,
     TEST_COLLECTIONS_DIR,
+    WORK_DIR_PATH,
 )
 from util.common_utils import read_yaml_file, write_yaml_file
-from util.constants.common_constants import TEST_DIRECTORY
 from util.test_data_types import DeploymentPlatform, PlatformCollection
 
 
 def _prepare_collection() -> None:
     shutil.rmtree(TEST_COLLECTIONS_DIR, ignore_errors=True)
-    shutil.copytree(INSTALLED_COLLECTIONS_DIR, TEST_COLLECTIONS_DIR)
+    shutil.copytree(INSTALLED_COLLECTIONS_PATH, TEST_COLLECTIONS_DIR)
 
 
 def _prepare_playbook_file() -> None:
     shutil.copy(
-        str(ANSIBLE_RESOURCE_DIR / PLAYBOOK_TEMPLATE_FILE_NAME),
-        str(TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME),
+        str(ANSIBLE_RESOURCES_PATH / PLAYBOOK_TEMPLATE_FILE_NAME),
+        str(WORK_DIR_PATH / PLAYBOOK_TEMPLATE_FILE_NAME),
     )
 
 
 def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
-    host_file = TEST_DIRECTORY / HOSTS_TEMPLATE_FILE_NAME
-    shutil.copy(str(ANSIBLE_RESOURCE_DIR / HOSTS_TEMPLATE_FILE_NAME), str(host_file))
-    data = read_yaml_file(INVENTORY_FILE)
+    host_file = WORK_DIR_PATH / HOSTS_TEMPLATE_FILE_NAME
+    shutil.copy(str(ANSIBLE_RESOURCES_PATH / HOSTS_TEMPLATE_FILE_NAME), str(host_file))
+    data = read_yaml_file(TEST_INVENTORY_FILE)
     for platform, hosts in platforms.items():
         group_data = data["all"]["children"][platform.family()]["children"][platform.value]
         group_data["hosts"] = {k: None for k in hosts}
@@ -44,12 +44,12 @@ def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
         if "localhost" in hosts:
             group_data = data["all"]["children"][platform.family()]["vars"]
             group_data[ANSIBLE_CONNECTION_KEY] = "local"
-    write_yaml_file(INVENTORY_FILE, data)
+    write_yaml_file(TEST_INVENTORY_FILE, data)
 
 
 def _prepare_credentials_file(user: str, password: str) -> None:
-    credentials_file = TEST_DIRECTORY / CREDENTIALS_FILE_NAME
-    shutil.copy(str(ANSIBLE_RESOURCE_DIR / CREDENTIALS_FILE_NAME), str(credentials_file))
+    credentials_file = WORK_DIR_PATH / CREDENTIALS_FILE_NAME
+    shutil.copy(str(ANSIBLE_RESOURCES_PATH / CREDENTIALS_FILE_NAME), str(credentials_file))
     data = read_yaml_file(credentials_file)
     data[ANSIBLE_USER_KEY] = user
     data[ANSIBLE_PASS_KEY] = password
@@ -94,27 +94,27 @@ class AnsibleConfig:
         _prepare_collection()
 
     def set_common_parameter(self, key: str, value: Any) -> None:
-        data = read_yaml_file(PLAYBOOK_FILE)
+        data = read_yaml_file(TEST_PLAYBOOK_FILE)
         data[0][AnsibleConfig.PARAM_SECTION_KEY][key] = value
-        write_yaml_file(PLAYBOOK_FILE, data)
+        write_yaml_file(TEST_PLAYBOOK_FILE, data)
 
     def set_platform_parameter(self, platform: DeploymentPlatform, key: str, value: Any) -> None:
-        data = read_yaml_file(INVENTORY_FILE)
+        data = read_yaml_file(TEST_INVENTORY_FILE)
         group_data = data["all"]["children"][platform.family()]["children"][platform.value]
         group_data[self.PARAM_SECTION_KEY][key] = value
-        write_yaml_file(INVENTORY_FILE, data)
+        write_yaml_file(TEST_INVENTORY_FILE, data)
 
     def set_deployment_hosts(self, hosts: str) -> None:
-        data = read_yaml_file(PLAYBOOK_FILE)
+        data = read_yaml_file(TEST_PLAYBOOK_FILE)
         data[0][self.HOSTS_PARAM_KEY] = hosts
-        write_yaml_file(PLAYBOOK_FILE, data)
+        write_yaml_file(TEST_PLAYBOOK_FILE, data)
 
     def clear_parameters_section(self) -> None:
-        data = read_yaml_file(PLAYBOOK_FILE)
+        data = read_yaml_file(TEST_PLAYBOOK_FILE)
         data[0][AnsibleConfig.PARAM_SECTION_KEY] = {}
-        write_yaml_file(PLAYBOOK_FILE, data)
-        data = read_yaml_file(INVENTORY_FILE)
+        write_yaml_file(TEST_PLAYBOOK_FILE, data)
+        data = read_yaml_file(TEST_INVENTORY_FILE)
         for platform in DeploymentPlatform:
             group_data = data["all"]["children"][platform.family()]["children"][platform.value]
             group_data[self.PARAM_SECTION_KEY] = {}
-        write_yaml_file(INVENTORY_FILE, data)
+        write_yaml_file(TEST_INVENTORY_FILE, data)

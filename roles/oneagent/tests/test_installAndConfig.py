@@ -1,10 +1,9 @@
 import logging
 from pathlib import Path, PureWindowsPath
 
-from ansible.constants import TECH_NAME
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from util.constants.common_constants import INSTALLER_SERVER_TOKEN
+from constants import INSTALLER_SERVER_TOKEN, TECH_NAME
 from util.test_data_types import DeploymentPlatform, DeploymentResult
 from util.test_helpers import (
     check_agent_state,

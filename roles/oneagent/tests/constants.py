@@ -1,0 +1,80 @@
+from enum import Enum
+from pathlib import Path
+import tempfile
+
+COLLECTION_NAMESPACE = "dynatrace"
+COLLECTION_NAME = "oneagent"
+ROLE_NAME = "oneagent"
+
+# TODO: remove in tests refactor
+TECH_NAME = "Ansible"
+
+ANSIBLE_USER_KEY = "ansible_user"
+ANSIBLE_PASS_KEY = "ansible_password"
+ANSIBLE_CONNECTION_KEY = "ansible_connection"
+
+HOSTS_TEMPLATE_FILE_NAME = "hosts.yml"
+CREDENTIALS_FILE_NAME = "credentials.yml"
+PLAYBOOK_TEMPLATE_FILE_NAME = "oneagent.yml"
+
+INSTALLED_COLLECTIONS_PATH = Path.home() / ".ansible" / "collections"
+NAMESPACE_PATH = INSTALLED_COLLECTIONS_PATH / "ansible_collections" / COLLECTION_NAMESPACE
+ROLE_PATH = NAMESPACE_PATH / COLLECTION_NAME / "roles" / ROLE_NAME
+TESTS_PATH = ROLE_PATH / "tests"
+
+FAILED_DEPLOYMENT_EXIT_CODE = 2
+SUCCESSFUL_DEPLOYMENT_EXIT_CODE = 0
+VARIABLE_PREFIX = f"{COLLECTION_NAME}_"
+
+RESOURCES_PATH = TESTS_PATH / "resources"
+ANSIBLE_RESOURCES_PATH = RESOURCES_PATH / "ansible"
+INSTALLERS_RESOURCES_PATH = RESOURCES_PATH / "installers"
+
+INSTALLER_CERTIFICATE_FILE_NAME = "dt-root.cert.pem"
+INSTALLER_PRIVATE_KEY_FILE_NAME = "dt-root.key"
+SERVER_CERTIFICATE_FILE_NAME = "server.pem"
+SERVER_PRIVATE_KEY_FILE_NAME = "server.key"
+
+INSTALLER_PARTIAL_NAME = "Dynatrace-OneAgent"
+INSTALLER_SYSTEM_NAME_TYPE_MAP = {"linux": "linux", "unix": "linux", "aix": "aix", "windows": "windows"}
+
+INSTALLER_SERVER_TOKEN = "abcdefghijk1234567890"
+
+
+class InstallerVersion(Enum):
+    OLD = "1.199.0.20241008-150308"
+    LATEST = "1.300.0.20241008-150308"
+
+
+UNIX_DEFAULT_DOWNLOAD_PATH = Path("/tmp")
+UNIX_DEFAULT_INSTALL_PATH = Path("/opt") / "dynatrace" / "oneagent"
+UNIX_ONEAGENTCTL_BIN_NAME = "oneagentctl"
+UNIX_ONEAGENTCTL_PATH = UNIX_DEFAULT_INSTALL_PATH / "agent" / "tools" / UNIX_ONEAGENTCTL_BIN_NAME
+
+WINDOWS_DEFAULT_DOWNLOAD_PATH = Path("%TEMP%")
+WINDOWS_DEFAULT_INSTALL_PATH = Path("C:\\Program Files") / "dynatrace" / "oneagent"
+WINDOWS_ONEAGENTCTL_BIN_NAME = "oneagentctl.exe"
+WINDOWS_ONEAGENTCTL_PATH = WINDOWS_DEFAULT_INSTALL_PATH / "agent" / "tools" / WINDOWS_ONEAGENTCTL_BIN_NAME
+
+TEST_RUN_DIR_PATH = Path(tempfile.gettempdir()) / "ansible_oneagent_tests_run_dir"
+WORK_DIR_INSTALLERS_PATH = TEST_RUN_DIR_PATH / "installers"
+WORK_DIR_LOGS_PATH = TEST_RUN_DIR_PATH / "logs"
+WORK_DIR_SERVER_PATH = TEST_RUN_DIR_PATH / "server"
+WORK_DIR_PATH = TEST_RUN_DIR_PATH / "work_dir"
+
+TEST_PLAYBOOK_FILE = WORK_DIR_PATH / PLAYBOOK_TEMPLATE_FILE_NAME
+TEST_INVENTORY_FILE = WORK_DIR_PATH / HOSTS_TEMPLATE_FILE_NAME
+TEST_COLLECTIONS_DIR = WORK_DIR_PATH / "collections"
+TEST_SIGNATURE_FILE = (
+    TEST_COLLECTIONS_DIR
+    / "ansible_collections"
+    / COLLECTION_NAMESPACE
+    / COLLECTION_NAME
+    / "roles"
+    / ROLE_NAME
+    / "files"
+    / INSTALLER_CERTIFICATE_FILE_NAME
+)
+
+ERROR_MESSAGES_FILE = ROLE_PATH / "vars" / "messages.yml"
+INSTALLER_SIGNATURE_FILE = ROLE_PATH / "files" / INSTALLER_CERTIFICATE_FILE_NAME

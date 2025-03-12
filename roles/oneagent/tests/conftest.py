@@ -13,12 +13,12 @@ from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import prepare_test_dirs
-from util.constants.common_constants import (
-    COMPONENT_TEST_BASE,
-    INSTALLERS_DIRECTORY,
-    LOG_DIRECTORY,
-    SERVER_DIRECTORY,
-    TEST_DIRECTORY,
+from constants import (
+    TEST_RUN_DIR_PATH,
+    WORK_DIR_INSTALLERS_PATH,
+    WORK_DIR_LOGS_PATH,
+    WORK_DIR_SERVER_PATH,
+    WORK_DIR_PATH,
 )
 from util.installer_provider import download_installers, download_signature, generate_installers
 from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
@@ -62,15 +62,15 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
 def create_test_directories(request) -> None:
     if request.config.getoption(PRESERVE_INSTALLERS_KEY):
         logging.info("Installers will be preserved, no installers will be generated")
-        shutil.rmtree(SERVER_DIRECTORY, ignore_errors=True)
-        shutil.rmtree(LOG_DIRECTORY, ignore_errors=True)
-        shutil.rmtree(TEST_DIRECTORY, ignore_errors=True)
+        shutil.rmtree(WORK_DIR_SERVER_PATH, ignore_errors=True)
+        shutil.rmtree(WORK_DIR_LOGS_PATH, ignore_errors=True)
+        shutil.rmtree(WORK_DIR_PATH, ignore_errors=True)
     else:
-        shutil.rmtree(COMPONENT_TEST_BASE, ignore_errors=True)
+        shutil.rmtree(TEST_RUN_DIR_PATH, ignore_errors=True)
 
-    os.makedirs(INSTALLERS_DIRECTORY, exist_ok=True)
-    os.makedirs(SERVER_DIRECTORY, exist_ok=True)
-    os.makedirs(LOG_DIRECTORY, exist_ok=True)
+    os.makedirs(WORK_DIR_INSTALLERS_PATH, exist_ok=True)
+    os.makedirs(WORK_DIR_SERVER_PATH, exist_ok=True)
+    os.makedirs(WORK_DIR_LOGS_PATH, exist_ok=True)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -126,7 +126,7 @@ def installer_server_url(request) -> None:
     yield url
 
     proc.terminate()
-    with Path(LOG_DIRECTORY / "server.log").open("a") as log:
+    with Path(WORK_DIR_LOGS_PATH / "server.log").open("a") as log:
         log.writelines(proc.stdout)
 
 

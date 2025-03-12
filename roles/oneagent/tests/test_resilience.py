@@ -1,8 +1,8 @@
 import logging
 import re
-
 import pytest
-from ansible.constants import ERROR_MESSAGES_FILE, FAILED_DEPLOYMENT_EXIT_CODE, TEST_SIGNATURE_FILE, VARIABLE_PREFIX
+
+from constants import ERROR_MESSAGES_FILE, FAILED_DEPLOYMENT_EXIT_CODE, TEST_SIGNATURE_FILE, VARIABLE_PREFIX
 from util.common_utils import read_yaml_file
 from util.test_data_types import DeploymentResult
 from util.test_helpers import enable_for_system_family, run_deployment, set_installer_download_params

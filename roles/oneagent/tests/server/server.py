@@ -5,11 +5,11 @@ from typing import Any
 
 from flask import Blueprint, Flask, request, send_file
 from util.common_utils import get_installers
-from util.constants.common_constants import (
+from constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
-    INSTALLERS_DIRECTORY,
+    WORK_DIR_INSTALLERS_PATH,
     SERVER_CERTIFICATE_FILE_NAME,
-    SERVER_DIRECTORY,
+    WORK_DIR_SERVER_PATH,
     SERVER_PRIVATE_KEY_FILE_NAME,
 )
 from util.ssl_certificate_generator import SSLCertificateGenerator
@@ -37,7 +37,7 @@ def get_installer(system: str, arch: str, version: str) -> TransferResult:
 
 @certificate_bp.route(f"/{INSTALLER_CERTIFICATE_FILE_NAME}")
 def get_ca_certificate() -> TransferResult:
-    cert_file = INSTALLERS_DIRECTORY / INSTALLER_CERTIFICATE_FILE_NAME
+    cert_file = WORK_DIR_INSTALLERS_PATH / INSTALLER_CERTIFICATE_FILE_NAME
     if not cert_file.exists():
         logging.warning("%s not found", cert_file)
         return f"{cert_file} not found", HTTPStatus.NOT_FOUND
@@ -79,13 +79,13 @@ def main() -> None:
         common_name=args.ip_address,
     )
     generator.generate_and_save(
-        f"{SERVER_DIRECTORY /SERVER_PRIVATE_KEY_FILE_NAME}",
-        f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}",
+        f"{WORK_DIR_SERVER_PATH /SERVER_PRIVATE_KEY_FILE_NAME}",
+        f"{WORK_DIR_SERVER_PATH / SERVER_CERTIFICATE_FILE_NAME}",
     )
 
     context = (
-        f"{SERVER_DIRECTORY / SERVER_CERTIFICATE_FILE_NAME}",
-        f"{SERVER_DIRECTORY / SERVER_PRIVATE_KEY_FILE_NAME}",
+        f"{WORK_DIR_SERVER_PATH / SERVER_CERTIFICATE_FILE_NAME}",
+        f"{WORK_DIR_SERVER_PATH / SERVER_PRIVATE_KEY_FILE_NAME}",
     )
     app.register_blueprint(installer_bp, url_prefix="/api/v1/deployment/installer/agent")
     app.register_blueprint(certificate_bp)
