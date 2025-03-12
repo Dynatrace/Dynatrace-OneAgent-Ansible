@@ -2,7 +2,7 @@ import logging
 import re
 import pytest
 
-from constants import ERROR_MESSAGES_FILE, FAILED_DEPLOYMENT_EXIT_CODE, TEST_SIGNATURE_FILE, VARIABLE_PREFIX
+from constants import ERROR_MESSAGES_FILE_PATH, FAILED_DEPLOYMENT_EXIT_CODE, TEST_SIGNATURE_FILE, VARIABLE_PREFIX
 from util.common_utils import read_yaml_file
 from util.test_data_types import DeploymentResult
 from util.test_helpers import enable_for_system_family, run_deployment, set_installer_download_params
@@ -21,7 +21,7 @@ VERSION_PARAMETER_TOO_LOW_KEY = "version_lower_than_minimal"
 
 
 def _parse_error_messages_file() -> dict[str, str]:
-    return read_yaml_file(ERROR_MESSAGES_FILE)
+    return read_yaml_file(ERROR_MESSAGES_FILE_PATH)
 
 
 def _prepare_test_data(data: dict[str, str]) -> dict[str, str]:

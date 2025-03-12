@@ -4,11 +4,11 @@ from typing import Any
 from constants import (
     ANSIBLE_CONNECTION_KEY,
     ANSIBLE_PASS_KEY,
-    ANSIBLE_RESOURCES_PATH,
+    ANSIBLE_RESOURCES_DIR_PATH,
     ANSIBLE_USER_KEY,
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
-    INSTALLED_COLLECTIONS_PATH,
+    INSTALLED_COLLECTIONS_DIR_PATH,
     TEST_INVENTORY_FILE,
     TEST_PLAYBOOK_FILE,
     PLAYBOOK_TEMPLATE_FILE_NAME,
@@ -21,19 +21,19 @@ from util.test_data_types import DeploymentPlatform, PlatformCollection
 
 def _prepare_collection() -> None:
     shutil.rmtree(TEST_COLLECTIONS_DIR, ignore_errors=True)
-    shutil.copytree(INSTALLED_COLLECTIONS_PATH, TEST_COLLECTIONS_DIR)
+    shutil.copytree(INSTALLED_COLLECTIONS_DIR_PATH, TEST_COLLECTIONS_DIR)
 
 
 def _prepare_playbook_file() -> None:
     shutil.copy(
-        str(ANSIBLE_RESOURCES_PATH / PLAYBOOK_TEMPLATE_FILE_NAME),
+        str(ANSIBLE_RESOURCES_DIR_PATH / PLAYBOOK_TEMPLATE_FILE_NAME),
         str(WORK_DIR_PATH / PLAYBOOK_TEMPLATE_FILE_NAME),
     )
 
 
 def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
     host_file = WORK_DIR_PATH / HOSTS_TEMPLATE_FILE_NAME
-    shutil.copy(str(ANSIBLE_RESOURCES_PATH / HOSTS_TEMPLATE_FILE_NAME), str(host_file))
+    shutil.copy(str(ANSIBLE_RESOURCES_DIR_PATH / HOSTS_TEMPLATE_FILE_NAME), str(host_file))
     data = read_yaml_file(TEST_INVENTORY_FILE)
     for platform, hosts in platforms.items():
         group_data = data["all"]["children"][platform.family()]["children"][platform.value]
@@ -49,7 +49,7 @@ def _prepare_inventory_file(user: str, platforms: PlatformCollection) -> None:
 
 def _prepare_credentials_file(user: str, password: str) -> None:
     credentials_file = WORK_DIR_PATH / CREDENTIALS_FILE_NAME
-    shutil.copy(str(ANSIBLE_RESOURCES_PATH / CREDENTIALS_FILE_NAME), str(credentials_file))
+    shutil.copy(str(ANSIBLE_RESOURCES_DIR_PATH / CREDENTIALS_FILE_NAME), str(credentials_file))
     data = read_yaml_file(credentials_file)
     data[ANSIBLE_USER_KEY] = user
     data[ANSIBLE_PASS_KEY] = password

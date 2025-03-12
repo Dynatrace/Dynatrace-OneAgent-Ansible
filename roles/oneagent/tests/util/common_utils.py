@@ -8,7 +8,7 @@ import yaml
 from constants import (
     INSTALLER_PARTIAL_NAME,
     INSTALLER_SYSTEM_NAME_TYPE_MAP,
-    WORK_DIR_INSTALLERS_PATH,
+    WORK_INSTALLERS_DIR_PATH,
     WORK_DIR_PATH,
     UNIX_ONEAGENTCTL_PATH,
     WINDOWS_ONEAGENTCTL_PATH
@@ -66,7 +66,7 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
 
 def _get_available_installers() -> Dict[DeploymentPlatform, list[Path]]:
     installers: dict[DeploymentPlatform, list[Path]] = {k: [] for k in DeploymentPlatform}
-    for installer in sorted(WORK_DIR_INSTALLERS_PATH.glob(f"{INSTALLER_PARTIAL_NAME}*")):
+    for installer in sorted(WORK_INSTALLERS_DIR_PATH.glob(f"{INSTALLER_PARTIAL_NAME}*")):
         platform = _get_platform_by_installer(installer)
         installers[platform].append(installer)
     return installers

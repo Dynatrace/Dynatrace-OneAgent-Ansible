@@ -1,9 +1,9 @@
 import logging
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from constants import INSTALLER_SERVER_TOKEN, UNIX_DEFAULT_DOWNLOAD_PATH
+from constants import INSTALLER_SERVER_TOKEN, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH
 from util.test_data_types import DeploymentPlatform, DeploymentResult
 from util.test_helpers import (
     check_agent_state,
@@ -12,8 +12,6 @@ from util.test_helpers import (
     run_deployment,
     set_installer_download_params,
 )
-
-WINDOWS_DOWNLOAD_PATH = PureWindowsPath("C:\\tmp\\dyna")
 
 CTL_OPTION_GET_HOST_TAGS = "--get-host-tags"
 CTL_OPTION_SET_HOST_TAG = "--set-host-tag"
@@ -88,7 +86,7 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
     )
 
     for platform, hosts in platforms.items():
-        download_dir: Path = get_platform_argument(platform, UNIX_DEFAULT_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH)
+        download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
         configurator.set_platform_parameter(platform, configurator.DOWNLOAD_DIR_KEY, str(download_dir))
         configurator.set_common_parameter(
             configurator.INSTALLER_PLATFORM_ARGS_KEY,
@@ -112,8 +110,8 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
         check_download_directory,
         wrapper,
         True,
-        UNIX_DEFAULT_DOWNLOAD_PATH,
-        WINDOWS_DOWNLOAD_PATH,
+        UNIX_DOWNLOAD_DIR_PATH,
+        WINDOWS_DOWNLOAD_DIR_PATH,
     )
 
     logging.info("Check if config args were applied correctly")
