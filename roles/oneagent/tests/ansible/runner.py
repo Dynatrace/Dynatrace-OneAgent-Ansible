@@ -1,11 +1,11 @@
 import logging
 import subprocess
 
-from ansible.constants import (
+from constants import (
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     PLAYBOOK_TEMPLATE_FILE_NAME,
-    TEST_DIRECTORY,
+    WORK_DIR_PATH,
 )
 from util.test_data_types import CommandResult, DeploymentResult
 
@@ -16,21 +16,21 @@ class AnsibleRunner:
         self.password = password
 
     def run_deployment(self) -> DeploymentResult:
-        with open(TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME, "r") as f:
+        with open(WORK_DIR_PATH / PLAYBOOK_TEMPLATE_FILE_NAME, "r") as f:
             logging.debug("Running playbook (%s):\n%s", PLAYBOOK_TEMPLATE_FILE_NAME, f.read())
 
-        with open(TEST_DIRECTORY / HOSTS_TEMPLATE_FILE_NAME, "r") as f:
+        with open(WORK_DIR_PATH / HOSTS_TEMPLATE_FILE_NAME, "r") as f:
             logging.debug("Inventory file (%s):\n%s", HOSTS_TEMPLATE_FILE_NAME, f.read())
 
-        with open(TEST_DIRECTORY / CREDENTIALS_FILE_NAME, "r") as f:
+        with open(WORK_DIR_PATH / CREDENTIALS_FILE_NAME, "r") as f:
             logging.debug("Credentials file (%s):\n%s", CREDENTIALS_FILE_NAME, f.read())
 
         res = subprocess.run(
             [
                 "ansible-playbook",
                 "-i",
-                TEST_DIRECTORY / HOSTS_TEMPLATE_FILE_NAME,
-                TEST_DIRECTORY / PLAYBOOK_TEMPLATE_FILE_NAME,
+                WORK_DIR_PATH / HOSTS_TEMPLATE_FILE_NAME,
+                WORK_DIR_PATH / PLAYBOOK_TEMPLATE_FILE_NAME,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

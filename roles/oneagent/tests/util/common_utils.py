@@ -5,23 +5,23 @@ from pathlib import Path
 from typing import Any, Dict
 
 import yaml
-from util.constants.common_constants import (
+from constants import (
     INSTALLER_PARTIAL_NAME,
     INSTALLER_SYSTEM_NAME_TYPE_MAP,
-    INSTALLERS_DIRECTORY,
-    TEST_DIRECTORY,
+    WORK_INSTALLERS_DIR_PATH,
+    WORK_DIR_PATH,
+    UNIX_ONEAGENTCTL_PATH,
+    WINDOWS_ONEAGENTCTL_PATH
 )
-from util.constants.unix_constants import UNIX_ONEAGENTCTL_PATH
-from util.constants.windows_constants import WINDOWS_ONEAGENTCTL_PATH
 from util.test_data_types import DeploymentPlatform
 
 ParsedYaml = dict | list | None
 
 
 def prepare_test_dirs() -> None:
-    remove_if_exists(TEST_DIRECTORY)
-    Path(TEST_DIRECTORY).mkdir(parents=True)
-    os.chdir(TEST_DIRECTORY)
+    remove_if_exists(WORK_DIR_PATH)
+    Path(WORK_DIR_PATH).mkdir(parents=True)
+    os.chdir(WORK_DIR_PATH)
 
 
 def remove_if_exists(path: Path) -> None:
@@ -66,7 +66,7 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
 
 def _get_available_installers() -> Dict[DeploymentPlatform, list[Path]]:
     installers: dict[DeploymentPlatform, list[Path]] = {k: [] for k in DeploymentPlatform}
-    for installer in sorted(INSTALLERS_DIRECTORY.glob(f"{INSTALLER_PARTIAL_NAME}*")):
+    for installer in sorted(WORK_INSTALLERS_DIR_PATH.glob(f"{INSTALLER_PARTIAL_NAME}*")):
         platform = _get_platform_by_installer(installer)
         installers[platform].append(installer)
     return installers

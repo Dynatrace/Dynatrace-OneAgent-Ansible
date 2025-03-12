@@ -1,9 +1,7 @@
 import logging
 
-from ansible.constants import LOCAL_INSTALLERS_LOCATION
+from constants import UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH, WORK_INSTALLERS_DIR_PATH
 from util.common_utils import get_installers
-from util.constants.unix_constants import UNIX_DEFAULT_DOWNLOAD_PATH
-from util.constants.windows_constants import WINDOWS_DEFAULT_DOWNLOAD_PATH
 from util.test_helpers import (
     check_agent_state,
     check_download_directory,
@@ -19,7 +17,7 @@ def test_local_installer(runner, configurator, platforms, wrapper, installer_ser
     set_ca_cert_download_params(configurator, installer_server_url)
 
     for platform, hosts in platforms.items():
-        installers_location = LOCAL_INSTALLERS_LOCATION
+        installers_location = WORK_INSTALLERS_DIR_PATH
         latest_installer_name = get_installers(platform.system(), platform.arch(), "latest")[-1]
         configurator.set_platform_parameter(
             platform,
@@ -38,6 +36,6 @@ def test_local_installer(runner, configurator, platforms, wrapper, installer_ser
         check_download_directory,
         wrapper,
         False,
-        UNIX_DEFAULT_DOWNLOAD_PATH,
-        WINDOWS_DEFAULT_DOWNLOAD_PATH,
+        UNIX_DOWNLOAD_DIR_PATH,
+        WINDOWS_DOWNLOAD_DIR_PATH,
     )

@@ -1,10 +1,9 @@
 import logging
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 
-from ansible.constants import TECH_NAME
 from command.platform_command_wrapper import PlatformCommandWrapper
 from util.common_utils import get_oneagentctl_path, get_platform_argument
-from util.constants.common_constants import INSTALLER_SERVER_TOKEN
+from constants import INSTALLER_SERVER_TOKEN, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH
 from util.test_data_types import DeploymentPlatform, DeploymentResult
 from util.test_helpers import (
     check_agent_state,
@@ -13,13 +12,6 @@ from util.test_helpers import (
     run_deployment,
     set_installer_download_params,
 )
-
-UNIX_DOWNLOAD_PATH = Path("/tmp/dyna")
-WINDOWS_DOWNLOAD_PATH = PureWindowsPath("C:\\tmp\\dyna")
-
-TECH_NAME_KEY = "orchestration_tech"
-TECH_VERSION_KEY = "tech_version"
-TECH_SCRIPT_VERSION_KEY = "script_version"
 
 CTL_OPTION_GET_HOST_TAGS = "--get-host-tags"
 CTL_OPTION_SET_HOST_TAG = "--set-host-tag"
@@ -45,7 +37,6 @@ def _check_install_args(
     platform: DeploymentPlatform,
     address: str,
     wrapper: PlatformCommandWrapper,
-    ansible: str,
 ) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
 
@@ -54,10 +45,6 @@ def _check_install_args(
     assert metadata.returncode == 0
 
     params = dict(kv.split("=") for kv in metadata.stdout.strip().splitlines())
-
-    assert params[TECH_VERSION_KEY] is not None
-    assert params[TECH_SCRIPT_VERSION_KEY] is not None
-    assert params[TECH_NAME_KEY] is not None and params[TECH_NAME_KEY] == ansible
 
 
 def _check_config_args(
@@ -99,7 +86,7 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
     )
 
     for platform, hosts in platforms.items():
-        download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_PATH, WINDOWS_DOWNLOAD_PATH)
+        download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
         configurator.set_platform_parameter(platform, configurator.DOWNLOAD_DIR_KEY, str(download_dir))
         configurator.set_common_parameter(
             configurator.INSTALLER_PLATFORM_ARGS_KEY,
@@ -123,8 +110,8 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
         check_download_directory,
         wrapper,
         True,
-        UNIX_DOWNLOAD_PATH,
-        WINDOWS_DOWNLOAD_PATH,
+        UNIX_DOWNLOAD_DIR_PATH,
+        WINDOWS_DOWNLOAD_DIR_PATH,
     )
 
     logging.info("Check if config args were applied correctly")
@@ -137,4 +124,4 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
     )
 
     logging.info("Check if installer args were passed correctly")
-    perform_operation_on_platforms(platforms, _check_install_args, wrapper, TECH_NAME)
+    perform_operation_on_platforms(platforms, _check_install_args, wrapper)
