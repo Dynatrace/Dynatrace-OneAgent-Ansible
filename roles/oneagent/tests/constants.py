@@ -6,9 +6,6 @@ COLLECTION_NAMESPACE = "dynatrace"
 COLLECTION_NAME = "oneagent"
 ROLE_NAME = "oneagent"
 
-# TODO: remove in tests refactor
-TECH_NAME = "Ansible"
-
 ANSIBLE_USER_KEY = "ansible_user"
 ANSIBLE_PASS_KEY = "ansible_password"
 ANSIBLE_CONNECTION_KEY = "ansible_connection"
