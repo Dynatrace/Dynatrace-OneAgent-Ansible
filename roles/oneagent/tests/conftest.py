@@ -5,6 +5,8 @@ import shutil
 import socket
 import subprocess
 import sys
+import requests
+import time
 from pathlib import Path
 from typing import Any
 
@@ -105,7 +107,7 @@ def installer_server_url(request) -> None:
     ipaddress = socket.gethostbyname(socket.gethostname())
     url = f"https://{ipaddress}:{port}"
 
-    logging.info("Running server on %s...", url)
+    logging.info("Running installer server on %s...", url)
 
     proc = subprocess.Popen(
         [
@@ -118,16 +120,32 @@ def installer_server_url(request) -> None:
             ipaddress,
         ],
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
+        stderr=subprocess.PIPE,
         encoding="utf-8",
         env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"},
     )
 
+    def output_log():
+        with Path(WORK_LOGS_DIR_PATH / "installer_server.log").open("a") as logfile:
+            logfile.writelines(proc.stdout)
+            logfile.writelines(proc.stderr)
+
+    for num in range(10):
+        try:
+            response = requests.get(url, verify=False)
+            logging.info("Installer server started successfully")
+            break
+        except requests.ConnectionError:
+            time.sleep(0.5)
+    else:
+        proc.terminate()
+        output_log()
+        pytest.exit("Failed to start installer server")
+
     yield url
 
     proc.terminate()
-    with Path(WORK_LOGS_DIR_PATH / "server.log").open("a") as log:
-        log.writelines(proc.stdout)
+    output_log()
 
 
 @pytest.fixture(autouse=True)
