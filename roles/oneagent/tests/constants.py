@@ -1,6 +1,6 @@
+import tempfile
 from enum import Enum
 from pathlib import Path
-import tempfile
 
 COLLECTION_NAMESPACE = "dynatrace"
 COLLECTION_NAME = "oneagent"

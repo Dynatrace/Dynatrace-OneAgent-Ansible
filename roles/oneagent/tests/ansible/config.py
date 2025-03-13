@@ -9,14 +9,14 @@ from constants import (
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     INSTALLED_COLLECTIONS_DIR_PATH,
-    TEST_INVENTORY_FILE,
-    TEST_PLAYBOOK_FILE,
     PLAYBOOK_TEMPLATE_FILE_NAME,
     TEST_COLLECTIONS_DIR,
+    TEST_INVENTORY_FILE,
+    TEST_PLAYBOOK_FILE,
     WORK_DIR_PATH,
 )
-from util.common_utils import read_yaml_file, write_yaml_file
-from util.test_data_types import DeploymentPlatform, PlatformCollection
+from deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from resources.file_operations import read_yaml_file, write_yaml_file
 
 
 def _prepare_collection() -> None:

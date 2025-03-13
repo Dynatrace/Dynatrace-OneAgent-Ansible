@@ -1,10 +1,14 @@
 import logging
 
-from constants import UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH, WORK_INSTALLERS_DIR_PATH
-from util.common_utils import get_installers
-from util.test_helpers import (
+from constants import (
+    UNIX_DOWNLOAD_DIR_PATH,
+    WINDOWS_DOWNLOAD_DIR_PATH,
+    WORK_INSTALLERS_DIR_PATH,
+)
+from deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
+    get_installers,
     perform_operation_on_platforms,
     run_deployment,
     set_ca_cert_download_params,
