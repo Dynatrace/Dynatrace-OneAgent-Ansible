@@ -3,16 +3,16 @@ import logging
 from http import HTTPStatus
 from typing import Any
 
-from flask import Blueprint, Flask, request, send_file
-from util.common_utils import get_installers
 from constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
-    WORK_INSTALLERS_DIR_PATH,
     SERVER_CERTIFICATE_FILE_NAME,
-    WORK_SERVER_DIR_PATH,
     SERVER_PRIVATE_KEY_FILE_NAME,
+    WORK_INSTALLERS_DIR_PATH,
+    WORK_SERVER_DIR_PATH,
 )
-from util.ssl_certificate_generator import SSLCertificateGenerator
+from deployment.deployment_operations import get_installers
+from deployment.ssl_certificate_generator import SSLCertificateGenerator
+from flask import Blueprint, Flask, request, send_file
 
 app = Flask(__name__)
 installer_bp = Blueprint("installer", __name__)
@@ -79,7 +79,7 @@ def main() -> None:
         common_name=args.ip_address,
     )
     generator.generate_and_save(
-        f"{WORK_SERVER_DIR_PATH /SERVER_PRIVATE_KEY_FILE_NAME}",
+        f"{WORK_SERVER_DIR_PATH / SERVER_PRIVATE_KEY_FILE_NAME}",
         f"{WORK_SERVER_DIR_PATH / SERVER_CERTIFICATE_FILE_NAME}",
     )
 

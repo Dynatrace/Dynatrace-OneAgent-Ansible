@@ -12,17 +12,29 @@ import pytest
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
-from util.common_utils import prepare_test_dirs
 from constants import (
     TEST_RUN_DIR_PATH,
+    TESTS_DIR_PATH,
+    WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_LOGS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
-    WORK_DIR_PATH,
 )
-from util.installer_provider import download_installers, download_signature, generate_installers
-from util.test_data_types import DeploymentPlatform, DeploymentResult, PlatformCollection
-from util.test_helpers import check_agent_state, perform_operation_on_platforms
+from deployment.deployment_operations import (
+    check_agent_state,
+    perform_operation_on_platforms,
+    prepare_test_dirs,
+)
+from deployment.deployment_platform import (
+    DeploymentPlatform,
+    DeploymentResult,
+    PlatformCollection,
+)
+from deployment.installer_fetching import (
+    download_installers,
+    download_signature,
+    generate_installers,
+)
 
 # Command line options
 USER_KEY = "user"
@@ -111,16 +123,16 @@ def installer_server_url(request) -> None:
         [
             sys.executable,
             "-m",
-            "server",
+            "installer_server",
             "--port",
             f"{port}",
             "--ip-address",
             ipaddress,
         ],
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
+        stderr=subprocess.PIPE,
         encoding="utf-8",
-        env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"},
+        env={"PYTHONPATH": f"{TESTS_DIR_PATH}"},
     )
 
     yield url
