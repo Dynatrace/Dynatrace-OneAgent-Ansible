@@ -60,6 +60,30 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
     return platforms
 
 
+def output_installer_server_log(proc):
+    with Path(WORK_LOGS_DIR_PATH / "installer_server.log").open("a") as logfile:
+        logfile.writelines(proc.stdout)
+        logfile.writelines(proc.stderr)
+
+
+def try_connect_to_server(url):
+    try:
+        response = requests.get(url, verify=False)
+        logging.info("Installer server started successfully")
+        return response
+    except requests.ConnectionError:
+        time.sleep(0.5)
+        return None
+
+
+def wait_for_server_or_fail(url, max_attempts=10):
+    for attempt in range(max_attempts):
+        result = try_connect_to_server(url)
+        if result is not None:
+            return True
+    return False
+
+
 @pytest.fixture(scope="session", autouse=True)
 def create_test_directories(request) -> None:
     if request.config.getoption(PRESERVE_INSTALLERS_KEY):
@@ -125,27 +149,15 @@ def installer_server_url(request) -> None:
         env={"PYTHONPATH": f"{Path(__file__).resolve().parent}"},
     )
 
-    def output_log():
-        with Path(WORK_LOGS_DIR_PATH / "installer_server.log").open("a") as logfile:
-            logfile.writelines(proc.stdout)
-            logfile.writelines(proc.stderr)
-
-    for num in range(10):
-        try:
-            response = requests.get(url, verify=False)
-            logging.info("Installer server started successfully")
-            break
-        except requests.ConnectionError:
-            time.sleep(0.5)
-    else:
+    if not wait_for_server_or_fail(url):
         proc.terminate()
-        output_log()
+        output_installer_server_log(proc)
         pytest.exit("Failed to start installer server")
 
     yield url
 
     proc.terminate()
-    output_log()
+    output_installer_server_log(proc)
 
 
 @pytest.fixture(autouse=True)
