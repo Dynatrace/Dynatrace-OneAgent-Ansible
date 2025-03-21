@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from pathlib import Path
 
-from util.test_data_types import CommandResult
+from command.command_result import CommandResult
 
 
 class CommandWrapper:

@@ -3,14 +3,15 @@ import re
 from typing import Dict
 
 from command.platform_command_wrapper import PlatformCommandWrapper
-from util.common_utils import get_installers, get_oneagentctl_path
-from util.test_data_types import DeploymentPlatform, PlatformCollection
-from util.test_helpers import (
+from deployment.deployment_operations import (
     check_agent_state,
+    get_installers,
+    get_oneagentctl_path,
     perform_operation_on_platforms,
     run_deployment,
     set_installer_download_params,
 )
+from deployment.deployment_platform import DeploymentPlatform, PlatformCollection
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:

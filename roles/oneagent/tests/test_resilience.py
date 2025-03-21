@@ -1,11 +1,19 @@
 import logging
 import re
 import pytest
-
-from constants import ERROR_MESSAGES_FILE_PATH, FAILED_DEPLOYMENT_EXIT_CODE, TEST_SIGNATURE_FILE, VARIABLE_PREFIX
-from util.common_utils import read_yaml_file
-from util.test_data_types import DeploymentResult
-from util.test_helpers import enable_for_system_family, run_deployment, set_installer_download_params
+from constants import (
+    ERROR_MESSAGES_FILE_PATH,
+    FAILED_DEPLOYMENT_EXIT_CODE,
+    TEST_SIGNATURE_FILE,
+    VARIABLE_PREFIX,
+)
+from deployment.deployment_operations import (
+    enable_for_system_family,
+    run_deployment,
+    set_installer_download_params,
+)
+from deployment.deployment_platform import DeploymentResult
+from resources.file_operations import read_yaml_file
 
 DOWNLOAD_DIR_CONTAINS_SPACES_KEY = "download_dir_contains_spaces"
 DOWNLOAD_FAILED_KEY = "failed_download"

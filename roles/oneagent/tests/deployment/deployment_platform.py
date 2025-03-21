@@ -1,12 +1,6 @@
-from dataclasses import dataclass
 from enum import Enum
 
-
-@dataclass
-class CommandResult:
-    returncode: int
-    stdout: str
-    stderr: str
+from command.command_wrapper import CommandResult
 
 
 class DeploymentPlatform(Enum):
