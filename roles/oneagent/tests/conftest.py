@@ -5,6 +5,8 @@ import shutil
 import socket
 import subprocess
 import sys
+import requests
+import time
 from pathlib import Path
 from typing import Any
 
@@ -70,6 +72,30 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
     return platforms
 
 
+def output_installer_server_log(proc):
+    with Path(WORK_LOGS_DIR_PATH / "installer_server.log").open("a") as logfile:
+        logfile.writelines(proc.stdout)
+        logfile.writelines(proc.stderr)
+
+
+def try_connect_to_server(url):
+    try:
+        response = requests.get(url, verify=False)
+        logging.info("Installer server started successfully")
+        return response
+    except requests.ConnectionError:
+        time.sleep(0.5)
+        return None
+
+
+def wait_for_server_or_fail(url, max_attempts=10):
+    for attempt in range(max_attempts):
+        result = try_connect_to_server(url)
+        if result is not None:
+            return True
+    return False
+
+
 @pytest.fixture(scope="session", autouse=True)
 def create_test_directories(request) -> None:
     if request.config.getoption(PRESERVE_INSTALLERS_KEY):
@@ -117,7 +143,7 @@ def installer_server_url(request) -> None:
     ipaddress = socket.gethostbyname(socket.gethostname())
     url = f"https://{ipaddress}:{port}"
 
-    logging.info("Running server on %s...", url)
+    logging.info("Running installer server on %s...", url)
 
     proc = subprocess.Popen(
         [
@@ -135,11 +161,15 @@ def installer_server_url(request) -> None:
         env={"PYTHONPATH": f"{TESTS_DIR_PATH}"},
     )
 
+    if not wait_for_server_or_fail(url):
+        proc.terminate()
+        output_installer_server_log(proc)
+        pytest.exit("Failed to start installer server")
+
     yield url
 
     proc.terminate()
-    with Path(WORK_LOGS_DIR_PATH / "server.log").open("a") as log:
-        log.writelines(proc.stdout)
+    output_installer_server_log(proc)
 
 
 @pytest.fixture(autouse=True)

@@ -52,9 +52,14 @@ def _check_deployment_failure(results: DeploymentResult, expected_message: str, 
     for result in results:
         assert result.returncode == expected_code
 
-    logging.info("Check if output contains proper error message")
+    logging.info("Check if output contains error message")
     for result in results:
-        assert re.search(expected_message, result.stdout + result.stderr)
+        combined_output = result.stdout + result.stderr
+        search_result = re.search(expected_message, combined_output)
+        if not search_result:
+            logging.debug("stdout: %s", result.stdout)
+            logging.debug("stderr: %s", result.stderr)
+        assert search_result
 
 
 def test_invalid_required_parameters(_error_messages, runner, configurator, installer_server_url):
