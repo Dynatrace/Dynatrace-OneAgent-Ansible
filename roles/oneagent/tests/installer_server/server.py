@@ -1,7 +1,8 @@
 import logging
+from pathlib import Path
 import threading
 from http import HTTPStatus
-from threading import Event
+from collections.abc import Generator
 
 from constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
@@ -58,7 +59,7 @@ def get_agent_in_version(system: str, version: str) -> TransferResult:
     return get_installer(system, request.args["arch"], version)
 
 
-def run_server(ip_address: str, port: int, log_file_path: str, stop_event: Event) -> None:
+def run_server(ip_address: str, port: int, log_file_path: Path) -> Generator[None, None, None]:
     logging.basicConfig(
         format=f"%(asctime)s [{__name__}] %(levelname)s: %(message)s",
         datefmt="%H:%M:%S",
@@ -90,13 +91,12 @@ def run_server(ip_address: str, port: int, log_file_path: str, stop_event: Event
 
     server = make_server(ip_address, port, app, ssl_context=ssl_context)
     server_thread = threading.Thread(target=server.serve_forever, daemon=True)
-
     server_thread.start()
 
     logging.info("Server thread started on %s:%d", ip_address, port)
 
-    _flag = stop_event.wait()
+    yield
 
-    logging.info("Received stop event, shutting down the server")
+    logging.info("Shutting down the server")
     server.shutdown()
     server_thread.join()

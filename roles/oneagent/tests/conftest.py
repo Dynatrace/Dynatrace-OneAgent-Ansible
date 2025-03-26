@@ -4,9 +4,8 @@ import os
 import shutil
 import socket
 import time
-from collections.abc import Generator
-from threading import Event, Thread
 from typing import Any
+from collections.abc import Generator
 
 import pytest
 import requests
@@ -136,22 +135,21 @@ def installer_server_url() -> Generator[str, None, None]:
     ipaddress = socket.gethostbyname(socket.gethostname())
     url = f"https://{ipaddress}:{port}"
 
-    logging.info("Running installer server on %s...", url)
+    logging.info("Running installer server on %s", url)
 
-    stop_event = Event()
-    server_thread = Thread(
-        target=run_server, args=(ipaddress, port, WORK_LOGS_DIR_PATH / "installer_server.log", stop_event), daemon=True
-    )
-    server_thread.start()
+    server = run_server(ipaddress, port, WORK_LOGS_DIR_PATH / "installer_server.log")
+    for _unused in server:
+        break
 
     if not wait_for_server_or_fail(url):
         pytest.exit("Failed to start installer server")
 
     yield url
 
-    logging.info("Stopping installer server...")
-    stop_event.set()
-    server_thread.join()
+    logging.info("Stopping installer server")
+    for _unused in server:
+        break
+    logging.info("Installer server has stopped")
 
 
 @pytest.fixture(autouse=True)
