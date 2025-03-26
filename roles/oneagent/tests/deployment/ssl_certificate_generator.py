@@ -64,7 +64,7 @@ class SSLCertificateGenerator:
 
     def _save_private_key(self, filename: Path, private_key: rsa.RSAPrivateKey) -> None:
         with open(filename, "wb") as f:
-            _bytes = f.write(
+            _unused = f.write(
                 private_key.private_bytes(
                     encoding=serialization.Encoding.PEM,
                     format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -74,7 +74,7 @@ class SSLCertificateGenerator:
 
     def _save_certificate(self, filename: Path, certificate: x509.Certificate) -> None:
         with open(filename, "wb") as f:
-            _bytes = f.write(certificate.public_bytes(serialization.Encoding.PEM))
+            _unused = f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
     def generate_and_save(self, private_key_path: Path, certificate_path: Path) -> None:
         logging.info("Generating self-signed certificate and key pair")
