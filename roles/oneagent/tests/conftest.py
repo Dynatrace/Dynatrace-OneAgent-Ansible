@@ -5,11 +5,10 @@ import shutil
 import socket
 import time
 from collections.abc import Generator
-from typing import Any
 
 import pytest
 import requests
-from pytest import FixtureRequest
+from pytest import FixtureRequest, Metafunc, Parser
 from tests.ansible.config import AnsibleConfigurator
 from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
@@ -55,10 +54,10 @@ CONFIGURATOR_KEY = "configurator"
 
 
 def is_local_deployment(platforms: PlatformCollection) -> bool:
-    return any("localhost" in hosts for platform, hosts in platforms.items())
+    return any("localhost" in hosts for _platform, hosts in platforms.items())
 
 
-def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
+def parse_platforms_from_options(options: dict[str, list[str]]) -> PlatformCollection:
     platforms: PlatformCollection = {}
     deployment_platforms = [e.value for e in DeploymentPlatform]
 
@@ -89,7 +88,8 @@ def wait_for_server_or_fail(url: str, max_attempts: int = 10) -> bool:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def create_test_directories(request) -> None:
+def create_test_directories(request: FixtureRequest) -> None:
+    logging.info("Creating working directories for tests")
     if request.config.getoption(PRESERVE_INSTALLERS_KEY):
         logging.info("Installers will be preserved, no installers will be generated")
         shutil.rmtree(WORK_SERVER_DIR_PATH, ignore_errors=True)
@@ -111,7 +111,7 @@ def prepare_installers(request: FixtureRequest) -> None:
     preserve_installers = request.config.getoption(PRESERVE_INSTALLERS_KEY)
     platforms = parse_platforms_from_options(vars(request.config.option))
 
-    cert_url = request.config.getini(CA_CERT_URL_KEY)
+    cert_url = str(request.config.getini(CA_CERT_URL_KEY))
 
     if preserve_installers:
         logging.info("Skipping installers preparation...")
@@ -153,7 +153,12 @@ def installer_server_url() -> Generator[str, None, None]:
 
 
 @pytest.fixture(autouse=True)
-def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
+def handle_test_environment(
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,
+    wrapper: PlatformCommandWrapper,
+) -> Generator[None, None, None]:
     logging.info("Preparing test environment")
     prepare_test_dirs()
     configurator.prepare_test_environment()
@@ -178,8 +183,8 @@ def handle_test_environment(runner, configurator, platforms, wrapper) -> None:
     configurator.clear_parameters_section()
 
 
-def pytest_addoption(parser) -> None:
-    parser.addini(CA_CERT_URL_KEY, "Url to CA certificate for downloading installers")
+def pytest_addoption(parser: Parser) -> None:
+    parser.addini(CA_CERT_URL_KEY, type="string", help="Url to CA certificate for downloading installers")
 
     parser.addoption(f"--{USER_KEY}", type=str, help="Name of the user", required=False)
     parser.addoption(f"--{PASS_KEY}", type=str, help="Password of the user", required=False)
@@ -221,14 +226,14 @@ def pytest_configure() -> None:
     )
 
 
-def pytest_generate_tests(metafunc) -> None:
+def pytest_generate_tests(metafunc: Metafunc) -> None:
     options = vars(metafunc.config.option)
     for key in [USER_KEY, PASS_KEY]:
         if key in metafunc.fixturenames:
             metafunc.parametrize(key, [options[key]])
 
-    user = options[USER_KEY]
-    password = options[PASS_KEY]
+    user: str = options[USER_KEY]
+    password: str = options[PASS_KEY]
     platforms = parse_platforms_from_options(options)
 
     wrapper = PlatformCommandWrapper(user, password)
