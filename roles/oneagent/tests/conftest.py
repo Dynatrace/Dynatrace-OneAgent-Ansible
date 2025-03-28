@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 import requests
-from _pytest.fixtures import FixtureRequest
+from pytest import FixtureRequest
 from tests.ansible.config import AnsibleConfig
 from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
