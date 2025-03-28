@@ -1,7 +1,7 @@
 import shutil
 from typing import Any
 
-from constants import (
+from tests.constants import (
     ANSIBLE_CONNECTION_KEY,
     ANSIBLE_PASS_KEY,
     ANSIBLE_RESOURCES_DIR_PATH,
@@ -15,8 +15,8 @@ from constants import (
     TEST_PLAYBOOK_FILE,
     WORK_DIR_PATH,
 )
-from deployment.deployment_platform import DeploymentPlatform, PlatformCollection
-from resources.file_operations import read_yaml_file, write_yaml_file
+from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from tests.resources.file_operations import read_yaml_file, write_yaml_file
 
 
 def _prepare_collection() -> None:

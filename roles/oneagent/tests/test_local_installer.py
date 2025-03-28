@@ -1,11 +1,11 @@
 import logging
 
-from constants import (
+from tests.constants import (
     UNIX_DOWNLOAD_DIR_PATH,
     WINDOWS_DOWNLOAD_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
 )
-from deployment.deployment_operations import (
+from tests.deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
     get_installers,

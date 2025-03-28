@@ -2,8 +2,8 @@ import logging
 import re
 from typing import Dict
 
-from command.platform_command_wrapper import PlatformCommandWrapper
-from deployment.deployment_operations import (
+from tests.command.platform_command_wrapper import PlatformCommandWrapper
+from tests.deployment.deployment_operations import (
     check_agent_state,
     get_installers,
     get_oneagentctl_path,
@@ -11,7 +11,7 @@ from deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:

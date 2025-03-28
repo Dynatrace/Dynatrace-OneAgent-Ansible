@@ -4,38 +4,38 @@ import os
 import shutil
 import socket
 import time
-from typing import Any
 from collections.abc import Generator
+from typing import Any
 
 import pytest
 import requests
-from _pytest.fixtures import FixtureRequest
-from ansible.config import AnsibleConfig
-from ansible.runner import AnsibleRunner
-from command.platform_command_wrapper import PlatformCommandWrapper
-from constants import (
+from pytest import FixtureRequest
+from tests.ansible.config import AnsibleConfig
+from tests.ansible.runner import AnsibleRunner
+from tests.command.platform_command_wrapper import PlatformCommandWrapper
+from tests.constants import (
     TEST_RUN_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_LOGS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
 )
-from deployment.deployment_operations import (
+from tests.deployment.deployment_operations import (
     check_agent_state,
     perform_operation_on_platforms,
     prepare_test_dirs,
 )
-from deployment.deployment_platform import (
+from tests.deployment.deployment_platform import (
     DeploymentPlatform,
     DeploymentResult,
     PlatformCollection,
 )
-from deployment.installer_fetching import (
+from tests.deployment.installer_fetching import (
     download_installers,
     download_signature,
     generate_installers,
 )
-from installer_server.server import run_server
+from tests.installer_server.server import run_server
 
 # Command line options
 USER_KEY = "user"

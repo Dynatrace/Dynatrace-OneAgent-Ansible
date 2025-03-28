@@ -1,6 +1,6 @@
 from enum import Enum
 
-from command.command_wrapper import CommandResult
+from tests.command.command_result import CommandResult
 
 
 class DeploymentPlatform(Enum):
