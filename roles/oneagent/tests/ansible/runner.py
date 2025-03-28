@@ -1,14 +1,14 @@
 import logging
 import subprocess
 
-from command.command_wrapper import CommandResult
-from constants import (
+from tests.command.command_result import CommandResult
+from tests.constants import (
     CREDENTIALS_FILE_NAME,
     HOSTS_TEMPLATE_FILE_NAME,
     PLAYBOOK_TEMPLATE_FILE_NAME,
     WORK_DIR_PATH,
 )
-from deployment.deployment_platform import DeploymentResult
+from tests.deployment.deployment_platform import DeploymentResult
 
 
 class AnsibleRunner:

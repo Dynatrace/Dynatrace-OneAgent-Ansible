@@ -1,13 +1,13 @@
 import logging
 from pathlib import Path
 
-from command.platform_command_wrapper import PlatformCommandWrapper
-from constants import (
+from tests.command.platform_command_wrapper import PlatformCommandWrapper
+from tests.constants import (
     INSTALLER_SERVER_TOKEN,
     UNIX_DOWNLOAD_DIR_PATH,
     WINDOWS_DOWNLOAD_DIR_PATH,
 )
-from deployment.deployment_operations import (
+from tests.deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
     get_oneagentctl_path,
@@ -16,7 +16,7 @@ from deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from deployment.deployment_platform import DeploymentPlatform, DeploymentResult
+from tests.deployment.deployment_platform import DeploymentPlatform, DeploymentResult
 
 CTL_OPTION_GET_HOST_TAGS = "--get-host-tags"
 CTL_OPTION_SET_HOST_TAG = "--set-host-tag"

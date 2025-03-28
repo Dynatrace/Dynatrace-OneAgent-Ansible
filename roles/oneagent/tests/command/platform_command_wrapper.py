@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from command.command_result import CommandResult
-from command.command_wrapper import CommandWrapper
-from command.unix.unix_command_wrapper import UnixCommandWrapper
-from command.windows.windows_command_wrapper import WindowsCommandWrapper
-from deployment.deployment_platform import DeploymentPlatform
+from tests.command.command_result import CommandResult
+from tests.command.command_wrapper import CommandWrapper
+from tests.command.unix.unix_command_wrapper import UnixCommandWrapper
+from tests.command.windows.windows_command_wrapper import WindowsCommandWrapper
+from tests.deployment.deployment_platform import DeploymentPlatform
 
 
 class PlatformCommandWrapper:

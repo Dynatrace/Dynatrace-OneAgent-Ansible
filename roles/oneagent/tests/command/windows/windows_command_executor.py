@@ -1,5 +1,5 @@
 import winrm
-from command.command_wrapper import CommandResult
+from tests.command.command_wrapper import CommandResult
 
 
 class WindowsCommandExecutor:

@@ -1,22 +1,22 @@
 import logging
-from pathlib import Path
 import threading
-from http import HTTPStatus
 from collections.abc import Generator
+from http import HTTPStatus
+from pathlib import Path
 
-from constants import (
+from flask import Blueprint, Flask, Response, request, send_file
+from tests.constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
     SERVER_CERTIFICATE_FILE_NAME,
     SERVER_PRIVATE_KEY_FILE_NAME,
     WORK_INSTALLERS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
 )
-from deployment.deployment_operations import get_installers
-from deployment.ssl_certificate_generator import (
+from tests.deployment.deployment_operations import get_installers
+from tests.deployment.ssl_certificate_generator import (
     SSLCertificateGenerator,
     SSLCertificateInfo,
 )
-from flask import Blueprint, Flask, Response, request, send_file
 from werkzeug.serving import make_server
 
 app = Flask(__name__)

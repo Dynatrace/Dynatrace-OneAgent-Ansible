@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from command.command_wrapper import CommandResult, CommandWrapper
-from command.windows.windows_command_executor import WindowsCommandExecutor
+from tests.command.command_wrapper import CommandResult, CommandWrapper
+from tests.command.windows.windows_command_executor import WindowsCommandExecutor
 
 
 class WindowsCommandWrapper(CommandWrapper):

@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from command.command_wrapper import CommandResult, CommandWrapper
+from tests.command.command_wrapper import CommandResult, CommandWrapper
 
 
 class UnixCommandWrapper(CommandWrapper):

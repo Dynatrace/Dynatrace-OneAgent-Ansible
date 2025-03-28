@@ -3,16 +3,18 @@ import subprocess
 from pathlib import Path
 
 import requests
-from constants import (
+from tests.constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
     INSTALLER_PRIVATE_KEY_FILE_NAME,
     INSTALLERS_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     InstallerVersion,
 )
-
-from .deployment_platform import DeploymentPlatform, PlatformCollection
-from .ssl_certificate_generator import SSLCertificateGenerator, SSLCertificateInfo
+from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from tests.deployment.ssl_certificate_generator import (
+    SSLCertificateGenerator,
+    SSLCertificateInfo,
+)
 
 
 def get_file_content(path: Path) -> list[str]:

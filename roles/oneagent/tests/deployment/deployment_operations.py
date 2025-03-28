@@ -5,10 +5,10 @@ import shutil
 from pathlib import Path
 from typing import Any, Callable, Dict
 
-from ansible.config import AnsibleConfig
-from ansible.runner import AnsibleRunner
-from command.platform_command_wrapper import PlatformCommandWrapper
-from constants import (
+from tests.ansible.config import AnsibleConfig
+from tests.ansible.runner import AnsibleRunner
+from tests.command.platform_command_wrapper import PlatformCommandWrapper
+from tests.constants import (
     INSTALLER_CERTIFICATE_FILE_NAME,
     INSTALLER_PARTIAL_NAME,
     INSTALLER_SERVER_TOKEN,
