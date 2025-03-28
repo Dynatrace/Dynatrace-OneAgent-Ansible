@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Callable, Dict
 
-from tests.ansible.config import AnsibleConfig
+from tests.ansible.config import AnsibleConfigurator
 from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
 from tests.constants import (
@@ -100,7 +100,7 @@ def enable_for_system_family(family: str) -> Callable:
     def func_wrapper(func):
         @functools.wraps(func)
         def params_wrapper(*args, **kwargs):
-            config: AnsibleConfig = _get_param_by_name("configurator", **kwargs)
+            config: AnsibleConfigurator = _get_param_by_name("configurator", **kwargs)
             platforms: PlatformCollection = _get_param_by_name("platforms", **kwargs)
             if any(p.family() == family for p in platforms.keys()):
                 config.set_deployment_hosts(family)
@@ -119,7 +119,7 @@ def perform_operation_on_platforms(platforms: PlatformCollection, operation: Cal
             operation(platform, address, *args)
 
 
-def set_ca_cert_download_params(config: AnsibleConfig, installer_server_url: str) -> None:
+def set_ca_cert_download_params(config: AnsibleConfigurator, installer_server_url: str) -> None:
     config.set_common_parameter(
         config.CA_CERT_DOWNLOAD_URL_KEY, f"{installer_server_url}/{INSTALLER_CERTIFICATE_FILE_NAME}"
     )
@@ -129,7 +129,7 @@ def set_ca_cert_download_params(config: AnsibleConfig, installer_server_url: str
     config.set_common_parameter(config.FORCE_CERT_DOWNLOAD_KEY, True)
 
 
-def set_installer_download_params(config: AnsibleConfig, installer_server_url: str) -> None:
+def set_installer_download_params(config: AnsibleConfigurator, installer_server_url: str) -> None:
     config.set_common_parameter(config.ENVIRONMENT_URL_KEY, installer_server_url)
     config.set_common_parameter(config.PAAS_TOKEN_KEY, INSTALLER_SERVER_TOKEN)
     config.set_common_parameter(

@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 import requests
 from pytest import FixtureRequest
-from tests.ansible.config import AnsibleConfig
+from tests.ansible.config import AnsibleConfigurator
 from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
 from tests.constants import (
@@ -232,7 +232,7 @@ def pytest_generate_tests(metafunc) -> None:
     platforms = parse_platforms_from_options(options)
 
     wrapper = PlatformCommandWrapper(user, password)
-    configurator = AnsibleConfig(user, password, platforms)
+    configurator = AnsibleConfigurator(user, password, platforms)
     runner = AnsibleRunner(user, password)
 
     if CONFIGURATOR_KEY in metafunc.fixturenames:
