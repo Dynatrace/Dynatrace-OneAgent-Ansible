@@ -12,7 +12,7 @@ from constants import (
 )
 
 from .deployment_platform import DeploymentPlatform, PlatformCollection
-from .ssl_certificate_generator import SSLCertificateGenerator
+from .ssl_certificate_generator import SSLCertificateGenerator, SSLCertificateInfo
 
 
 def get_file_content(path: Path) -> list[str]:
@@ -72,16 +72,18 @@ def generate_installers() -> bool:
     installer_template = replace_tag(installer_template, "##UNINSTALL_CODE##", "".join(uninstall_code))
     installer_template = replace_tag(installer_template, "##ONEAGENTCTL_CODE##", "".join(oneagentctl_code))
 
-    generator = SSLCertificateGenerator(
+    ssl_info = SSLCertificateInfo(
         country_name="US",
         state_name="California",
         locality_name="San Francisco",
         organization_name="Dynatrace",
         common_name="127.0.0.1",
     )
-    generator.generate_and_save(
-        f"{WORK_INSTALLERS_DIR_PATH /INSTALLER_PRIVATE_KEY_FILE_NAME}",
-        f"{WORK_INSTALLERS_DIR_PATH /INSTALLER_CERTIFICATE_FILE_NAME}",
+    ssl_generator = SSLCertificateGenerator(ssl_info, validity_days=365)
+
+    ssl_generator.generate_and_save(
+        WORK_INSTALLERS_DIR_PATH / INSTALLER_PRIVATE_KEY_FILE_NAME,
+        WORK_INSTALLERS_DIR_PATH / INSTALLER_CERTIFICATE_FILE_NAME,
     )
 
     # REMOVE INSTALLER VERSION

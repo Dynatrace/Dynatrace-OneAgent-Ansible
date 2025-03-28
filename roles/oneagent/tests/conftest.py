@@ -3,20 +3,18 @@ import logging
 import os
 import shutil
 import socket
-import subprocess
-import sys
-import requests
 import time
-from pathlib import Path
 from typing import Any
+from collections.abc import Generator
 
 import pytest
+import requests
+from _pytest.fixtures import FixtureRequest
 from ansible.config import AnsibleConfig
 from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
 from constants import (
     TEST_RUN_DIR_PATH,
-    TESTS_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_LOGS_DIR_PATH,
@@ -37,6 +35,7 @@ from deployment.installer_fetching import (
     download_signature,
     generate_installers,
 )
+from installer_server.server import run_server
 
 # Command line options
 USER_KEY = "user"
@@ -72,13 +71,7 @@ def parse_platforms_from_options(options: dict[str, Any]) -> PlatformCollection:
     return platforms
 
 
-def output_installer_server_log(proc):
-    with Path(WORK_LOGS_DIR_PATH / "installer_server.log").open("a") as logfile:
-        logfile.writelines(proc.stdout)
-        logfile.writelines(proc.stderr)
-
-
-def try_connect_to_server(url):
+def try_connect_to_server(url: str):
     try:
         response = requests.get(url, verify=False)
         logging.info("Installer server started successfully")
@@ -88,10 +81,9 @@ def try_connect_to_server(url):
         return None
 
 
-def wait_for_server_or_fail(url, max_attempts=10):
-    for attempt in range(max_attempts):
-        result = try_connect_to_server(url)
-        if result is not None:
+def wait_for_server_or_fail(url: str, max_attempts: int = 10) -> bool:
+    for _attempt in range(max_attempts):
+        if try_connect_to_server(url) is not None:
             return True
     return False
 
@@ -112,7 +104,7 @@ def create_test_directories(request) -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def prepare_installers(request) -> None:
+def prepare_installers(request: FixtureRequest) -> None:
     logging.info("Preparing installers...")
     tenant = request.config.getoption(TENANT_KEY)
     tenant_token = request.config.getoption(TENANT_TOKEN_KEY)
@@ -138,38 +130,26 @@ def prepare_installers(request) -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def installer_server_url(request) -> None:
+def installer_server_url() -> Generator[str, None, None]:
     port = 8021
     ipaddress = socket.gethostbyname(socket.gethostname())
     url = f"https://{ipaddress}:{port}"
 
-    logging.info("Running installer server on %s...", url)
+    logging.info("Running installer server on %s", url)
 
-    proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "installer_server",
-            "--port",
-            f"{port}",
-            "--ip-address",
-            ipaddress,
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding="utf-8",
-        env={"PYTHONPATH": f"{TESTS_DIR_PATH}"},
-    )
+    server = run_server(ipaddress, port, WORK_LOGS_DIR_PATH / "installer_server.log")
+    for _unused in server:
+        break
 
     if not wait_for_server_or_fail(url):
-        proc.terminate()
-        output_installer_server_log(proc)
         pytest.exit("Failed to start installer server")
 
     yield url
 
-    proc.terminate()
-    output_installer_server_log(proc)
+    logging.info("Stopping installer server")
+    for _unused in server:
+        break
+    logging.info("Installer server has stopped")
 
 
 @pytest.fixture(autouse=True)
