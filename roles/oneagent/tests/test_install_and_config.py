@@ -13,7 +13,7 @@ from tests.deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
     get_oneagentctl_path,
-    get_platform_argument,
+    select_by_platform,
     perform_operation_on_platforms,
     run_deployment,
     set_installer_download_params,
@@ -103,7 +103,7 @@ def test_basic_installation(
     )
 
     for platform, _hosts in platforms.items():
-        download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
+        download_dir: Path = select_by_platform(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
         configurator.set_platform_parameter(platform, configurator.DOWNLOAD_DIR_KEY, str(download_dir))
         configurator.set_common_parameter(
             configurator.INSTALLER_PLATFORM_ARGS_KEY,

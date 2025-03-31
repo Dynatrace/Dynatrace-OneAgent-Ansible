@@ -3,7 +3,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Callable, Dict
+from typing import Any, Callable, TypeVar, cast
 
 from tests.ansible.config import AnsibleConfigurator
 from tests.ansible.runner import AnsibleRunner
@@ -20,8 +20,7 @@ from tests.constants import (
     WORK_INSTALLERS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
 )
-
-from .deployment_platform import (
+from tests.deployment.deployment_platform import (
     DeploymentPlatform,
     DeploymentResult,
     PlatformCollection,
@@ -45,11 +44,16 @@ def remove_if_exists(path: Path) -> None:
 
 
 def get_oneagentctl_path(platform: DeploymentPlatform) -> Path:
-    return get_platform_argument(platform, UNIX_ONEAGENTCTL_PATH, WINDOWS_ONEAGENTCTL_PATH)
+    return select_by_platform(platform, UNIX_ONEAGENTCTL_PATH, WINDOWS_ONEAGENTCTL_PATH)
 
 
-def get_platform_argument(platform: DeploymentPlatform, unix_arg: Any, windows_arg: Any) -> Any:
-    return windows_arg if platform == DeploymentPlatform.WINDOWS_X86 else unix_arg
+PlatformSpecificValue = TypeVar("PlatformSpecificValue")
+
+
+def select_by_platform(
+    platform: DeploymentPlatform, unix_value: PlatformSpecificValue, windows_value: PlatformSpecificValue
+) -> PlatformSpecificValue:
+    return windows_value if platform == DeploymentPlatform.WINDOWS_X86 else unix_value
 
 
 def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
@@ -65,21 +69,21 @@ def _get_platform_by_installer(installer: Path) -> DeploymentPlatform:
     return DeploymentPlatform.LINUX_X86
 
 
-def _get_available_installers() -> Dict[DeploymentPlatform, list[Path]]:
-    installers: dict[DeploymentPlatform, list[Path]] = {k: [] for k in DeploymentPlatform}
+def _get_available_installers() -> dict[DeploymentPlatform, list[Path]]:
+    installers: dict[DeploymentPlatform, list[Path]] = {platform: [] for platform in DeploymentPlatform}
     for installer in sorted(WORK_INSTALLERS_DIR_PATH.glob(f"{INSTALLER_PARTIAL_NAME}*")):
         platform = _get_platform_by_installer(installer)
         installers[platform].append(installer)
     return installers
 
 
-def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> list[Path | str]:
+def get_installers(system: str, arch: str, version: str = "", include_paths: bool = False) -> list[Path]:
     try:
         # Special handling for mocking server behavior as URL for Linux
         # installers contains "unix" instead of linux
         system = INSTALLER_SYSTEM_NAME_TYPE_MAP[system]
         platform_installers = _get_available_installers()[DeploymentPlatform.from_system_and_arch(system, arch)]
-        installers = platform_installers if include_paths else [ins.name for ins in platform_installers]
+        installers = platform_installers if include_paths else [Path(ins.name) for ins in platform_installers]
         if not version:
             return installers
         if version == "latest":
@@ -91,29 +95,31 @@ def get_installers(system: str, arch: str, version: str = "", include_paths: boo
         return []
 
 
-def _get_param_by_name(name: str, **kwargs) -> Any:
+def _get_kwarg_by_name(name: str, **kwargs: object) -> object:
     assert name in kwargs, f"No '{name}' parameter in parameters list"
     return kwargs[name]
 
 
-def enable_for_system_family(family: str) -> Callable:
-    def func_wrapper(func):
+def enable_for_system_family(family: str) -> Callable[[Callable[..., None]], Callable[..., None]]:
+    def func_wrapper(func: Callable[..., None]) -> Callable[..., None]:
         @functools.wraps(func)
-        def params_wrapper(*args, **kwargs):
-            config: AnsibleConfigurator = _get_param_by_name("configurator", **kwargs)
-            platforms: PlatformCollection = _get_param_by_name("platforms", **kwargs)
-            if any(p.family() == family for p in platforms.keys()):
+        def params_wrapper(*args: object, **kwargs: object) -> None:
+            config = cast(AnsibleConfigurator, _get_kwarg_by_name("configurator", **kwargs))
+            platforms = cast(PlatformCollection, _get_kwarg_by_name("platforms", **kwargs))
+            matching_platforms = [p for p in platforms.keys() if p.family() == family]
+            if matching_platforms:
                 config.set_deployment_hosts(family)
+                logging.debug("Running test for %s platform", family)
                 func(*args, **kwargs)
             else:
-                logging.info("Skipping test for specified platform")
+                logging.info("Skipping test for %s platform", family)
 
         return params_wrapper
 
     return func_wrapper
 
 
-def perform_operation_on_platforms(platforms: PlatformCollection, operation: CallableOperation, *args) -> None:
+def perform_operation_on_platforms(platforms: PlatformCollection, operation: CallableOperation, *args: object) -> None:
     for platform, hosts in platforms.items():
         for address in hosts:
             operation(platform, address, *args)
@@ -171,7 +177,7 @@ def check_download_directory(
     windows_path: Path,
 ) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
-    download_path: Path = get_platform_argument(platform, unix_path, windows_path)
+    download_path: Path = select_by_platform(platform, unix_path, windows_path)
     installer_path = download_path / f"{INSTALLER_PARTIAL_NAME}*"
     assert wrapper.directory_exists(platform, address, download_path).returncode == 0
     assert wrapper.file_exists(platform, address, installer_path).returncode == 0 if exists else 1
