@@ -2,6 +2,8 @@ import logging
 import re
 
 import pytest
+from tests.ansible.config import AnsibleConfigurator
+from tests.ansible.runner import AnsibleRunner
 from tests.constants import (
     ERROR_MESSAGES_FILE_PATH,
     FAILED_DEPLOYMENT_EXIT_CODE,
@@ -63,7 +65,9 @@ def _check_deployment_failure(results: DeploymentResult, expected_message: str, 
         assert search_result
 
 
-def test_invalid_required_parameters(_error_messages, runner, configurator, installer_server_url):
+def test_invalid_required_parameters(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+) -> None:
     logging.info("Running missing required parameters test")
 
     logging.debug("Removing required parameter - direct download scenario")
@@ -77,7 +81,9 @@ def test_invalid_required_parameters(_error_messages, runner, configurator, inst
     )
 
 
-def test_invalid_architecture(_error_messages, runner, configurator, installer_server_url):
+def test_invalid_architecture(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+):
     logging.info("Running invalid architecture test")
 
     set_installer_download_params(configurator, installer_server_url)
@@ -90,7 +96,9 @@ def test_invalid_architecture(_error_messages, runner, configurator, installer_s
     )
 
 
-def test_missing_local_installer(_error_messages, runner, configurator):
+def test_missing_local_installer(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator
+):
     logging.info("Running missing local installer test")
 
     configurator.set_common_parameter(configurator.LOCAL_INSTALLER_KEY, "non_existing_installer")
@@ -103,7 +111,12 @@ def test_missing_local_installer(_error_messages, runner, configurator):
 
 
 @enable_for_system_family(family="unix")
-def test_directories_contain_spaces(_error_messages, runner, configurator, platforms, installer_server_url):
+def test_directories_contain_spaces(
+    _error_messages: dict[str, str],
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    installer_server_url: str,
+):
     logging.info("Running directories contain spaces test")
 
     logging.debug("Space in directory path - INSTALL_PATH scenario")
@@ -129,7 +142,9 @@ def test_directories_contain_spaces(_error_messages, runner, configurator, platf
     )
 
 
-def test_version_parameter_too_low(_error_messages, runner, configurator, installer_server_url):
+def test_version_parameter_too_low(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+):
     logging.info("Running version parameter too low test")
 
     set_installer_download_params(configurator, installer_server_url)
@@ -142,7 +157,9 @@ def test_version_parameter_too_low(_error_messages, runner, configurator, instal
     )
 
 
-def test_multiple_install_path_arguments(_error_messages, runner, configurator, installer_server_url):
+def test_multiple_install_path_arguments(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+):
     logging.info("Running multiple install path arguments test")
 
     set_installer_download_params(configurator, installer_server_url)
@@ -156,7 +173,9 @@ def test_multiple_install_path_arguments(_error_messages, runner, configurator, 
     )
 
 
-def test_failed_download(_error_messages, runner, configurator, installer_server_url):
+def test_failed_download(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+):
     logging.info("Running failed download test")
 
     set_installer_download_params(configurator, installer_server_url)
@@ -169,9 +188,10 @@ def test_failed_download(_error_messages, runner, configurator, installer_server
     )
 
 
-# noinspection PyUnusedLocal
 @enable_for_system_family(family="unix")
-def test_failed_signature_verification(_error_messages, runner, configurator, platforms, installer_server_url):
+def test_failed_signature_verification(
+    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+):
     logging.info("Running failed signature verification test")
 
     set_installer_download_params(configurator, installer_server_url)
@@ -179,7 +199,6 @@ def test_failed_signature_verification(_error_messages, runner, configurator, pl
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
 
     with TEST_SIGNATURE_FILE.open("w") as signature:
-        signature.write("break signature by writing some text")
+        _unused = signature.write("break signature by writing some text")
 
-    universal_message = _error_messages.get(SIGNATURE_VERIFICATION_FAILED_KEY)
-    _check_deployment_failure(run_deployment(runner, True), universal_message, FAILED_DEPLOYMENT_EXIT_CODE)
+    _check_deployment_failure(run_deployment(runner, True), _error_messages[SIGNATURE_VERIFICATION_FAILED_KEY], FAILED_DEPLOYMENT_EXIT_CODE)
