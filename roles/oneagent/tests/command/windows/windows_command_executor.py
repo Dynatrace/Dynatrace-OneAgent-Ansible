@@ -1,11 +1,11 @@
 import winrm
-from tests.command.command_wrapper import CommandResult
+from tests.command.command_result import CommandResult
 
 
 class WindowsCommandExecutor:
     def __init__(self, user: str, password: str):
-        self.user = user
-        self.password = password
+        self.user: str = user
+        self.password: str = password
 
     def execute(self, address: str, command: str, *args: str) -> CommandResult:
         session = winrm.Session(address, auth=(self.user, self.password))

@@ -9,8 +9,8 @@ from tests.deployment.deployment_platform import DeploymentPlatform
 
 class PlatformCommandWrapper:
     def __init__(self, user: str, password: str):
-        self.unix_command_wrapper = UnixCommandWrapper(user, password)
-        self.windows_command_wrapper = WindowsCommandWrapper(user, password)
+        self.unix_command_wrapper: UnixCommandWrapper = UnixCommandWrapper(user, password)
+        self.windows_command_wrapper: WindowsCommandWrapper = WindowsCommandWrapper(user, password)
 
     def _get_command_wrapper(self, platform: DeploymentPlatform) -> CommandWrapper:
         if platform == DeploymentPlatform.WINDOWS_X86:
