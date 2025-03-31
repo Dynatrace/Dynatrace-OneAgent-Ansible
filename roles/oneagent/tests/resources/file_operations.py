@@ -1,16 +1,19 @@
 from pathlib import Path
+from typing import cast
 
 import yaml
 
-ParsedYaml = dict | list | None
+YamlScalar = str | int | float | bool | None
+YamlValue = YamlScalar | dict[str, YamlScalar] | list[YamlScalar]
+ParsedYaml = dict[str, YamlValue] | list[YamlValue] | YamlScalar
 
 
 def read_yaml_file(file: Path) -> ParsedYaml:
     with file.open("r") as config:
-        data = yaml.load(config, Loader=yaml.Loader)
+        data = cast(ParsedYaml, yaml.safe_load(config))
         return data
 
 
 def write_yaml_file(file: Path, data: ParsedYaml) -> None:
     with file.open("w") as config:
-        config.write(yaml.dump(data))
+        _unused = config.write(yaml.dump(data))
