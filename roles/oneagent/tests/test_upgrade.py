@@ -1,7 +1,8 @@
 import logging
 import re
-from typing import Dict
 
+from tests.ansible.config import AnsibleConfigurator
+from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
 from tests.deployment.deployment_operations import (
     check_agent_state,
@@ -15,8 +16,8 @@ from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCol
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
-    versions: Dict[DeploymentPlatform, str] = {}
-    for platform, hosts in platforms.items():
+    versions: dict[DeploymentPlatform, str] = {}
+    for platform, _hosts in platforms.items():
         installers = get_installers(platform.system(), platform.arch())
         versioned_installer = installers[-1 if latest else 0]
         versions[platform] = re.search(r"\d.\d+.\d+.\d+-\d+", str(versioned_installer)).group()
@@ -33,7 +34,13 @@ def _check_agent_version(
     assert installed_version.stdout.strip() == versions[platform]
 
 
-def test_upgrade(runner, configurator, platforms, wrapper, installer_server_url):
+def test_upgrade(
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,
+    wrapper: PlatformCommandWrapper,
+    installer_server_url: str,
+):
     logging.info("Running upgrade test")
 
     set_installer_download_params(configurator, installer_server_url)
@@ -43,7 +50,7 @@ def test_upgrade(runner, configurator, platforms, wrapper, installer_server_url)
     for platform, version in old_versions.items():
         configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, version)
 
-    run_deployment(runner)
+    _unused = run_deployment(runner)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
@@ -53,7 +60,7 @@ def test_upgrade(runner, configurator, platforms, wrapper, installer_server_url)
 
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
 
-    run_deployment(runner)
+    _unused = run_deployment(runner)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
