@@ -15,7 +15,7 @@ from tests.deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import DeploymentResult
+from tests.deployment.deployment_platform import DeploymentResult, PlatformCollection
 from tests.resources.file_operations import read_yaml_file
 
 DOWNLOAD_DIR_CONTAINS_SPACES_KEY = "download_dir_contains_spaces"
@@ -115,6 +115,7 @@ def test_directories_contain_spaces(
     _error_messages: dict[str, str],
     runner: AnsibleRunner,
     configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,
     installer_server_url: str,
 ):
     logging.info("Running directories contain spaces test")
@@ -190,7 +191,11 @@ def test_failed_download(
 
 @enable_for_system_family(family="unix")
 def test_failed_signature_verification(
-    _error_messages: dict[str, str], runner: AnsibleRunner, configurator: AnsibleConfigurator, installer_server_url: str
+    _error_messages: dict[str, str],
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,
+    installer_server_url: str,
 ):
     logging.info("Running failed signature verification test")
 
@@ -201,4 +206,6 @@ def test_failed_signature_verification(
     with TEST_SIGNATURE_FILE.open("w") as signature:
         _unused = signature.write("break signature by writing some text")
 
-    _check_deployment_failure(run_deployment(runner, True), _error_messages[SIGNATURE_VERIFICATION_FAILED_KEY], FAILED_DEPLOYMENT_EXIT_CODE)
+    _check_deployment_failure(
+        run_deployment(runner, True), _error_messages[SIGNATURE_VERIFICATION_FAILED_KEY], FAILED_DEPLOYMENT_EXIT_CODE
+    )
