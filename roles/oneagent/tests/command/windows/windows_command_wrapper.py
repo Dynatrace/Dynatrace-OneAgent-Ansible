@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import override
 
 from tests.command.command_result import CommandResult
 from tests.command.command_wrapper import CommandWrapper
 from tests.command.windows.windows_command_executor import WindowsCommandExecutor
+from typing_extensions import override
 
 
 class WindowsCommandWrapper(CommandWrapper):

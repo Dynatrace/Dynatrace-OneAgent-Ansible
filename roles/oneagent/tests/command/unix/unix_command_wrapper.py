@@ -1,9 +1,9 @@
 import subprocess
 from pathlib import Path
-from typing import override
 
 from tests.command.command_result import CommandResult
 from tests.command.command_wrapper import CommandWrapper
+from typing_extensions import override
 
 
 class UnixCommandWrapper(CommandWrapper):
