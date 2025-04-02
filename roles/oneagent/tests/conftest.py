@@ -54,7 +54,7 @@ CONFIGURATOR_KEY = "configurator"
 
 
 def is_local_deployment(platforms: PlatformCollection) -> bool:
-    return any("localhost" in hosts for _platform, hosts in platforms.items())
+    return any("localhost" in hosts for hosts in platforms.values())
 
 
 def parse_platforms_from_options(options: dict[str, list[str]]) -> PlatformCollection:

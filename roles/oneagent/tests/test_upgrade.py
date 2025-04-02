@@ -17,7 +17,7 @@ from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCol
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
     versions: dict[DeploymentPlatform, str] = {}
-    for platform, _hosts in platforms.items():
+    for platform in platforms:
         installers = get_installers(platform.system(), platform.arch())
         versioned_installer = installers[-1 if latest else 0]
         versions[platform] = re.search(r"\d.\d+.\d+.\d+-\d+", str(versioned_installer)).group()

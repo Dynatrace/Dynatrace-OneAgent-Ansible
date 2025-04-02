@@ -102,7 +102,7 @@ def test_basic_installation(
         ],
     )
 
-    for platform, _hosts in platforms.items():
+    for platform in platforms:
         download_dir: Path = select_by_platform(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
         configurator.set_platform_parameter(platform, configurator.DOWNLOAD_DIR_KEY, str(download_dir))
         configurator.set_common_parameter(

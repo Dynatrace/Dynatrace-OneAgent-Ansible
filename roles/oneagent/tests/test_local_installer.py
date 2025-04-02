@@ -30,7 +30,7 @@ def test_local_installer(
 
     set_ca_cert_download_params(configurator, installer_server_url)
 
-    for platform, _hosts in platforms.items():
+    for platform in platforms:
         installers_location = WORK_INSTALLERS_DIR_PATH
         latest_installer_name = get_installers(platform.system(), platform.arch(), "latest")[-1]
         configurator.set_platform_parameter(
