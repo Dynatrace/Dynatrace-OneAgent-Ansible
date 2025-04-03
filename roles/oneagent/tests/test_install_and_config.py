@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 
+from tests.ansible.config import AnsibleConfigurator
+from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
 from tests.constants import (
     INSTALLER_SERVER_TOKEN,
@@ -11,12 +13,16 @@ from tests.deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
     get_oneagentctl_path,
-    get_platform_argument,
+    select_by_platform,
     perform_operation_on_platforms,
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import DeploymentPlatform, DeploymentResult
+from tests.deployment.deployment_platform import (
+    DeploymentPlatform,
+    DeploymentResult,
+    PlatformCollection,
+)
 
 CTL_OPTION_GET_HOST_TAGS = "--get-host-tags"
 CTL_OPTION_SET_HOST_TAG = "--set-host-tag"
@@ -65,13 +71,19 @@ def _check_config_args(
     _assert_oneagentctl_getter(platform, address, wrapper, CTL_OPTION_GET_HOST_PROPERTIES, expected_properties)
 
 
-def _check_output_for_secrets(result: DeploymentResult, installer_server_url) -> None:
+def _check_output_for_secrets(result: DeploymentResult, installer_server_url: str) -> None:
     for out in result:
         assert INSTALLER_SERVER_TOKEN not in out.stdout
         assert installer_server_url not in out.stderr
 
 
-def test_basic_installation(runner, configurator, platforms, wrapper, installer_server_url):
+def test_basic_installation(
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,
+    wrapper: PlatformCommandWrapper,
+    installer_server_url: str,
+):
     logging.info("Running basic installation test")
 
     dummy_common_tag = "dummy_common_tag"
@@ -90,8 +102,8 @@ def test_basic_installation(runner, configurator, platforms, wrapper, installer_
         ],
     )
 
-    for platform, hosts in platforms.items():
-        download_dir: Path = get_platform_argument(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
+    for platform in platforms:
+        download_dir: Path = select_by_platform(platform, UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH)
         configurator.set_platform_parameter(platform, configurator.DOWNLOAD_DIR_KEY, str(download_dir))
         configurator.set_common_parameter(
             configurator.INSTALLER_PLATFORM_ARGS_KEY,

@@ -30,7 +30,6 @@ local deployment are specified or any other platforms is used along with local o
 - Python 3.10+
 - pip 21.0+
 - venv 20.0+
--
 
 ## Running tests
 

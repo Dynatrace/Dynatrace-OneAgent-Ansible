@@ -56,7 +56,7 @@ def _prepare_credentials_file(user: str, password: str) -> None:
     write_yaml_file(credentials_file, data)
 
 
-class AnsibleConfig:
+class AnsibleConfigurator:
     HOSTS_PARAM_KEY = "hosts"
     PARAM_SECTION_KEY = "vars"
 
@@ -95,7 +95,7 @@ class AnsibleConfig:
 
     def set_common_parameter(self, key: str, value: Any) -> None:
         data = read_yaml_file(TEST_PLAYBOOK_FILE)
-        data[0][AnsibleConfig.PARAM_SECTION_KEY][key] = value
+        data[0][AnsibleConfigurator.PARAM_SECTION_KEY][key] = value
         write_yaml_file(TEST_PLAYBOOK_FILE, data)
 
     def set_platform_parameter(self, platform: DeploymentPlatform, key: str, value: Any) -> None:
@@ -111,7 +111,7 @@ class AnsibleConfig:
 
     def clear_parameters_section(self) -> None:
         data = read_yaml_file(TEST_PLAYBOOK_FILE)
-        data[0][AnsibleConfig.PARAM_SECTION_KEY] = {}
+        data[0][AnsibleConfigurator.PARAM_SECTION_KEY] = {}
         write_yaml_file(TEST_PLAYBOOK_FILE, data)
         data = read_yaml_file(TEST_INVENTORY_FILE)
         for platform in DeploymentPlatform:

@@ -125,7 +125,7 @@ def download_and_save(path: Path, url: str, headers: dict[str, str]) -> bool:
         return False
 
     with path.open("wb") as f:
-        f.write(resp.content)
+        _unused = f.write(resp.content)
     return True
 
 
@@ -134,7 +134,7 @@ def download_signature(url: str) -> bool:
     return download_and_save(path, url, {})
 
 
-def download_installer(tenant, tenant_token, version: str, platform: DeploymentPlatform) -> bool:
+def download_installer(tenant: str, tenant_token: str, version: str, platform: DeploymentPlatform) -> bool:
     family = platform.family()
     url = f"{tenant}/api/v1/deployment/installer/agent/{family}/default/version/{version}"
     headers = {"accept": "application/octet-stream", "Authorization": f"Api-Token {tenant_token}"}
@@ -145,8 +145,8 @@ def download_installer(tenant, tenant_token, version: str, platform: DeploymentP
     return download_and_save(path, url, headers)
 
 
-def download_installers(tenant, tenant_token, platforms: PlatformCollection) -> bool:
-    for platform, hosts in platforms.items():
+def download_installers(tenant: str, tenant_token: str, platforms: PlatformCollection) -> bool:
+    for platform in platforms:
         versions = get_installers_versions_from_tenant(tenant, tenant_token, platform.family())
         if not versions:
             return False

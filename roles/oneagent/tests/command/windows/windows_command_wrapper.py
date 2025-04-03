@@ -1,21 +1,26 @@
 from pathlib import Path
 
-from tests.command.command_wrapper import CommandResult, CommandWrapper
+from tests.command.command_result import CommandResult
+from tests.command.command_wrapper import CommandWrapper
 from tests.command.windows.windows_command_executor import WindowsCommandExecutor
+from typing_extensions import override
 
 
 class WindowsCommandWrapper(CommandWrapper):
     def __init__(self, user: str, password: str):
-        self.executor = WindowsCommandExecutor(user, password)
+        self.executor: WindowsCommandExecutor = WindowsCommandExecutor(user, password)
 
+    @override
     def get_file_content(self, address: str, file: Path) -> CommandResult:
         return self.executor.execute(address, "type", str(file))
 
+    @override
     def file_exists(self, address: str, file: Path) -> CommandResult:
         # Windows needs double quoting for passing paths
         # containing spaces, single quotes don't work
         return self.executor.execute(address, f'if exist "{file}" (exit 0) else (exit 1)')
 
+    @override
     def directory_exists(self, address: str, directory: Path) -> CommandResult:
         return self.executor.execute(address, f'if exist "{directory}\\*" (exit 0) else (exit 1)')
 
@@ -26,6 +31,7 @@ class WindowsCommandWrapper(CommandWrapper):
 
         return result
 
+    @override
     def create_directory(self, address: str, directory: Path) -> CommandResult:
         for parent in list(directory.parents)[::-1][1::]:
             result = self._run_directory_creation_command(address, parent)
@@ -33,5 +39,6 @@ class WindowsCommandWrapper(CommandWrapper):
                 return result
         return self._run_directory_creation_command(address, directory)
 
+    @override
     def run_command(self, address: str, command: str, *args: str) -> CommandResult:
         return self.executor.execute(address, f'"{command}"', *args)
