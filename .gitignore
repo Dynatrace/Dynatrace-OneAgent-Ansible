@@ -28,4 +28,4 @@ dynatrace-oneagent-*.tar.gz
 .idea
 
 # Tests working directory
-**/test_dir/
+ansible_oneagent_tests_run_dir/
