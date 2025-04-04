@@ -1,4 +1,3 @@
-import tempfile
 from enum import Enum
 from pathlib import Path
 
@@ -53,7 +52,7 @@ WINDOWS_INSTALL_DIR_PATH = Path("C:\\Program Files") / "dynatrace" / "oneagent"
 WINDOWS_ONEAGENTCTL_BIN_NAME = "oneagentctl.exe"
 WINDOWS_ONEAGENTCTL_PATH = WINDOWS_INSTALL_DIR_PATH / "agent" / "tools" / WINDOWS_ONEAGENTCTL_BIN_NAME
 
-TEST_RUN_DIR_PATH = Path(tempfile.gettempdir()) / "ansible_oneagent_tests_run_dir"
+TEST_RUN_DIR_PATH = Path(__file__).parent.absolute() / "ansible_oneagent_tests_run_dir"
 WORK_INSTALLERS_DIR_PATH = TEST_RUN_DIR_PATH / "installers"
 WORK_LOGS_DIR_PATH = TEST_RUN_DIR_PATH / "logs"
 WORK_SERVER_DIR_PATH = TEST_RUN_DIR_PATH / "server"
