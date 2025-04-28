@@ -66,7 +66,7 @@ def test_upgrade(
     perform_operation_on_platforms(platforms, _check_agent_version, wrapper, old_versions)
 
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
-    configurator.set_common_parameter(configurator.DEBUG_LOG_ALL, "true")
+    configurator.set_common_parameter(configurator.NO_LOG_ATTRIBUTE_VALUE, "false")
 
     result = run_deployment(runner)
     _check_output_for_contains_secrets(result, installer_server_url)

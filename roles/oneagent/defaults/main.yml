@@ -38,4 +38,4 @@ oneagent_reboot_timeout: 3600
 oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem
 
 # If true, set no_log variable to false
-oneagent_debug_log_all: false
+oneagent_no_log_attribute: true
