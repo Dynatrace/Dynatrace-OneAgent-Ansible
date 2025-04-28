@@ -1,7 +1,7 @@
 ---
 - name: Install OneAgent
   ansible.builtin.command: "{{ oneagent_install_cmd }} {{ _oneagent_all_install_args | join(' ') }}"
-  no_log: oneagent_no_log_attribute
+  no_log: {{ oneagent_no_log_attribute }}
   ignore_errors: true
   register: _oneagent_install_result
   changed_when: true
