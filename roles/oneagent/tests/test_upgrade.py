@@ -34,10 +34,12 @@ def _check_agent_version(
     installed_version = wrapper.run_command(platform, address, f"{get_oneagentctl_path(platform)}", "--version")
     assert installed_version.stdout.strip() == versions[platform]
 
+
 def _check_output_for_contains_secrets(result: DeploymentResult, installer_server_url: str) -> None:
     for out in result:
         assert INSTALLER_SERVER_TOKEN in out.stdout
         assert installer_server_url in out.stderr
+
 
 def test_upgrade(
     runner: AnsibleRunner,
