@@ -12,7 +12,8 @@ from tests.deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection, DeploymentResult
+from tests.constants import INSTALLER_SERVER_TOKEN
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
