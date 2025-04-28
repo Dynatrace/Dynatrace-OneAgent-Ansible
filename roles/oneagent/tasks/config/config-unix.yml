@@ -6,7 +6,7 @@
 
 - name: Applying OneAgent configuration
   ansible.builtin.command: "{{ oneagent_ctl_bin_path }} {{ _oneagent_all_config_args | join(' ') }}"
-  no_log: {{ oneagent_no_log_attribute }}
+  no_log: "{{ oneagent_no_log_attribute }}"
   ignore_errors: true
   changed_when: true
   register: _oneagent_config_result
