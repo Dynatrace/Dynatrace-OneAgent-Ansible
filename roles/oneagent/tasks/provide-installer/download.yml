@@ -2,7 +2,7 @@
 - name: Set URL for agent download
   ansible.builtin.set_fact:
     _oneagent_installer_url: "{{ _oneagent_installer_url | default(oneagent_default_download_url) | replace(item.key, item.value) }}"
-  no_log: true
+  no_log: not oneagent_debug_log_all
   with_dict:
     "#URL": "{{ oneagent_environment_url }}"
     "#SYS": "{{ oneagent_download_system }}"

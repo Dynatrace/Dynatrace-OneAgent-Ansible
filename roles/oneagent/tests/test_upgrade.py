@@ -33,6 +33,10 @@ def _check_agent_version(
     installed_version = wrapper.run_command(platform, address, f"{get_oneagentctl_path(platform)}", "--version")
     assert installed_version.stdout.strip() == versions[platform]
 
+def _check_output_for_contains_secrets(result: DeploymentResult, installer_server_url: str) -> None:
+    for out in result:
+        assert INSTALLER_SERVER_TOKEN in out.stdout
+        assert installer_server_url in out.stderr
 
 def test_upgrade(
     runner: AnsibleRunner,
@@ -59,8 +63,10 @@ def test_upgrade(
     perform_operation_on_platforms(platforms, _check_agent_version, wrapper, old_versions)
 
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
+    configurator.set_common_parameter(configurator.DEBUG_LOG_ALL, "true")
 
-    _unused = run_deployment(runner)
+    result = run_deployment(runner)
+    _check_output_for_contains_secrets(result, installer_server_url)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)

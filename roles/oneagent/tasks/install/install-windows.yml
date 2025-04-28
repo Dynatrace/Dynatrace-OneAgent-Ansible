@@ -6,7 +6,7 @@
     creates_version: "{{ _oneagent_new_agent_version.stdout }}"
     arguments: "{{ _oneagent_all_install_args | join(' ') }} --quiet"
     state: present
-  no_log: true
+  no_log: not oneagent_debug_log_all
   ignore_errors: true
   register: _oneagent_install_result
 

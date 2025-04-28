@@ -9,7 +9,7 @@
   args:
     removes: "{{ oneagent_ctl_bin_path }}"
   register: _oneagent_uninstall_result
-  no_log: true
+  no_log: not oneagent_debug_log_all
   ignore_errors: true
   when: _oneagent_ctl_state.stat.exists
 
