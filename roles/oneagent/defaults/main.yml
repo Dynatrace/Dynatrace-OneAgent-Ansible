@@ -37,5 +37,5 @@ oneagent_reboot_timeout: 3600
 # Set CA certificate download url
 oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem
 
-# If true, set no_log variable to false
+# Sets no_log attribute value in tasks
 oneagent_no_log_attribute: true

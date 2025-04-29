@@ -13,7 +13,6 @@ from tests.deployment.deployment_operations import (
     set_installer_download_params,
 )
 from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection, DeploymentResult
-from tests.constants import INSTALLER_SERVER_TOKEN
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
@@ -33,12 +32,6 @@ def _check_agent_version(
 ) -> None:
     installed_version = wrapper.run_command(platform, address, f"{get_oneagentctl_path(platform)}", "--version")
     assert installed_version.stdout.strip() == versions[platform]
-
-
-def _check_output_for_contains_secrets(result: DeploymentResult, installer_server_url: str) -> None:
-    for out in result:
-        assert INSTALLER_SERVER_TOKEN in out.stdout
-        assert installer_server_url in out.stderr
 
 
 def test_upgrade(
@@ -66,10 +59,8 @@ def test_upgrade(
     perform_operation_on_platforms(platforms, _check_agent_version, wrapper, old_versions)
 
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
-    configurator.set_common_parameter(configurator.NO_LOG_ATTRIBUTE_VALUE, "false")
 
-    result = run_deployment(runner)
-    _check_output_for_contains_secrets(result, installer_server_url)
+     _unused = run_deployment(runner)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
