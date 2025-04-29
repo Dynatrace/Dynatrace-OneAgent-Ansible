@@ -12,7 +12,7 @@ from tests.deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection, DeploymentResult
+from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
