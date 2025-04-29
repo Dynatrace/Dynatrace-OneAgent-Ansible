@@ -60,7 +60,7 @@ def test_upgrade(
 
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
 
-     _unused = run_deployment(runner)
+    _unused = run_deployment(runner)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
