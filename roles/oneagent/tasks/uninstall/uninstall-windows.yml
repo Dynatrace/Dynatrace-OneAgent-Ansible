@@ -19,7 +19,7 @@
     product_id: "{{ _oneagent_product_code }}"
     state: absent
     log_path: "{{ oneagent_uninstall_log_path }}"
-  no_log: true
+  no_log: "{{ oneagent_no_log }}"
   ignore_errors: true
   register: _oneagent_uninstall_result
   when: _oneagent_product_code is defined
