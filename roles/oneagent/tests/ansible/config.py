@@ -68,7 +68,6 @@ class AnsibleConfigurator:
     PACKAGE_STATE_KEY = "oneagent_package_state"
     PRESERVE_INSTALLER_KEY = "oneagent_preserve_installer"
     VERIFY_SIGNATURE_KEY = "oneagent_verify_signature"
-    NO_LOG_ATTRIBUTE_VALUE = "oneagent_no_log_attribute"
 
     # Internal parameters
     CA_CERT_DOWNLOAD_CERT_KEY = "oneagent_ca_cert_download_cert"

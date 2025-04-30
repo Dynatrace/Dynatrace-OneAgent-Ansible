@@ -37,5 +37,5 @@ oneagent_reboot_timeout: 3600
 # Set CA certificate download url
 oneagent_ca_cert_download_url: https://ca.dynatrace.com/dt-root.cert.pem
 
-# Sets no_log attribute value in tasks
-oneagent_no_log_attribute: true
+# Sets Ansible `no_log` attribute value in tasks which may log sensitive values
+oneagent_no_log: true
