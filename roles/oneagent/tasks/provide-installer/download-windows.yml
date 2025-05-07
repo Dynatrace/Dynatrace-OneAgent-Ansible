@@ -5,8 +5,14 @@
     state: directory
   when: not _oneagent_download_path_state.stat.exists
 
+- name: Check if OneAgent installer exists
+  ansible.windows.win_stat:
+    path: "{{ oneagent_installer_path }}"
+  register: installer_stat
+
 - name: Download OneAgent installer
   ansible.windows.win_get_url:
+    url_timeout: 60
     url: "{{ _oneagent_installer_url }}"
     dest: "{{ oneagent_installer_path }}"
     validate_certs: "{{ oneagent_validate_certs | default(true) }}"
@@ -17,3 +23,7 @@
   no_log: "{{ oneagent_no_log }}"
   ignore_errors: true
   register: _oneagent_download_result
+  retries: 5
+  until: _oneagent_download_result is succeeded
+  delay: 10
+  changed_when: not installer_stat.stat.exists or _oneagent_download_result.changed
