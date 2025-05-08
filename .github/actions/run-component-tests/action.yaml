@@ -39,5 +39,5 @@ runs:
       with:
         name: component-tests-${{ github.sha }}
         retention-days: 1
-        path: roles/oneagent/tests/ansible_oneagent_tests_run_dir/logs
+        path: roles/oneagent/tests/ansible_oneagent_tests_run_dir
         if-no-files-found: error

@@ -2,7 +2,6 @@ import logging
 import threading
 from collections.abc import Generator
 from http import HTTPStatus
-from pathlib import Path
 
 from flask import Blueprint, Flask, Response, request, send_file
 from tests.constants import (
@@ -59,14 +58,7 @@ def get_agent_in_version(system: str, version: str) -> TransferResult:
     return get_installer(system, request.args["arch"], version)
 
 
-def run_server(ip_address: str, port: int, log_file_path: Path) -> Generator[None, None, None]:
-    logging.basicConfig(
-        format=f"%(asctime)s [{__name__}] %(levelname)s: %(message)s",
-        datefmt="%H:%M:%S",
-        level=logging.INFO,
-        handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()],
-    )
-
+def run_server(ip_address: str, port: int) -> Generator[None, None, None]:
     logging.info("Starting server on %s:%d", ip_address, port)
 
     ssl_info = SSLCertificateInfo(

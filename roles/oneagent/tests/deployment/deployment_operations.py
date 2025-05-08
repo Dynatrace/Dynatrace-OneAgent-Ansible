@@ -1,7 +1,6 @@
 import functools
 import logging
 import os
-import shutil
 from pathlib import Path
 from typing import Any, Callable, TypeVar, cast
 
@@ -29,18 +28,9 @@ from tests.deployment.deployment_platform import (
 CallableOperation = Callable[[DeploymentPlatform, str, Any], None]
 
 
-def prepare_test_dirs() -> None:
-    remove_if_exists(WORK_DIR_PATH)
-    Path(WORK_DIR_PATH).mkdir(parents=True)
+def prepare_test_dirs(test_case_name: str) -> None:
+    Path(WORK_DIR_PATH / test_case_name).mkdir(parents=True, exist_ok=True)
     os.chdir(WORK_DIR_PATH)
-
-
-def remove_if_exists(path: Path) -> None:
-    if path.exists():
-        try:
-            shutil.rmtree(str(path)) if os.path.isdir(str(path)) else os.remove(str(path))
-        except OSError as os_error:
-            logging.error("Failed to remove %s: %s", path, os_error)
 
 
 def get_oneagentctl_path(platform: DeploymentPlatform) -> Path:
@@ -147,11 +137,8 @@ def set_installer_download_params(config: AnsibleConfigurator, installer_server_
     set_ca_cert_download_params(config, installer_server_url)
 
 
-def run_deployment(runner: AnsibleRunner, ignore_errors: bool = False) -> DeploymentResult:
-    results = runner.run_deployment()
-    logging.info("Deployment finished")
-    for result in results:
-        logging.debug("Exit code: %s\nOutput: %s, Error: %s", result.returncode, result.stdout, result.stderr)
+def run_deployment(runner: AnsibleRunner, configurator: AnsibleConfigurator, ignore_errors: bool = False) -> DeploymentResult:
+    results = runner.run_deployment(configurator)
 
     if not ignore_errors:
         logging.info("Check exit codes")
