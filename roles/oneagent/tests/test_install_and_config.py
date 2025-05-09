@@ -84,8 +84,6 @@ def test_basic_installation(
     wrapper: PlatformCommandWrapper,
     installer_server_url: str,
 ):
-    logging.info("Running basic installation test")
-
     dummy_common_tag = "dummy_common_tag"
     dummy_platform_tag = "dummy_platform_tag"
     dummy_common_property = "dummy_common_key=dummy_common_value"
@@ -113,7 +111,7 @@ def test_basic_installation(
             ],
         )
 
-    result = run_deployment(runner)
+    result = run_deployment(runner, configurator)
 
     logging.info("Check if output contains secrets")
     _check_output_for_secrets(result, installer_server_url)

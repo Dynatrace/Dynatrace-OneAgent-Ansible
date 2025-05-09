@@ -26,8 +26,6 @@ def test_local_installer(
     wrapper: PlatformCommandWrapper,
     installer_server_url: str,
 ):
-    logging.info("Running local installer test")
-
     set_ca_cert_download_params(configurator, installer_server_url)
 
     for platform in platforms:
@@ -39,7 +37,7 @@ def test_local_installer(
             f"{installers_location}/{latest_installer_name}",
         )
 
-    _unused = run_deployment(runner)
+    _unused = run_deployment(runner, configurator)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)

@@ -41,8 +41,6 @@ def test_upgrade(
     wrapper: PlatformCommandWrapper,
     installer_server_url: str,
 ):
-    logging.info("Running upgrade test")
-
     set_installer_download_params(configurator, installer_server_url)
     configurator.set_common_parameter(configurator.VALIDATE_DOWNLOAD_CERTS_KEY, False)
 
@@ -50,7 +48,7 @@ def test_upgrade(
     for platform, version in old_versions.items():
         configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, version)
 
-    _unused = run_deployment(runner)
+    _unused = run_deployment(runner, configurator)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)
@@ -60,7 +58,7 @@ def test_upgrade(
 
     configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
 
-    _unused = run_deployment(runner)
+    _unused = run_deployment(runner, configurator)
 
     logging.info("Check if agent is installed")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, True)

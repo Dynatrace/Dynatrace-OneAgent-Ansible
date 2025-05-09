@@ -16,7 +16,6 @@ from tests.constants import (
     TEST_RUN_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
-    WORK_LOGS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
 )
 from tests.deployment.deployment_operations import (
@@ -64,7 +63,6 @@ def parse_platforms_from_options(options: dict[str, list[str]]) -> PlatformColle
     for key, hosts in options.items():
         if key in deployment_platforms and hosts:
             if "localhost" in hosts:
-                logging.info("Local deployment detected for %s, only this host will be used", key)
                 return {DeploymentPlatform.from_str(key): hosts}
             platforms[DeploymentPlatform.from_str(key)] = hosts
     return platforms
@@ -93,14 +91,13 @@ def create_test_directories(request: FixtureRequest) -> None:
     if request.config.getoption(PRESERVE_INSTALLERS_KEY):
         logging.info("Installers will be preserved, no installers will be generated")
         shutil.rmtree(WORK_SERVER_DIR_PATH, ignore_errors=True)
-        shutil.rmtree(WORK_LOGS_DIR_PATH, ignore_errors=True)
         shutil.rmtree(WORK_DIR_PATH, ignore_errors=True)
     else:
         shutil.rmtree(TEST_RUN_DIR_PATH, ignore_errors=True)
 
     os.makedirs(WORK_INSTALLERS_DIR_PATH, exist_ok=True)
     os.makedirs(WORK_SERVER_DIR_PATH, exist_ok=True)
-    os.makedirs(WORK_LOGS_DIR_PATH, exist_ok=True)
+    os.makedirs(WORK_DIR_PATH, exist_ok=True)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -109,21 +106,19 @@ def prepare_installers(request: FixtureRequest) -> None:
     tenant = request.config.getoption(TENANT_KEY)
     tenant_token = request.config.getoption(TENANT_TOKEN_KEY)
     preserve_installers = request.config.getoption(PRESERVE_INSTALLERS_KEY)
-    platforms = parse_platforms_from_options(vars(request.config.option))
-
     cert_url = str(request.config.getini(CA_CERT_URL_KEY))
 
     if preserve_installers:
         logging.info("Skipping installers preparation...")
         return
 
-    if is_local_deployment(platforms):
+    if is_local_deployment(request.config.platforms):
         logging.info("Generating installers...")
         if not generate_installers():
             pytest.exit("Generating installers failed")
     elif tenant and tenant_token:
         logging.info("Downloading installers and signature...")
-        if not download_signature(cert_url) or not download_installers(tenant, tenant_token, platforms):
+        if not download_signature(cert_url) or not download_installers(tenant, tenant_token, request.config.platforms):
             pytest.exit("Downloading installers and signature failed")
     else:
         pytest.exit("No tenant or tenant token provided, cannot download installers")
@@ -137,7 +132,7 @@ def installer_server_url() -> Generator[str, None, None]:
 
     logging.info("Running installer server on %s", url)
 
-    server = run_server(ipaddress, port, WORK_LOGS_DIR_PATH / "installer_server.log")
+    server = run_server(ipaddress, port)
     for _unused in server:
         break
 
@@ -154,33 +149,29 @@ def installer_server_url() -> Generator[str, None, None]:
 
 @pytest.fixture(autouse=True)
 def handle_test_environment(
+    request,
     runner: AnsibleRunner,
     configurator: AnsibleConfigurator,
     platforms: PlatformCollection,
     wrapper: PlatformCommandWrapper,
 ) -> Generator[None, None, None]:
     logging.info("Preparing test environment")
-    prepare_test_dirs()
-    configurator.prepare_test_environment()
+    prepare_test_dirs(WORK_DIR_PATH / request.module.__name__ / request.node.originalname)
 
     yield
 
     logging.info("Cleaning up environment")
-    configurator.clear_parameters_section()
-
     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
 
     logging.info("Check if agent is uninstalled")
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
 
-    results: DeploymentResult = runner.run_deployment()
+    results: DeploymentResult = runner.run_deployment(configurator)
     for result in results:
         if result.returncode != 0:
-            logging.error("Failed to clean up environment, output: %s", result.stdout)
+            logging.error("Failed to clean up environment, exit code: %d", result.returncode)
 
     shutil.rmtree("/var/lib/dynatrace", ignore_errors=True)
-
-    configurator.clear_parameters_section()
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -218,12 +209,8 @@ def pytest_addoption(parser: Parser) -> None:
         )
 
 
-def pytest_configure() -> None:
-    logging.basicConfig(
-        format="%(asctime)s [deploymentTest] %(levelname)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        level=logging.DEBUG,
-    )
+def pytest_configure(config) -> None:
+    config.platforms = parse_platforms_from_options(vars(config.option))
 
 
 def pytest_generate_tests(metafunc: Metafunc) -> None:
@@ -234,11 +221,10 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
 
     user: str = options[USER_KEY]
     password: str = options[PASS_KEY]
-    platforms = parse_platforms_from_options(options)
 
     wrapper = PlatformCommandWrapper(user, password)
-    configurator = AnsibleConfigurator(user, password, platforms)
-    runner = AnsibleRunner(user, password)
+    configurator = AnsibleConfigurator(user, password, metafunc.config.platforms)
+    runner = AnsibleRunner(WORK_DIR_PATH / metafunc.module.__name__ / metafunc.function.__name__, user, password)
 
     if CONFIGURATOR_KEY in metafunc.fixturenames:
         metafunc.parametrize(CONFIGURATOR_KEY, [configurator])
@@ -247,7 +233,16 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
         metafunc.parametrize(RUNNER_KEY, [runner])
 
     if PLATFORMS_KEY in metafunc.fixturenames:
-        metafunc.parametrize(PLATFORMS_KEY, [platforms])
+        metafunc.parametrize(PLATFORMS_KEY, [metafunc.config.platforms])
 
     if WRAPPER_KEY in metafunc.fixturenames:
         metafunc.parametrize(WRAPPER_KEY, [wrapper])
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_setup(item):
+    config = item.config
+    logging_plugin = config.pluginmanager.get_plugin("logging-plugin")
+    logging_plugin.set_log_path(WORK_DIR_PATH / item._request.module.__name__ / item._request.node.originalname / "test.log")
+
+    yield
