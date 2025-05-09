@@ -8,3 +8,4 @@
   ansible.builtin.file:
     path: "{{ oneagent_installer_path }}"
     state: absent
+  changed_when: not installer_stat.stat.exists or _oneagent_download_result.changed
