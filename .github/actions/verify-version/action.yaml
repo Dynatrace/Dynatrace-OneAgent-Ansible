@@ -40,6 +40,6 @@ runs:
       shell: bash
       run: |
         latestVersion="${{ env.LATEST_VERSION }}"
-        roleVersion="$(sed -n "s/oneagent_script_version: \(.*\)/\1/p" roles/oneagent/vars/main.yml)"
+        roleVersion="$(sed -n "s/oneagent_script_version: \(.*\)/\1/p" roles/oneagent/vars/version.yml)"
         printf "Latest version: %s, role version: %s" "${latestVersion}" "${roleVersion}"
         [ "${latestVersion}" = "${roleVersion}" ]

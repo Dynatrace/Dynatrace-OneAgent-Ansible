@@ -14,12 +14,11 @@
 
 name: "Build, test and publish"
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  release:
+    types: [released]
 
 jobs:
-  build-test-and-publish:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +36,11 @@ jobs:
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
-      - name: Publish to Ansible Galaxy
-        uses: ./.github/actions/publish-to-ansible-galaxy
-        with:
-          ansible-galaxy-api-token: ${{ secrets.ANSIBLE_GALAXY_API_TOKEN }}
+  publish:
+    needs: build-and-test
+    uses: ansible/team-devtools/.github/workflows/release_collection.yml@main
+    with:
+      environment: release
+    secrets:
+        ah_token: ${{ secrets.AH_TOKEN }}
+        ansible_galaxy_api_key: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
