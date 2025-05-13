@@ -2,7 +2,6 @@
 import logging
 import os
 import shutil
-import socket
 import time
 from collections.abc import Generator
 
@@ -127,7 +126,7 @@ def prepare_installers(request: FixtureRequest) -> None:
 @pytest.fixture(scope="session", autouse=True)
 def installer_server_url() -> Generator[str, None, None]:
     port = 8021
-    ipaddress = socket.gethostbyname(socket.gethostname())
+    ipaddress = "127.0.0.1"
     url = f"https://{ipaddress}:{port}"
 
     logging.info("Running installer server on %s", url)
