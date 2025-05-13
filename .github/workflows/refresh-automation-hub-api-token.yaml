@@ -1,0 +1,13 @@
+name: Refresh Automation Hub token
+
+on:
+  schedule:
+    - cron: '0 0 */15 * *' 
+
+jobs:
+  refresh-token:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Call Automation Hub Rest API
+      run: curl https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token -d grant_type=refresh_token -d client_id="cloud-services" -d refresh_token="${{ secrets.AH_TOKEN }}"
