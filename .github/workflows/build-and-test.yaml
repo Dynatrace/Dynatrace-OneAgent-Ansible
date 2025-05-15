@@ -30,8 +30,8 @@ jobs:
           ansibleVersionsData="$(curl -s https://endoflife.date/api/v1/products/ansible/)"
           supportedAnsibleVersions="$(echo "${ansibleVersionsData}" | jq -c '[.result.releases[] | select(.isEol == false) | .name]')"
           echo "community_package_versions=${supportedAnsibleVersions}"
-    needs: set-up-ansible-versions
   build-and-test:
+    needs: set-up-ansible-versions
     runs-on: ubuntu-latest
     strategy:
       matrix:
