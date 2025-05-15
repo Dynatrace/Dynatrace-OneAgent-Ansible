@@ -12,17 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Publish to Ansible Galaxy"
-description: Publish to Ansible Galaxy
-
+name: "Make GitHub release"
 inputs:
-  ansible-galaxy-api-token:
-    description: Ansible Galaxy API token required for ansible-galaxy client authentication
+  version:
+    description: "Version to be set"
+    required: true
+  gha_token:
+    descrition: "GHA bot token"
     required: true
 
 runs:
   using: composite
   steps:
-    - name: "Publish the Ansible collection"
+    - name: Install git-conventional-commits
       shell: bash
-      run: ansible-galaxy collection publish dynatrace-oneagent* --token ${{ inputs.ansible-galaxy-api-token }}
+      run: |
+        npm i git-conventional-commits
+
+    - name: Generate changelog
+      shell: bash
+      run: |
+        npx git-conventional-commits changelog --file github-release-changelog.md --release ${{ inputs.version }}
+
+    - name: Make release
+      shell: bash
+      run: |
+        gh release create ${{ inputs.version }} --notes-file github-release-changelog.md
+      env:
+        GH_TOKEN: ${{ inputs.gha_token }}
