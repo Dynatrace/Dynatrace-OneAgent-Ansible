@@ -19,19 +19,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-and-upload:
+  get-ansible-versions:
     runs-on: ubuntu-latest
+    outputs:
+      supported_ansible_versions: ${{ steps.get-ansible-versions.outputs.supported_ansible_versions }}
+      latest_ansible_version: ${{ steps.get-ansible-versions.outputs.latest_ansible_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Ansible versions
+        id: get-ansible-versions
+        uses: ./.github/actions/get-ansible-versions
+  build-test-and-upload:
+    needs: get-ansible-versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ansible-version: ${{ fromJson(needs.get-ansible-versions.outputs.supported_ansible_versions) }}
     steps:
       - uses: actions/checkout@v4
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-version: ${{ matrix.ansible-version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
+        with:
+          ansible-version: ${{ matrix.ansible-version }}
       - name: Upload the collection
+        if: matrix.ansible-version == needs.get-ansible-versions.outputs.latest_ansible_version
         uses: ./.github/actions/upload-collection

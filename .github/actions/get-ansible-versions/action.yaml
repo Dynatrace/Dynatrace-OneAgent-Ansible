@@ -1,0 +1,39 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: "Get Ansible versions"
+description: "Retrieves a list of supported Ansible versions and the latest Ansible version"
+
+outputs:
+  supported_ansible_versions:
+    description: "List of supported Ansible versions"
+    value: ${{ steps.get-ansible-versions.outputs.supported_ansible_versions }}
+  latest_ansible_version:
+    description: "Latest supported Ansible version"
+    value: ${{ steps.get-ansible-versions.outputs.latest_ansible_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get Ansible versions
+      id: get-ansible-versions
+      shell: bash
+      run: |
+        ansibleVersionsData="$(curl -s https://endoflife.date/api/v1/products/ansible/)"
+
+        supportedVersions="$(echo "${ansibleVersionsData}" | jq -c '[.result.releases[] | select(.isEol == false) | .name]')"
+        echo "supported_ansible_versions=${supportedVersions}" >> $GITHUB_OUTPUT
+
+        latestVersion="$(echo "${ansibleVersionsData}" | jq -r '.result.releases[] | select(.isEol == false) | .name' | sort -V | tail -n1)"
+        echo "latest_ansible_version=${latestVersion}" >> $GITHUB_OUTPUT

@@ -18,8 +18,20 @@ on:
     types: [released]
 
 jobs:
+  get-ansible-versions:
+      runs-on: ubuntu-latest
+      outputs:
+        supported_ansible_versions: ${{ steps.get-ansible-versions.outputs.supported_ansible_versions }}
+      steps:
+        - uses: actions/checkout@v4
+        - name: Get Ansible versions
+          id: get-ansible-versions
+          uses: ./.github/actions/get-ansible-versions
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ansible-version: ${{ fromJson(needs.get-ansible-versions.outputs.supported_ansible_versions) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,13 +41,17 @@ jobs:
       - name: Verify version
         uses: ./.github/actions/verify-version
       - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-version: ${{ matrix.ansible-version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
+        with:
+          ansible-version: ${{ matrix.ansible-version }}
   publish:
     needs: build-and-test
     uses: ansible/team-devtools/.github/workflows/release_collection.yml@main
