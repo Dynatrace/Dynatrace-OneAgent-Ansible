@@ -19,14 +19,31 @@ on:
   workflow_call:
 
 jobs:
-  build-and-test:
+  set-up-ansible-versions:
     runs-on: ubuntu-latest
+    outputs:
+      community_package_versions: ${{ steps.set-up-ansible-community-package-versions.outputs.community_package_versions }}
+    steps:
+      - name: Set up Ansible community package versions
+        id: set-up-ansible-community-package-versions
+        run: |
+          ansibleVersionsData="$(curl -s https://endoflife.date/api/v1/products/ansible/)"
+          supportedAnsibleVersions="$(echo "${ansibleVersionsData}" | jq -c '[.result.releases[] | select(.isEol == false) | .name]')"
+          echo "community_package_versions=${supportedAnsibleVersions}"
+  build-and-test:
+    needs: set-up-ansible-versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ansible-package-version: ${{ fromJson(needs.set-up-ansible-versions.outputs.community_package_versions) }}
     steps:
       - uses: actions/checkout@v4
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
         uses: ./.github/actions/setup-build-environment
+        with:
+          ansible-package-version: ${{ matrix.ansible-package-version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
