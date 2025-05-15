@@ -19,8 +19,37 @@ on:
   workflow_call:
 
 jobs:
+  set-up-ansible-community-package-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.set-matrix.outputs.versions }}
+    steps:
+      - name: Set up Ansible community package version matrix
+        id: set-matrix
+        run: |
+          minVersion="$(cat ansible-min-version.txt)"
+          minVersionMajor="$(echo "$minVersion" | cut -d. -f1)"
+          minVersionMinor="$(echo "$minVersion" | cut -d. -f2)"
+
+          versions=""
+          for version in $(curl -s "https://pypi.org/pypi/ansible-core/json" | jq -r ".releases | keys[]" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | sort -V); do
+            versionMajorMinor="$(echo "$version" | cut -d. -f1,2)"
+            versionMajor="$(echo "$versionMajorMinor" | cut -d. -f1)"
+            versionMinor="$(echo "$versionMajorMinor" | cut -d. -f2)"
+            if [ "$versionMajor" -gt "$minVersionMajor" ] || { [ "$versionMajor" -eq "$minVersionMajor" ] && [ "$versionMinor" -ge "$minVersionMinor" ]; }; then
+              if ! echo "$versions" | grep -q "^$versionMajorMinor$"; then
+                versions="$versions\n$versionMajorMinor"
+              fi
+            fi
+          done
+
+          versions=$(echo -e "$versions" | grep -v "^$")
+          echo "versions=$(jq -c -R -s \"split(\\n)[:-1]\" <<< \"$versions\")" >> $GITHUB_OUTPUT
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ansible-package-version: ${{ fromJson(needs.set-up-ansible-community-package-versions.outputs.versions) }}
     steps:
       - uses: actions/checkout@v4
       - name: Set environment variables
