@@ -12,15 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Prepare build environment"
-description: "Prepares build environment"
+name: "Set up build environment"
+description: "Sets up build environment"
+
+inputs:
+  ansible-community-package-version:
+    description: "The Ansible community package version to install"
+    required: true
 
 runs:
   using: composite
   steps:
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: "3.12"
+    - name: "Upgrade pip"
+      shell: bash
+      run: |
+        pip install --upgrade pip
     - name: "Install dependencies"
       shell: bash
-      run: pip install ansible ansible-lint
+      run: |
+        pip install "ansible==${{ inputs.ansible-community-package-version }}.*" ansible-lint

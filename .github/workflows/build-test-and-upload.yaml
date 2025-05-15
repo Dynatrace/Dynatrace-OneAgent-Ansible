@@ -23,15 +23,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get latest supported Ansible version
+        id: get-latest-ansible-version
+        uses: ./.github/get-latest-supported-ansible-community-package-version
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-community-package-version: ${{ steps.get-latest-ansible-version.outputs.community_package_version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
+        with:
+          ansible-community-package-version: ${{ steps.get-latest-ansible-version.outputs.community_package_version }}
       - name: Upload the collection
         uses: ./.github/actions/upload-collection

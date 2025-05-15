@@ -9,8 +9,8 @@ configuration of OneAgent and ensures the OneAgent service remains in a running 
 
 ## Requirements
 
-- Ansible >= 2.15.0
-- pywinrm >= 0.4.3 (Windows only)
+- `ansible` (any supported version)
+- `pywinrm >= 0.4.3` (Windows only)
 
 ## Installation
 

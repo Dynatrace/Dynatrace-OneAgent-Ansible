@@ -25,18 +25,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Get latest supported Ansible version
+        id: get-latest-ansible-version
+        uses: ./.github/get-latest-supported-ansible-community-package-version
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Verify version
         uses: ./.github/actions/verify-version
       - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-community-package-version: ${{ steps.get-latest-ansible-version.outputs.community_package_version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
+        with:
+          ansible-community-package-version: ${{ steps.get-latest-ansible-version.outputs.community_package_version }}
       - name: Publish to Ansible Galaxy
         uses: ./.github/actions/publish-to-ansible-galaxy
         with:

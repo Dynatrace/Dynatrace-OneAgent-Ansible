@@ -19,17 +19,34 @@ on:
   workflow_call:
 
 jobs:
-  build-and-test:
+  get-supported-ansible-community-package-versions:
     runs-on: ubuntu-latest
+    outputs:
+      community_package_versions: ${{ steps.get-supported-ansible-community-package-versions.outputs.community_package_versions }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ansible community package versions
+        id: get-supported-ansible-community-package-versions
+        uses: ./.github/actions/get-supported-ansible-community-package-versions
+  build-and-test:
+    needs: get-supported-ansible-community-package-versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ansible-community-package-version: ${{ fromJson(needs.get-supported-ansible-community-package-versions.outputs.community_package_versions) }}
     steps:
       - uses: actions/checkout@v4
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-community-package-version: ${{ matrix.ansible-community-package-version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
       - name: Run sanity tests
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
+        with:
+          ansible-community-package-version: ${{ matrix.ansible-community-package-version }}

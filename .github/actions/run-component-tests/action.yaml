@@ -15,6 +15,12 @@
 name: "Run component tests"
 description: "Runs component tests"
 
+inputs:
+  ansible-community-package-version:
+    description: "The Ansible package version being tested"
+    required: false
+    default: "unknown"
+
 runs:
   using: composite
   steps:
@@ -37,7 +43,7 @@ runs:
       uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
-        name: component-tests-${{ github.sha }}
+        name: component-tests-ansible-${{ inputs.ansible-community-package-version }}-${{ github.run_id }}
         retention-days: 1
         path: roles/oneagent/tests/ansible_oneagent_tests_run_dir
         if-no-files-found: error
