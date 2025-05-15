@@ -54,7 +54,8 @@ See [OneAgent role README](roles/oneagent/README.md) for more details.
 
 ## Testing
 
-The collection is continuously tested in CI against all supported Ansible core versions (from the minimum in `ansible-min-version.txt` to the latest available). This includes Ansible sanity tests and component tests, which run regular deployments and check a variety of installation scenarios.
+The collection was tested against Ansible sanity tests and component tests. The latter runs regular deployment with
+the installer and checks veriety of installation scenarios.
 See [OneAgent role tests README](roles/oneagent/tests/README.md) for more details.
 
 ## Support
