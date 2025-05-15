@@ -15,6 +15,12 @@
 name: "Run component tests"
 description: "Runs component tests"
 
+inputs:
+  ansible-version:
+    description: "The Ansible version being tested"
+    required: false
+    default: "unknown"
+
 runs:
   using: composite
   steps:
@@ -23,8 +29,9 @@ runs:
       run: |
         python -m venv venv
         source venv/bin/activate
+        pip install --upgrade pip
         pip install -r roles/oneagent/tests/requirements.txt
-
+        pip install "ansible==${{ inputs.ansible-version }}.*"
     - name: "Install the collection"
       shell: bash
       run: sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
@@ -37,7 +44,7 @@ runs:
       uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
-        name: component-tests-${{ github.sha }}
+        name: component-tests-ansible-${{ inputs.ansible-version }}-${{ github.run_id }}
         retention-days: 1
         path: roles/oneagent/tests/ansible_oneagent_tests_run_dir
         if-no-files-found: error

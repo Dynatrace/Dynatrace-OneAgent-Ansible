@@ -17,19 +17,58 @@ on:
   pull_request:
   workflow_dispatch:
   workflow_call:
+  push:
+    branches: ["master"]
 
 jobs:
-  build-and-test:
+  fetch-ansible-versions:  
     runs-on: ubuntu-latest
+    name: "Fetch Ansible versions"
+    outputs:
+        supported_ansible_versions: ${{ steps.v.outputs.supported_ansible_versions }}
+        latest_ansible_version : ${{ steps.v.outputs.latest_ansible_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/get-ansible-versions
+        id: v
+
+  build:
+    needs: fetch-ansible-versions
+    runs-on: ubuntu-latest
+    name: Build with Ansible ${{ needs.fetch-ansible-versions.outputs.latest_ansible_version }}
     steps:
       - uses: actions/checkout@v4
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-version: ${{ needs.fetch-ansible-versions.outputs.latest_ansible_version }}
       - name: Build the collection
         uses: ./.github/actions/build-collection
+      - name: Upload the collection
+        uses: ./.github/actions/upload-collection
+
+  test:
+    name: Test with Ansible ${{ matrix.ansible-version }}
+    needs: [fetch-ansible-versions, build]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+          ansible-version: ${{ fromJson(needs.fetch-ansible-versions.outputs.supported_ansible_versions) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set environment variables
+        uses: ./.github/actions/set-environment-variables
+      - name: Set up environment
+        uses: ./.github/actions/set-up-build-environment
+        with:
+          ansible-version: ${{ matrix.ansible-version }}
+      - name: Download the collection
+        uses: ./.github/actions/download-collection
       - name: Run sanity tests
         uses: ./.github/actions/run-sanity-and-linter-tests
       - name: Run component tests
         uses: ./.github/actions/run-component-tests
+        with:
+          ansible-version: ${{ matrix.ansible-version }}

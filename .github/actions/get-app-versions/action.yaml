@@ -1,0 +1,43 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: "Get application versions"
+description: "Retrieves a list of supported versions of specified application and its latest version"
+
+inputs:
+  app:
+    description: "Name of the application"
+    required: true
+outputs:
+  supported_versions:
+    description: "List of supported versions"
+    value: ${{ steps.get-app-versions.outputs.supported_versions }}
+  latest_version:
+    description: "Latest supported version"
+    value: ${{ steps.get-app-versions.outputs.latest_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get app versions
+      id: get-app-versions
+      shell: bash
+      run: |
+        supportedVersions="$(python $GITHUB_WORKSPACE/.github/actions/get-app-versions/eol_client.py ${{ inputs.app }})"
+        echo "supported_versions=${supportedVersions}"
+        echo "supported_versions=${supportedVersions}" >> $GITHUB_OUTPUT
+
+        latestVersion="$(python $GITHUB_WORKSPACE/.github/actions/get-app-versions/eol_client.py ${{ inputs.app }} --get_latest)"
+        echo "latest_version=${latestVersion}"
+        echo "latest_version=${latestVersion}" >> $GITHUB_OUTPUT
