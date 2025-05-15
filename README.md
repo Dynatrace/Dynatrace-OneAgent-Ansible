@@ -4,8 +4,8 @@ Ansible collection for deploying Dynatrace OneAgent.
 
 ## Description
 
-The Dynatrace OneAgent Ansible collection is a collection consisting of a single role that handles the installation and
-configuration of OneAgent and ensures the OneAgent service remains in a running state.
+The Dynatrace OneAgent Ansible collection consists of a single role that handles the installation and
+configuration of OneAgent, ensuring the OneAgent service remains in a running state.
 
 ## Requirements
 
@@ -20,7 +20,7 @@ Before using this collection, you need to install it with the Ansible Galaxy com
 ansible-galaxy collection install dynatrace.oneagent
 ```
 
-You can also include it in a requirements.yml file and install it with ansible-galaxy collection install -r
+You can also include it in a requirements.yml file and install it with `ansible-galaxy collection install -r`
 requirements.yml, using the format:
 
 ```yaml
@@ -53,7 +53,7 @@ See [OneAgent role README](roles/oneagent/README.md) for more details.
 ## Testing
 
 The collection was tested against Ansible sanity tests and component tests. The latter runs regular deployment with
-the installer and checks veriety of installation scenarios.
+the installer and checks variety of installation scenarios.
 See [OneAgent role tests README](roles/oneagent/tests/README.md) for more details.
 
 ## Support
