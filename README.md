@@ -9,10 +9,8 @@ configuration of OneAgent and ensures the OneAgent service remains in a running 
 
 ## Requirements
 
-- Ansible core (minimum version specified in `ansible-min-version.txt`)
+- Ansible core
 - pywinrm >= 0.4.3 (Windows only)
-
-> **Note:** The minimum supported Ansible core version is defined in the `ansible-min-version.txt` file. The CI pipeline automatically tests this collection against all Ansible core versions from the minimum specified up to the latest available.
 
 ## Installation
 

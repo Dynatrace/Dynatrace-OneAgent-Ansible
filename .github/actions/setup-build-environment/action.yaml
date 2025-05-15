@@ -17,7 +17,7 @@ description: "Prepares build environment"
 
 inputs:
   ansible-package-version:
-    description: 'The Ansible community package version to install'
+    description: "The Ansible community package version to install"
     required: true
 
 runs:
