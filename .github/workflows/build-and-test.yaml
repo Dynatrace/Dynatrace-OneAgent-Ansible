@@ -50,9 +50,9 @@ jobs:
         run: |
           coreVersions=${{ steps.set-up-ansible-core-versions.outputs.core_versions }}
           communityPackageVersions=""
-          for v in $(echo "$coreVersions" | jq -r '.[]'); do
-            minor=$(echo "$v" | cut -d. -f2)
-            communityPackageVersion=$((minor - 7))
+          for coreVersion in $(echo "$coreVersions" | jq -r '.[]'); do
+            coreVersionMinor=$(echo "$coreVersion" | cut -d. -f2)
+            communityPackageVersion=$((coreVersionMinor - 7))
             communityPackageVersions="$communityPackageVersions\n$communityPackageVersion"
           done
           communityPackageVersions=$(echo -e "$communityPackageVersions" | grep -v "^$" | sort -u)
