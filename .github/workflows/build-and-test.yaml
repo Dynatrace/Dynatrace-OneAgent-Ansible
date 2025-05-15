@@ -46,7 +46,6 @@ jobs:
 
           uniqueCoreVersions=$(echo -e "$coreVersions" | grep -v "^$" | sort -u)
           echo "core_versions=$(jq -c -R -s \"split(\\n)[:-1]\" <<< \"$uniqueCoreVersions\")" >> $GITHUB_OUTPUT
-
       - name: Set up Ansible community package versions
         id: set-up-ansible-community-package-versions
         run: |
@@ -59,7 +58,6 @@ jobs:
           done
           communityPackageVersions=$(echo -e "$communityPackageVersions" | grep -v "^$" | sort -u)
           echo "community_package_versions=$(jq -c -R -s \"split(\\n)[:-1]\" <<< \"$communityPackageVersions\")" >> $GITHUB_OUTPUT
-
   build-and-test:
     runs-on: ubuntu-latest
     strategy:
