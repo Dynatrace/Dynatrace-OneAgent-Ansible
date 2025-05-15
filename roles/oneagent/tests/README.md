@@ -47,6 +47,9 @@ $ python -m venv venv && source venv/bin/activate
 # Install requirements
 $ pip install -r roles/oneagent/tests/requirements.txt
 
+# Install ansible (any supported version, for more details see: https://endoflife.date/api/v1/products/ansible/)
+$ pip install ansible
+
 # Build and install the collection
 $ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pem -P roles/oneagent/files
 $ ansible-galaxy collection build . -vvv

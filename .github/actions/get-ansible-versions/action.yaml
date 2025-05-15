@@ -1,0 +1,20 @@
+name: Get Ansible Versions
+
+description: "Fetches supported and latest Ansible versions"
+
+outputs:
+  supported_ansible_versions:
+    description: "List of supported Ansible versions"
+    value: ${{ steps.get.outputs.supported_versions }}
+  latest_ansible_version:
+    description: "Latest Ansible version"
+    value: ${{ steps.get.outputs.latest_version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Ansible versions
+      id: get
+      uses: ./.github/actions/get-app-versions
+      with:
+        app: ansible
