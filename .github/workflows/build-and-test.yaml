@@ -24,6 +24,7 @@ jobs:
     outputs:
       community_package_versions: ${{ steps.set-up-ansible-community-package-versions.outputs.community_package_versions }}
     steps:
+      - uses: actions/checkout@v4
       - name: Set up Ansible core versions
         id: set-up-ansible-core-versions
         run: |
