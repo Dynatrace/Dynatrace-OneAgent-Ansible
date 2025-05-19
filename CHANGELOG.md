@@ -1,7 +1,3 @@
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
 ## [1.2.4] - 2025-04-30
 - Added parameter `oneagent_no_log` controlling Ansible no_log attribute
 

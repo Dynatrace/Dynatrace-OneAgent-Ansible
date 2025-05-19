@@ -1,0 +1,29 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version'
+        required: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the branch
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Upate version
+        uses:  ./.github/actions/update-version
+        with:
+          version: ${{ github.event.inputs.version}}
+          gha_token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Release on GitHub
+        uses:  ./.github/actions/make-release
+        with:
+          version: ${{ github.event.inputs.version }}
+          gha_token: ${{ secrets.BOT_TOKEN }}

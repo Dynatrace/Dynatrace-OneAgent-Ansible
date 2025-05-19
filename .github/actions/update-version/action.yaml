@@ -1,0 +1,89 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: "Update version in all needed files"
+inputs:
+  version:
+    description: "Version to be set"
+    required: true
+  gha_token:
+    description: "GHA bot token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+      - name: Install git-conventional-commits
+        shell: bash
+        run: |
+          npm i git-conventional-commits
+
+      - name: Update version in files
+        shell: bash
+        run: |
+          python $GITHUB_WORKSPACE/.github/actions/update-version/update_version.py ${{ inputs.version }}
+
+      - name: Generate changelog
+        shell: bash
+        run: |
+          npx git-conventional-commits changelog --file CHANGELOG.md --release ${{ inputs.version }}
+
+      - name: setup git config
+        shell: bash
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: commit
+        shell: bash
+        run: |
+          # Stage the file, commit and push
+          git add galaxy.yml roles/oneagent/vars/version.yml CHANGELOG.md
+          git commit -m "Update version"
+          git push origin HEAD:${{ inputs.version }}
+
+      - name: Create Pull Request
+        shell: bash
+        run: |
+          gh pr create --title "Version update: ${{ inputs.version }}" --body "" --head "${{ inputs.version }}" --base "master"
+          while [[ $(gh pr list --head "${{ inputs.version }}" --json "title" --jq 'length==0') == "true" ]]; do
+            echo "Waiting for PR..."
+            sleep 10
+          done
+        env:
+          GH_TOKEN: ${{ inputs.gha_token }}
+
+      - name: Wait for Pull Request build
+        shell: bash
+        run: |
+          PR_BUILD_STATUS=""
+          until [[ "${PR_BUILD_STATUS}" == "SUCCESS" || "${PR_BUILD_STATUS}" == "FAILURE" ]]; do
+            PR_BUILD_STATUS=$(gh pr list --head ${{ inputs.version }} --json statusCheckRollup --jq '.[].statusCheckRollup[].conclusion')
+            echo "$ Waiting for PR build to finish..."
+            sleep 10
+          done
+          echo "PR build status: ${PR_BUILD_STATUS}"
+          if [[ "${PR_BUILD_STATUS}" == "FAILURE" ]]; then
+             exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ inputs.gha_token }}
+
+      - name: Merge Pull Request
+        shell: bash
+        run: |
+          gh pr merge "${{ inputs.version }}" --rebase --delete-branch
+        env:
+          GH_TOKEN: ${{ inputs.gha_token }}

@@ -1,4 +1,6 @@
 ---
+- name: Load version variable
+  ansible.builtin.include_vars: vars/version.yml
 - name: Load variables based on OS
   ansible.builtin.include_vars: vars/{{ oneagent_system_name }}.yml
 - name: Load messages
