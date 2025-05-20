@@ -25,13 +25,7 @@ If you don't specify the installer, the script attempts to use the direct downlo
 
 ### Configure existing installation
 
-The role is capable of configuring existing installation by utilizing `oneagentctl`.
-There are 2 ways of applying configuration:
-
-- In case the Agent in the same or lower version is installed on specified host already, the script
-  uses provided installation parameters and runs `oneagentctl` with them, skipping installation procedure.
-- In case no `environment_url`, `paas_token` and `local_installer` parameters are provided,
-  the script runs `oneagentctl` with provided parameters directly.
+The role is capable of configuring existing installation by utilizing `oneagentctl`. In case no `environment_url`, `paas_token` and `local_installer` parameters are provided, the script runs `oneagentctl` with provided parameters directly.
 
 For full list of suitable parameters, see [OneAgent configuration via command-line interface].
 
