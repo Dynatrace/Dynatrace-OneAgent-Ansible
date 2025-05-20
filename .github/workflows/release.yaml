@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Upate version
+      - name: Update version
         uses:  ./.github/actions/update-version
         with:
           version: ${{ github.event.inputs.version}}
