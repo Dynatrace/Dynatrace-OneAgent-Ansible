@@ -47,7 +47,7 @@ UNIX_INSTALL_DIR_PATH = Path("/opt") / "dynatrace" / "oneagent"
 UNIX_ONEAGENTCTL_BIN_NAME = "oneagentctl"
 UNIX_ONEAGENTCTL_PATH = UNIX_INSTALL_DIR_PATH / "agent" / "tools" / UNIX_ONEAGENTCTL_BIN_NAME
 
-WINDOWS_DOWNLOAD_DIR_PATH = Path("%TEMP%")
+WINDOWS_DOWNLOAD_DIR_PATH = Path("C:\\Windows\\Temp")
 WINDOWS_INSTALL_DIR_PATH = Path("C:\\Program Files") / "dynatrace" / "oneagent"
 WINDOWS_ONEAGENTCTL_BIN_NAME = "oneagentctl.exe"
 WINDOWS_ONEAGENTCTL_PATH = WINDOWS_INSTALL_DIR_PATH / "agent" / "tools" / WINDOWS_ONEAGENTCTL_BIN_NAME

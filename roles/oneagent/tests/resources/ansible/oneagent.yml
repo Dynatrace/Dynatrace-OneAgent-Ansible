@@ -1,6 +1,8 @@
 ---
 - name: Basic playbook
   hosts: all
+  gather_subset:
+    - "!hardware" # may fail on Windows VMs
   vars_files:
     - credentials.yml
   vars: {}
