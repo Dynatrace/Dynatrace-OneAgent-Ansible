@@ -138,7 +138,15 @@ def set_installer_download_params(config: AnsibleConfigurator, installer_server_
 
 
 def run_deployment(runner: AnsibleRunner, configurator: AnsibleConfigurator, ignore_errors: bool = False) -> DeploymentResult:
-    results = runner.run_deployment(configurator)
+    return _run_deployment(configurator)
+
+
+def run_check_mode(runner: AnsibleRunner, configurator: AnsibleConfigurator, ignore_errors: bool = False, check_mode: bool = True) -> DeploymentResult:
+    return _run_deployment(configurator, check_mode)
+
+
+def _run_deployment(runner: AnsibleRunner, configurator: AnsibleConfigurator, ignore_errors: bool = False, check_mode: bool = False) -> DeploymentResult:
+    results = runner.run_deployment(configurator, check_mode=check_mode)
 
     if not ignore_errors:
         logging.info("Check exit codes")
