@@ -45,14 +45,16 @@ def test_basic_installation(
         ],
     )
 
-
-    result = run_deployment(runner, check_mode=True)
+    result = run_check_mode(runner, check_mode=True)
 
     logging.info("Running Check Mode / Dry Run check")
+
     for result in results:
         changed_tasks = re.findall(r'changed=(\d+)', result.stdout)
-            if changed_tasks:
-                changed_count = sum(map(int, changed_tasks))
-                if changed_count > 0:
-                    assert change_count == 0, f"Playbook would change {changed_count} tasks"
+
+        if changed_tasks:
+            changed_count = sum(map(int, changed_tasks))
+            if changed_count > 0:
+                assert change_count == 0, f"Playbook would change {changed_count} tasks"
+
     return results
