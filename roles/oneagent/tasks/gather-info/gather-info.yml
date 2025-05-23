@@ -9,4 +9,3 @@
 - name: Determine deployment type
   ansible.builtin.set_fact:
     oneagent_is_operation_installation: "{{ _oneagent_is_installation_possible }}"
-    oneagent_is_operation_configuration: "{{ not _oneagent_is_installation_possible }}"
