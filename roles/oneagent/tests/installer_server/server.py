@@ -58,6 +58,13 @@ def get_agent_in_version(system: str, version: str) -> TransferResult:
     return get_installer(system, request.args["arch"], version)
 
 
+@installer_bp.route("/<system>/default/latest/metainfo")
+def get_latest_agent_metainfo(system: str) -> TransferResult:
+    logging.info("Getting metainfo for latest installer - %s_%s, ", system, request.args["arch"])
+    single_installer = get_installers(system, request.args["arch"], "latest")[0]
+    return {"latestAgentVersion": str(single_installer)}, HTTPStatus.OK
+
+
 def run_server(ip_address: str, port: int) -> Generator[None, None, None]:
     logging.info("Starting server on %s:%d", ip_address, port)
 

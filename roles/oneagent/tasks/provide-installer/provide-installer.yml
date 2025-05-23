@@ -1,4 +1,17 @@
 ---
+- name: Check latest on tenant
+  ansible.builtin.uri:
+    url: "{{ oneagent_environment_url }}/api/v1/deployment/installer/agent/unix/default/latest/metainfo?arch=x86"
+    validate_certs: "{{ oneagent_validate_certs | default(true) }}"
+  environment:
+    SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
+  register: oneagent_aaa
+  ignore_errors: true
+
+- name: AAAAAAAAAA
+  ansible.builtin.debug:
+    msg: "{{ oneagent_aaa }}"
+
 - name: Download OneAgent installer
   ansible.builtin.include_tasks: provide-installer/download.yml
   when: oneagent_local_installer|length == 0
