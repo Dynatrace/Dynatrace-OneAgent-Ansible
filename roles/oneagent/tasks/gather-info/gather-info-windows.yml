@@ -9,8 +9,3 @@
   register: _oneagent_installed_agent_version
   when: _oneagent_ctl_state.stat.exists
   changed_when: false
-
-- name: Determine version of new installer
-  ansible.windows.win_command: '"{{ oneagent_installer_path }}" --version --quiet'
-  register: _oneagent_new_agent_version
-  changed_when: false

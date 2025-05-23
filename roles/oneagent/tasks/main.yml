@@ -9,12 +9,12 @@
   ansible.builtin.include_tasks: params/params.yml
 - name: Prepare and perform installation
   block:
-    - name: Provide OneAgent installer
-      ansible.builtin.include_tasks: provide-installer/provide-installer.yml
-      when: oneagent_is_operation_installation
-
     - name: Gather installers info
       ansible.builtin.include_tasks: gather-info/gather-info.yml
+      when: oneagent_is_operation_installation
+
+    - name: Provide OneAgent installer
+      ansible.builtin.include_tasks: provide-installer/provide-installer.yml
       when: oneagent_is_operation_installation
 
     - name: Apply OneAgent configuration
