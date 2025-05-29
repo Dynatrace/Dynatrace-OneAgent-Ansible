@@ -14,28 +14,14 @@
 
 name: "Build, test and publish"
 on:
+  workflow_dispatch:
   release:
     types: [released]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set environment variables
-        uses: ./.github/actions/set-environment-variables
-      - name: Verify version
-        uses: ./.github/actions/verify-version
-      - name: Set up environment
-        uses: ./.github/actions/setup-build-environment
-      - name: Build the collection
-        uses: ./.github/actions/build-collection
-      - name: Run sanity tests
-        uses: ./.github/actions/run-sanity-and-linter-tests
-      - name: Run component tests
-        uses: ./.github/actions/run-component-tests
+    uses: ./.github/workflows/build-and-test.yaml
+
   publish:
     needs: build-and-test
     uses: ansible/team-devtools/.github/workflows/release_collection.yml@main

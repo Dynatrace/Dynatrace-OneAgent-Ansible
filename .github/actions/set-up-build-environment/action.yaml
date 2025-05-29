@@ -12,15 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Upload collection"
-description: Uploads the collection to GitHub storage 
+name: "Set up build environment"
+description: "Sets up build environment"
+
+inputs:
+  ansible-version:
+    description: "The Ansible version to install"
+    required: true
 
 runs:
   using: composite
   steps:
-    - name: "Publish artifact"
-      uses: actions/upload-artifact@v4
+    - uses: actions/setup-python@v5
       with:
-        name: dynatrace-oneagent-${{ github.sha }}
-        retention-days: 7
-        path: dynatrace-oneagent*
+        python-version: "3.12"
+    - name: "Upgrade pip"
+      shell: bash
+      run: |
+        pip install --upgrade pip
+    - name: "Install dependencies"
+      shell: bash
+      run: |
+        pip install "ansible==${{ inputs.ansible-version }}.*" ansible-lint

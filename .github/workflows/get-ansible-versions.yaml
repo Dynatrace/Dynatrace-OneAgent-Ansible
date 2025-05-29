@@ -1,0 +1,23 @@
+name: Get Ansible Versions
+
+on:
+  workflow_call:
+    outputs:
+      supported_ansible_versions:
+        value: ${{ jobs.get-ansible-versions.outputs.supported_ansible_versions }}
+      latest_ansible_version:
+        value: ${{ jobs.get-ansible-versions.outputs.latest_ansible_version }}
+jobs:
+  get-ansible-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      supported_ansible_versions: ${{ steps.foo.outputs.supported_versions }}
+      latest_ansible_version: ${{ steps.foo.outputs.latest_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Ansible versions
+        id: foo
+        uses: ./.github/actions/get-app-versions
+        with:
+          app: ansible
+
