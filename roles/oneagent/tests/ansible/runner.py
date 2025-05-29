@@ -21,7 +21,7 @@ class AnsibleRunner:
             extension = new_extension
         return f"{base_name}_{self.run_index}{extension}"
 
-    def run_deployment(self, configurator: AnsibleConfigurator) -> DeploymentResult:
+    def run_deployment(self, configurator: AnsibleConfigurator, check_mode: bool = False) -> DeploymentResult:
         playbook_file_path = self._generate_file_name(PLAYBOOK_TEMPLATE_FILE_NAME)
         inventory_file_path = self._generate_file_name(HOSTS_TEMPLATE_FILE_NAME)
         log_file_path = self.work_dir / self._generate_file_name(PLAYBOOK_TEMPLATE_FILE_NAME, ".log")
@@ -37,6 +37,8 @@ class AnsibleRunner:
             inventory_file_path,
             playbook_file_path,
         ]
+        if check_mode:
+            commandline.append("--check")
 
         logging.info("Running '%s' in '%s'. ", " ".join(commandline), self.work_dir)
 
