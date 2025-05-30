@@ -15,7 +15,7 @@
   retries: 5
   until: oneagent_installer_from_tenant_json is succeeded
   delay: 10
-  when: oneagent_version == "latest" and oneagent_local_installer|length == 0
+  when: oneagent_version == 'latest' and oneagent_local_installer|length == 0
 
 - name: Parse metainfo output
   ansible.builtin.set_fact:

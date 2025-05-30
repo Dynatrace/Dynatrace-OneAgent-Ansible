@@ -3,7 +3,7 @@
   ansible.builtin.set_fact:
     _oneagent_skip_installer_download: >-
       {{ (oneagent_version == 'latest' and oneagent_installer_metainfo_version is defined and
-           (_oneagent_installed_agent_version.stdout | default('') >= oneagent_installer_metainfo_version | default(''))) or
+           (_oneagent_installed_agent_version.stdout | default('') >= oneagent_installer_metainfo_version)) or
          (oneagent_version != 'latest' and
            (_oneagent_installed_agent_version.stdout | default('') >= oneagent_version)) }}
 
