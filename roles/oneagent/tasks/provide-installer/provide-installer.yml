@@ -2,10 +2,11 @@
 - name: Check if installer should be downloaded
   ansible.builtin.set_fact:
     _oneagent_skip_installer_download: >-
-      {{ (oneagent_version == 'latest' and oneagent_installer_metainfo_version is defined and
-           (_oneagent_installed_agent_version.stdout | default('') >= oneagent_installer_metainfo_version)) or
-         (oneagent_version != 'latest' and
-           (_oneagent_installed_agent_version.stdout | default('') >= oneagent_version)) }}
+      {{ oneagent_installed_agent_version.stdout | default('') | length > 0 and
+         ((oneagent_version == 'latest' and oneagent_installer_metainfo_version | default('') | length > 0 and
+            (_oneagent_installed_agent_version.stdout | default('') is version(oneagent_installer_metainfo_version, '>='))) or
+          (oneagent_version != 'latest' and
+            (_oneagent_installed_agent_version.stdout | default('') is version(oneagent_version, '>=')))) }}
 
 - name: Download OneAgent installer
   ansible.builtin.include_tasks: provide-installer/download.yml
@@ -25,7 +26,10 @@
 
 - name: Compare versions of installed OneAgent and uploaded installer
   ansible.builtin.set_fact:
-    _oneagent_is_installation_possible: "{{ _oneagent_installed_agent_version.stdout | default('') < _oneagent_new_agent_version.stdout | default('') }}"
+    _oneagent_is_installation_possible: >-
+      {{ _oneagent_new_agent_version.stdout | default('') | length > 0 and
+         (_oneagent_installed_agent_version.stdout | default('') | length == 0 or
+          _oneagent_installed_agent_version.stdout is version(_oneagent_new_agent_version.stdout, '<')) }}
 
 - name: Determine deployment type
   ansible.builtin.set_fact:

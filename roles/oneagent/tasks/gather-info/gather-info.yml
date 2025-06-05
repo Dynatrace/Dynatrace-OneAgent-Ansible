@@ -11,11 +11,17 @@
   environment:
     SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
   register: oneagent_installer_from_tenant_json
+  no_log: "{{ oneagent_no_log }}"
   ignore_errors: true
   retries: 5
   until: oneagent_installer_from_tenant_json is succeeded
   delay: 10
   when: oneagent_version == 'latest' and oneagent_local_installer|length == 0
+
+- name: Verify getting metainfo result
+  ansible.builtin.debug:
+    msg: "{{ oneagent_fetch_metadata_failed | format(oneagent_installer_from_tenant_json.response | default(oneagent_installer_from_tenant_json.msg)) }}"
+  when: oneagent_installer_from_tenant_json.failed|default(false)
 
 - name: Parse metainfo output
   ansible.builtin.set_fact:
