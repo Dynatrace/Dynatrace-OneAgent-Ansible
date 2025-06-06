@@ -14,3 +14,4 @@ oneagent_multiple_install_dir: Multiple INSTALL_PATH parameters are not allowed
 oneagent_signature_verification_failed: "Signature verification failed: %s"
 oneagent_uninstall_failed_unix: "Uninstall failed, exit code: %d, output: %s %s"
 oneagent_reboot_failed: Failed to reboot the host
+oneagent_fetch_metadata_failed: "Failed to fetch metadata from tenant: %s"

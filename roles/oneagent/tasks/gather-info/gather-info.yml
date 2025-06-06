@@ -2,10 +2,28 @@
 - name: Gather installers info
   ansible.builtin.include_tasks: tasks/gather-info/gather-info-{{ oneagent_system_family }}.yml
 
-- name: Compare versions of installed OneAgent and uploaded installer
-  ansible.builtin.set_fact:
-    _oneagent_is_installation_possible: "{{ _oneagent_installed_agent_version.stdout | default('') < _oneagent_new_agent_version.stdout }}"
+- name: Gather installer metainfo from tenant
+  ansible.builtin.uri:
+    url: "{{ oneagent_environment_url }}/api/v1/deployment/installer/agent/{{ oneagent_system_family }}/default/latest/metainfo?arch={{ oneagent_download_arch }}"
+    validate_certs: "{{ oneagent_validate_certs | default(true) }}"
+    headers:
+      Authorization: Api-Token {{ oneagent_paas_token }}
+  environment:
+    SSL_CERT_FILE: "{{ oneagent_ca_cert_download_cert | default(omit) }}"
+  register: oneagent_installer_from_tenant_json
+  no_log: "{{ oneagent_no_log }}"
+  ignore_errors: true
+  retries: 5
+  until: oneagent_installer_from_tenant_json is succeeded
+  delay: 10
+  when: oneagent_version == 'latest' and oneagent_local_installer|length == 0
 
-- name: Determine deployment type
+- name: Verify getting metainfo result
+  ansible.builtin.debug:
+    msg: "{{ oneagent_fetch_metadata_failed | format(oneagent_installer_from_tenant_json.response | default(oneagent_installer_from_tenant_json.msg)) }}"
+  when: oneagent_installer_from_tenant_json.failed|default(false)
+
+- name: Parse metainfo output
   ansible.builtin.set_fact:
-    oneagent_is_operation_installation: "{{ _oneagent_is_installation_possible }}"
+    oneagent_installer_metainfo_version: "{{ oneagent_installer_from_tenant_json.json.latestAgentVersion | default('') }}"
+  when: oneagent_installer_from_tenant_json is not failed
