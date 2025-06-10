@@ -28,4 +28,4 @@
   retries: 5
   until: _oneagent_download_result is succeeded
   delay: 10
-  changed_when: not installer_stat.stat.exists or _oneagent_download_result.changed
+  changed_when: false
