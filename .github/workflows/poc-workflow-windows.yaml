@@ -1,6 +1,7 @@
 name: POC Ansible Windows Ping
 
 on:
+  pull_request:
   workflow_dispatch:
 
 jobs:
