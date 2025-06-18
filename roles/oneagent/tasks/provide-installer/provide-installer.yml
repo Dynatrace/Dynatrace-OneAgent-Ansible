@@ -2,7 +2,7 @@
 - name: Check if installer should be downloaded
   ansible.builtin.set_fact:
     _oneagent_skip_installer_download: >-
-      {{ oneagent_installed_agent_version.stdout | default('') | length > 0 and
+      {{ _oneagent_installed_agent_version.stdout | default('') | length > 0 and
          ((oneagent_version == 'latest' and oneagent_installer_metainfo_version | default('') | length > 0 and
             (_oneagent_installed_agent_version.stdout | default('') is version(oneagent_installer_metainfo_version, '>='))) or
           (oneagent_version != 'latest' and
