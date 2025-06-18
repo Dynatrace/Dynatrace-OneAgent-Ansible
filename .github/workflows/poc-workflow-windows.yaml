@@ -1,0 +1,51 @@
+name: POC Ansible Windows Ping
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ping-windows:
+    runs-on: ubuntu-latest
+
+    env:
+      POC_IP: ${{ secrets.POC_IP }}
+      POC_USER: ${{ secrets.POC_USER }}
+      POC_PASS: ${{ secrets.POC_PASS }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Ansible and dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+          pip3 install ansible pywinrm
+
+      - name: Create Ansible inventory file
+        run: |
+          cat <<EOF > hosts.ini
+          [windows]
+          $POC_IP
+
+          [windows:vars]
+          ansible_user=$POC_USER
+          ansible_password=$POC_PASS
+          ansible_port=5985
+          ansible_connection=winrm
+          EOF
+
+      - name: Create Ansible playbook
+        run: |
+          cat <<EOF > ping.yml
+          ---
+          - name: Ping Windows Hosts
+            hosts: windows
+            tasks:
+              - name: Ping using win_ping
+                win_ping:
+          EOF
+
+      - name: Run Ansible playbook
+        run: |
+          ansible-playbook -i hosts.ini ping.yml
