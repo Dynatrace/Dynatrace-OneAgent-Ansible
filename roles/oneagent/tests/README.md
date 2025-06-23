@@ -52,8 +52,8 @@ $ pip install ansible
 
 # Build and install the collection
 $ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pem -P roles/oneagent/files
-$ ansible-galaxy collection build . -vvv
-$ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
+$ ansible-galaxy collection build . -vvvf
+$ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvvf dynatrace-oneagent*"
 ```
 
 ### Running tests locally and remotely
