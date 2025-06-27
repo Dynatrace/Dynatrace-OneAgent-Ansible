@@ -59,7 +59,8 @@ def test_upgrade(
     logging.info("Check if agent has proper version")
     perform_operation_on_platforms(platforms, _check_agent_version, wrapper, old_versions)
 
-    configurator.set_common_parameter(configurator.INSTALLER_VERSION_KEY, "latest")
+    for platform in platforms:
+        configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, "latest")
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, False)
 
     _unused = run_deployment(runner, configurator)
@@ -71,6 +72,8 @@ def test_upgrade(
     new_versions = _get_versions_for_platforms(platforms, True)
     perform_operation_on_platforms(platforms, _check_agent_version, wrapper, new_versions)
 
+    for platform in platforms:
+        configurator.set_platform_parameter(platform, configurator.INSTALLER_VERSION_KEY, "latest")
     configurator.set_common_parameter(configurator.PRESERVE_INSTALLER_KEY, True)
 
     _unused = run_deployment(runner, configurator)

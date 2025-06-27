@@ -152,7 +152,7 @@ def check_agent_state(
 ) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
     result = wrapper.file_exists(platform, address, get_oneagentctl_path(platform))
-    assert result.returncode == 0 if installed else 1
+    assert result.returncode == (0 if installed else 1)
 
 
 def check_download_directory(
@@ -167,4 +167,4 @@ def check_download_directory(
     download_path: Path = select_by_platform(platform, unix_path, windows_path)
     installer_path = download_path / f"{INSTALLER_PARTIAL_NAME}*"
     assert wrapper.directory_exists(platform, address, download_path).returncode == 0
-    assert wrapper.file_exists(platform, address, installer_path).returncode == 0 if exists else 1
+    assert wrapper.file_exists(platform, address, installer_path).returncode == (0 if exists else 1)

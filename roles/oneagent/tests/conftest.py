@@ -162,13 +162,13 @@ def handle_test_environment(
     logging.info("Cleaning up environment")
     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
 
-    logging.info("Check if agent is uninstalled")
-    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
-
     results: DeploymentResult = runner.run_deployment(configurator)
     for result in results:
         if result.returncode != 0:
             logging.error("Failed to clean up environment, exit code: %d", result.returncode)
+
+    logging.info("Check if agent is uninstalled")
+    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
 
     shutil.rmtree("/var/lib/dynatrace", ignore_errors=True)
 
