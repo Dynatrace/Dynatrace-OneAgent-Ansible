@@ -236,12 +236,3 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
 
     if WRAPPER_KEY in metafunc.fixturenames:
         metafunc.parametrize(WRAPPER_KEY, [wrapper])
-
-
-@pytest.hookimpl(hookwrapper=True, tryfirst=True)
-def pytest_runtest_setup(item):
-    config = item.config
-    logging_plugin = config.pluginmanager.get_plugin("logging-plugin")
-    logging_plugin.set_log_path(WORK_DIR_PATH / item._request.module.__name__ / item._request.node.originalname / "test.log")
-
-    yield
