@@ -38,7 +38,7 @@ runs:
 
     - name: "Run component tests"
       shell: bash
-      run: sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost"
+      run: sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost --log-file=/roles/oneagent/tests/ansible_oneagent_tests_run_dir/test.log"
 
     - name: "Upload logs"
       uses: actions/upload-artifact@v4
