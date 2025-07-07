@@ -20,4 +20,5 @@ runs:
   steps:
     - name: "Set environment variables"
       shell: bash
-      run: printf "FILES_DIR=roles/oneagent/files\n" >> $GITHUB_ENV
+      run: printf "FILES_DIR=roles/oneagent/files\nLOG_FILE_DIR=$GITHUB_WORKSPACE/roles/oneagent/tests/ansible_oneagent_tests_run_dir\n" >> $GITHUB_ENV
+
