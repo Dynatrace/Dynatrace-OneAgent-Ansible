@@ -1,3 +1,12 @@
+## **1.2.102**&emsp;<sub><sup>2025-05-23 (f903c8f0f8156ebfeb82a7c1638e5d94d085e47b...5cb5d4e8f19b78ac717485b0a708e6d1b9b2bb56)</sup></sub>
+
+### Features
+
+- add retry mechanism for OneAgent installer download (79658309a21dff5f54d3758131643485a0623ac6)
+- Remove unintended config feature from the collection (5cb5d4e8f19b78ac717485b0a708e6d1b9b2bb56)
+
+<br>
+
 ## [1.2.4] - 2025-04-30
 - Added parameter `oneagent_no_log` controlling Ansible no_log attribute
 
