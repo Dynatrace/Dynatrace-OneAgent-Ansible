@@ -12,7 +12,6 @@ from tests.ansible.config import AnsibleConfigurator
 from tests.ansible.runner import AnsibleRunner
 from tests.command.platform_command_wrapper import PlatformCommandWrapper
 from tests.constants import (
-    TEST_RUN_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
@@ -39,7 +38,6 @@ USER_KEY = "user"
 PASS_KEY = "password"
 TENANT_KEY = "tenant"
 TENANT_TOKEN_KEY = "tenant_token"
-PRESERVE_INSTALLERS_KEY = "preserve_installers"
 
 # Ini file configuration
 CA_CERT_URL_KEY = "dynatrace_ca_cert_url"
@@ -87,13 +85,6 @@ def wait_for_server_or_fail(url: str, max_attempts: int = 10) -> bool:
 @pytest.fixture(scope="session", autouse=True)
 def create_test_directories(request: FixtureRequest) -> None:
     logging.info("Creating working directories for tests")
-    if request.config.getoption(PRESERVE_INSTALLERS_KEY):
-        logging.info("Installers will be preserved, no installers will be generated")
-        shutil.rmtree(WORK_SERVER_DIR_PATH, ignore_errors=True)
-        shutil.rmtree(WORK_DIR_PATH, ignore_errors=True)
-    else:
-        shutil.rmtree(TEST_RUN_DIR_PATH, ignore_errors=True)
-
     os.makedirs(WORK_INSTALLERS_DIR_PATH, exist_ok=True)
     os.makedirs(WORK_SERVER_DIR_PATH, exist_ok=True)
     os.makedirs(WORK_DIR_PATH, exist_ok=True)
@@ -104,12 +95,7 @@ def prepare_installers(request: FixtureRequest) -> None:
     logging.info("Preparing installers...")
     tenant = request.config.getoption(TENANT_KEY)
     tenant_token = request.config.getoption(TENANT_TOKEN_KEY)
-    preserve_installers = request.config.getoption(PRESERVE_INSTALLERS_KEY)
     cert_url = str(request.config.getini(CA_CERT_URL_KEY))
-
-    if preserve_installers:
-        logging.info("Skipping installers preparation...")
-        return
 
     if is_local_deployment(request.config.platforms):
         logging.info("Generating installers...")
@@ -162,13 +148,13 @@ def handle_test_environment(
     logging.info("Cleaning up environment")
     configurator.set_common_parameter(configurator.PACKAGE_STATE_KEY, "absent")
 
-    logging.info("Check if agent is uninstalled")
-    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
-
     results: DeploymentResult = runner.run_deployment(configurator)
     for result in results:
         if result.returncode != 0:
             logging.error("Failed to clean up environment, exit code: %d", result.returncode)
+
+    logging.info("Check if agent is uninstalled")
+    perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
 
     shutil.rmtree("/var/lib/dynatrace", ignore_errors=True)
 
@@ -188,13 +174,6 @@ def pytest_addoption(parser: Parser) -> None:
         f"--{TENANT_TOKEN_KEY}",
         type=str,
         help="API key for downloading installer",
-        required=False,
-    )
-    parser.addoption(
-        f"--{PRESERVE_INSTALLERS_KEY}",
-        type=bool,
-        default=False,
-        help="Preserve installers after test run",
         required=False,
     )
 

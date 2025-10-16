@@ -1,7 +1,16 @@
 ---
+- name: Check if installer should be downloaded
+  ansible.builtin.set_fact:
+    _oneagent_skip_installer_download: >-
+      {{ _oneagent_installed_agent_version.stdout | default('') | length > 0 and
+         ((oneagent_version == 'latest' and oneagent_installer_metainfo_version | default('') | length > 0 and
+            (_oneagent_installed_agent_version.stdout | default('') is version(oneagent_installer_metainfo_version, '>='))) or
+          (oneagent_version != 'latest' and
+            (_oneagent_installed_agent_version.stdout | default('') is version(oneagent_version, '>=')))) }}
+
 - name: Download OneAgent installer
   ansible.builtin.include_tasks: provide-installer/download.yml
-  when: oneagent_local_installer|length == 0
+  when: oneagent_local_installer|length == 0 and not _oneagent_skip_installer_download | bool
 
 - name: Transfer OneAgent installer
   ansible.builtin.include_tasks: provide-installer/transfer-{{ oneagent_system_family }}.yml
@@ -9,4 +18,19 @@
 
 - name: Verify OneAgent installer signature
   ansible.builtin.include_tasks: provide-installer/signature-{{ oneagent_system_family }}.yml
-  when: oneagent_system_is_unix and oneagent_verify_signature
+  when: oneagent_system_is_unix and oneagent_verify_signature and not _oneagent_skip_installer_download | bool
+
+- name: Gather new installer info
+  ansible.builtin.include_tasks: provide-installer/new-installer-info-{{ oneagent_system_family }}.yml
+  when: oneagent_local_installer|length > 0 or not _oneagent_skip_installer_download | bool
+
+- name: Compare versions of installed OneAgent and uploaded installer
+  ansible.builtin.set_fact:
+    _oneagent_is_installation_possible: >-
+      {{ _oneagent_new_agent_version.stdout | default('') | length > 0 and
+         (_oneagent_installed_agent_version.stdout | default('') | length == 0 or
+          _oneagent_installed_agent_version.stdout is version(_oneagent_new_agent_version.stdout, '<')) }}
+
+- name: Determine deployment type
+  ansible.builtin.set_fact:
+    oneagent_is_operation_installation: "{{ _oneagent_is_installation_possible | bool }}"

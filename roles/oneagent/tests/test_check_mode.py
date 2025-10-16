@@ -2,19 +2,13 @@ import logging
 
 from tests.ansible.config import AnsibleConfigurator
 from tests.ansible.runner import AnsibleRunner
-from tests.command.platform_command_wrapper import PlatformCommandWrapper
 from tests.deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import PlatformCollection
 
 
 def parse_changed_tasks(ansible_output: str):
-    excluded_tasks = [
-        "dynatrace.oneagent.oneagent : Download OneAgent installer",
-        "dynatrace.oneagent.oneagent : Install OneAgent"
-    ]
     changed_tasks = []
     current_task = None
 
@@ -23,16 +17,12 @@ def parse_changed_tasks(ansible_output: str):
             current_task = line.split("TASK [", 1)[1].split("]", 1)[0]
 
         if "changed:" in line and current_task:
-            if current_task not in excluded_tasks:
-                changed_tasks.append(current_task)
+            changed_tasks.append(current_task)
 
     return changed_tasks
 
 
 def collect_changed_tasks_from_results(results):
-    if not isinstance(results, (list, tuple)):
-        results = [results]
-
     all_changed_tasks = []
 
     for i, res in enumerate(results):
@@ -52,8 +42,6 @@ def collect_changed_tasks_from_results(results):
 def test_check_mode(
     runner: AnsibleRunner,
     configurator: AnsibleConfigurator,
-    platforms: PlatformCollection,
-    wrapper: PlatformCommandWrapper,
     installer_server_url: str,
 ):
     set_installer_download_params(configurator, installer_server_url)

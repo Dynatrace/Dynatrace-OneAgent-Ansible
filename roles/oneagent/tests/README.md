@@ -47,10 +47,13 @@ $ python -m venv venv && source venv/bin/activate
 # Install requirements
 $ pip install -r roles/oneagent/tests/requirements.txt
 
+# Install ansible (any supported version, for more details see: https://endoflife.date/api/v1/products/ansible/)
+$ pip install ansible
+
 # Build and install the collection
 $ mkdir -p roles/oneagent/files && wget https://ca.dynatrace.com/dt-root.cert.pem -P roles/oneagent/files
-$ ansible-galaxy collection build . -vvv
-$ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvv dynatrace-oneagent*"
+$ ansible-galaxy collection build . -vvvf
+$ sudo bash -c "source venv/bin/activate && ansible-galaxy collection install -vvvf dynatrace-oneagent*"
 ```
 
 ### Running tests locally and remotely
@@ -64,25 +67,4 @@ $ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_
 # Run tests with regular installer on remote Windows machine
 $ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --user=<USER> --password=<password> \
 --tenant=https://abc123456.com --tenant_token=<TOKEN> --windows_x86=<IP>"
-```
-
-There is also an option to run tests with placed-in installers using `--preserve-installers` switch.
-In this mode, the test environment won't be fully cleaned. It requires that both installers differs in version and have
-the naming schema from tenant, e.g. `Dynatrace-OneAgent-Linux-1.301.0.sh`, `Dynatrace-OneAgent-Linux-arm-1.302.0.sh`.
-Also, the installers certificate must be downloaded for successful run. </br>
-You can refer to [this documentation](https://docs.dynatrace.com/docs/shortlink/api-deployment-get-versions) on how to
-list available installers.
-For downloading the specific version of the OneAgent, visit
-[this documentation](https://docs.dynatrace.com/docs/shortlink/api-deployment-get-oneagent-version). </br>
-To run tests in this mode, download 2 versions of installers you want along with the certificate and place them in
-`test_dir/installers` directory. Then, you can run the tests.
-
-```console
-# Create directory `test_dir/installers` and place the installers and certificate in it
-$ mkdir -p test_dir/installers
-$ cp /path/and/name/of/both/installers test_dir/installers
-$ wget https://ca.dynatrace.com/dt-root.cert.pem -P test_dir/installers
-
-# Run tests on local machine
-$ sudo bash -c "source venv/bin/activate && pytest roles/oneagent/tests --linux_x86=localhost --preserve_installers"
 ```

@@ -1,4 +1,4 @@
-ansible >= 2.15
+ansible >= 10
 Flask == 3.0.3
 netifaces ~= 0.11.0
 pytest ~= 8.2.1
