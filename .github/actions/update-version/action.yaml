@@ -32,12 +32,16 @@ runs:
       - name: Update version in files
         shell: bash
         run: |
-          python $GITHUB_WORKSPACE/.github/actions/update-version/update_version.py ${{ inputs.version }}
+          python $GITHUB_WORKSPACE/.github/actions/update-version/update_version.py "$VERSION"
+        env:
+          VERSION: ${{ inputs.version }}
 
       - name: Generate changelog
         shell: bash
         run: |
-          npx git-conventional-commits changelog --file CHANGELOG.md --release ${{ inputs.version }}
+          npx git-conventional-commits changelog --file CHANGELOG.md --release "$VERSION"
+        env:
+          VERSION: ${{ inputs.version }}
 
       - name: setup git config
         shell: bash
@@ -51,39 +55,44 @@ runs:
         run: |
           # Stage the file, commit and push
           git add galaxy.yml roles/oneagent/vars/version.yml CHANGELOG.md
-          git commit -m "Update version"
-          git push origin HEAD:${{ inputs.version }}
+          git commit -m "chore: Update version"
+          git push origin HEAD:"$VERSION"
+        env:
+          VERSION: ${{ inputs.version }}
 
       - name: Create Pull Request
         shell: bash
         run: |
-          gh pr create --title "Version update: ${{ inputs.version }}" --body "" --head "${{ inputs.version }}" --base "master"
-          while [[ $(gh pr list --head "${{ inputs.version }}" --json "title" --jq 'length==0') == "true" ]]; do
+          gh pr create --title "Version update: $VERSION" --body "" --head "$VERSION" --base "master"
+          while [[ $(gh pr list --head "$VERSION" --json "title" --jq 'length==0') == "true" ]]; do
             echo "Waiting for PR..."
             sleep 10
           done
         env:
           GH_TOKEN: ${{ inputs.gha_token }}
+          VERSION: ${{ inputs.version }}
 
       - name: Wait for Pull Request build
         shell: bash
         run: |
           PR_BUILD_STATUS=""
-          until [[ "${PR_BUILD_STATUS}" == "SUCCESS" || "${PR_BUILD_STATUS}" == "FAILURE" ]]; do
-            PR_BUILD_STATUS=$(gh pr list --head ${{ inputs.version }} --json statusCheckRollup --jq '.[].statusCheckRollup[].conclusion')
+          until [[ "${PR_BUILD_STATUS}" == "COMPLETED" ]]; do
+            PR_BUILD_STATUS=$(gh pr list --head "$VERSION" --json statusCheckRollup --jq '.[].statusCheckRollup[].status' | sort -u)
             echo "$ Waiting for PR build to finish..."
             sleep 10
           done
           echo "PR build status: ${PR_BUILD_STATUS}"
-          if [[ "${PR_BUILD_STATUS}" == "FAILURE" ]]; then
+          if [[ "${PR_BUILD_STATUS}" != "SUCCESS" ]]; then
              exit 1
           fi
         env:
           GH_TOKEN: ${{ inputs.gha_token }}
+          VERSION: ${{ inputs.version }}
 
       - name: Merge Pull Request
         shell: bash
         run: |
-          gh pr merge "${{ inputs.version }}" --rebase --delete-branch
+          gh pr merge "$VERSION" --rebase --delete-branch
         env:
           GH_TOKEN: ${{ inputs.gha_token }}
+          VERSION: ${{ inputs.version }}
