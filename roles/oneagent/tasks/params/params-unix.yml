@@ -2,12 +2,12 @@
 - name: Validate installation directory name doesn't contains spaces
   ansible.builtin.fail:
     msg: "{{ oneagent_install_dir_contains_spaces }}"
-  when: oneagent_install_path|regex_search(" ")
+  when: "' ' in oneagent_install_path"
 
 - name: Validate download directory name doesn't contain spaces
   ansible.builtin.fail:
     msg: "{{ oneagent_download_dir_contains_spaces }}"
-  when: oneagent_is_operation_installation and oneagent_download_path|regex_search(" ")
+  when: "oneagent_is_operation_installation and ' ' in oneagent_download_path"
 
 - name: Validate if download directory is available
   ansible.builtin.stat:
