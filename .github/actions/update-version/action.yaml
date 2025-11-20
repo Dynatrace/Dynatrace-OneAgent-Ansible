@@ -72,6 +72,15 @@ runs:
           GH_TOKEN: ${{ inputs.gha_token }}
           VERSION: ${{ inputs.version }}
 
+      - name: Trigger Pull Request build
+        shell: bash
+        run: |
+          PR_NUMBER=$(gh pr list --head "$VERSION" --json number --jq '.[0].number')
+          gh workflow run build-and-test.yaml -f pr_number="$PR_NUMBER"
+        env:
+          GH_TOKEN: ${{ inputs.gha_token }}
+          VERSION: ${{ inputs.version }}
+
       - name: Wait for Pull Request build
         shell: bash
         run: |
