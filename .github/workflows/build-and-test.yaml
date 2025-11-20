@@ -16,6 +16,11 @@ name: "Build and test"
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number'
+        required: false
+        type: string
   workflow_call:
   push:
     branches: ["master"]
@@ -32,6 +37,8 @@ jobs:
         latest_ansible_version : ${{ steps.v.outputs.latest_ansible_version }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.ref }}
       - uses: ./.github/actions/get-ansible-versions
         id: v
 
@@ -41,6 +48,8 @@ jobs:
     name: Build with Ansible ${{ needs.fetch-ansible-versions.outputs.latest_ansible_version }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.ref }}
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
@@ -61,6 +70,8 @@ jobs:
           ansible-version: ${{ fromJson(needs.fetch-ansible-versions.outputs.supported_ansible_versions) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.ref }}
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
