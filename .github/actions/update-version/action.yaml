@@ -77,6 +77,8 @@ runs:
         with:
           script: |
             await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               workflow_id: 'build-and-test.yaml',
               ref: '${{ steps.pr.outputs.head_ref }}',
             });
