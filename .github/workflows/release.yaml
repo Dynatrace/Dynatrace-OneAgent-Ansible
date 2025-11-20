@@ -20,10 +20,10 @@ jobs:
         uses:  ./.github/actions/update-version
         with:
           version: ${{ github.event.inputs.version}}
-          gha_token: ${{ secrets.BOT_TOKEN }}
+          gha_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release on GitHub
         uses:  ./.github/actions/make-release
         with:
           version: ${{ github.event.inputs.version }}
-          gha_token: ${{ secrets.BOT_TOKEN }}
+          gha_token: ${{ secrets.GITHUB_TOKEN }}
