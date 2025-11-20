@@ -17,11 +17,15 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      pr_number:
-        description: 'Pull request number'
+      branch:
+        description: 'Branch to build'
         required: false
         type: string
   workflow_call:
+    inputs:
+      branch:
+        required: false
+        type: string
   push:
     branches: ["master"]
   schedule:
@@ -38,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.ref }}
+          ref: ${{ inputs.branch || github.ref }}
       - uses: ./.github/actions/get-ansible-versions
         id: v
 
@@ -49,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.ref }}
+          ref: ${{ inputs.branch || github.ref }}
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
@@ -71,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.ref }}
+          ref: ${{ inputs.branch || github.ref }}
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
