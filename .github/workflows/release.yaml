@@ -7,7 +7,8 @@ on:
         required: true
 
 jobs:
-  update:
+  release-on-github:
+    name: Release on GitHub
     runs-on: ubuntu-latest
     steps:
       # Checkout the branch
@@ -22,8 +23,18 @@ jobs:
           version: ${{ github.event.inputs.version}}
           gha_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Release on GitHub
+      - name: Make GitHub release
         uses:  ./.github/actions/make-release
         with:
           version: ${{ github.event.inputs.version }}
           gha_token: ${{ secrets.GITHUB_TOKEN }}
+
+  release-on-ah-and-galaxy:
+    name: Release on Automation Hub and Ansible Galaxy
+    uses: ansible/ansible-content-actions/.github/workflows/release.yaml@main
+    needs: release-on-github
+    with:
+      environment: release
+    secrets:
+      ah_token: ${{ secrets.AH_TOKEN }}
+      ansible_galaxy_api_key: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
