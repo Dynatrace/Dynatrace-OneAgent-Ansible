@@ -75,6 +75,8 @@ runs:
             });
             core.setOutput('number', pr.number);
             core.setOutput('head_ref', pr.head.ref);
+        env:
+          VERSION: ${{ inputs.version }}
 
       - name: Trigger Pull Request build
         uses: actions/github-script@v7
