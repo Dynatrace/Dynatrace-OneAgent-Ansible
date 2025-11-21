@@ -68,9 +68,9 @@ runs:
             const { data: pr } = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: '$VERSION',
+              head: process.env.VERSION,
               base: 'master',
-              title: 'Version update: $VERSION',
+              title: `Version update: ${process.env.VERSION}`,
               body: ''
             });
             core.setOutput('number', pr.number);
