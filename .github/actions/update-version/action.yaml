@@ -103,10 +103,10 @@ runs:
           ELAPSED=0
           BUILD_URL=""
           while [ $ELAPSED -lt $TIMEOUT ]; do
-            RUNS_JSON=$(gh run list --branch "$VERSION" --workflow build-and-test.yaml --json databaseId,status,conclusion,htmlUrl -L 1)
+            RUNS_JSON=$(gh run list --branch "$VERSION" --workflow build-and-test.yaml --json databaseId,status,conclusion,url -L 1)
             STATUS=$(echo "$RUNS_JSON" | jq -r '.[0].status')
             CONCLUSION=$(echo "$RUNS_JSON" | jq -r '.[0].conclusion')
-            BUILD_URL=$(echo "$RUNS_JSON" | jq -r '.[0].htmlUrl')
+            BUILD_URL=$(echo "$RUNS_JSON" | jq -r '.[0].url')
             echo "PR build status: $STATUS, conclusion: $CONCLUSION. Waiting for completion..."
             if [[ -n "$BUILD_URL" ]]; then
               echo "Build job URL: $BUILD_URL"
