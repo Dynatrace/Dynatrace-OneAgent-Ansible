@@ -61,47 +61,68 @@ runs:
           VERSION: ${{ inputs.version }}
 
       - name: Create Pull Request
-        id: pr
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: pr } = await github.rest.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head: process.env.VERSION,
-              base: 'master',
-              title: `Version update: ${process.env.VERSION}`,
-              body: ''
-            });
-            core.setOutput('number', pr.number);
-            core.setOutput('head_ref', pr.head.ref);
+        shell: bash
+        run: |
+          gh pr create --title "Version update: $VERSION" --body "" --head "$VERSION" --base "master"
+          TIMEOUT=600 # 10 minutes in seconds
+          INTERVAL=10 # polling interval in seconds
+          ELAPSED=0
+          PR_URL=""
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            PR_JSON=$(gh pr list --head "$VERSION" --json url -L 1)
+            PR_URL=$(echo "$PR_JSON" | jq -r '.[0].url')
+            if [[ -n "$PR_URL" && "$PR_URL" != "null" ]]; then
+              echo "Pull request created: $PR_URL"
+              break
+            fi
+            echo "Waiting for pull request to be created..."
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+          if [[ -z "$PR_URL" || "$PR_URL" == "null" ]]; then
+            echo "Pull request was not created within timeout."
+            exit 1
+          fi
         env:
+          GH_TOKEN: ${{ inputs.gha_token }}
           VERSION: ${{ inputs.version }}
 
       - name: Trigger Pull Request build
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'build-and-test.yaml',
-              ref: '${{ steps.pr.outputs.head_ref }}',
-            });
+        shell: bash
+        run: |
+          gh workflow run build-and-test.yaml --ref "$VERSION"
+        env:
+          GH_TOKEN: ${{ inputs.gha_token }}
+          VERSION: ${{ inputs.version }}
 
       - name: Wait for Pull Request build
         shell: bash
         run: |
-          PR_BUILD_STATUS=""
-          until [[ "${PR_BUILD_STATUS}" == "COMPLETED" ]]; do
-            PR_BUILD_STATUS=$(gh pr list --head "$VERSION" --json statusCheckRollup --jq '.[].statusCheckRollup[].status' | sort -u)
-            echo "$ Waiting for PR build to finish..."
-            sleep 10
+          TIMEOUT=600 # 10 minutes in seconds
+          INTERVAL=10 # polling interval in seconds
+          ELAPSED=0
+          BUILD_URL=""
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            RUNS_JSON=$(gh run list --branch "$VERSION" --workflow build-and-test.yaml --json databaseId,status,conclusion,htmlUrl -L 1)
+            STATUS=$(echo "$RUNS_JSON" | jq -r '.[0].status')
+            CONCLUSION=$(echo "$RUNS_JSON" | jq -r '.[0].conclusion')
+            BUILD_URL=$(echo "$RUNS_JSON" | jq -r '.[0].htmlUrl')
+            echo "PR build status: $STATUS, conclusion: $CONCLUSION. Waiting for completion..."
+            if [[ -n "$BUILD_URL" ]]; then
+              echo "Build job URL: $BUILD_URL"
+            fi
+            if [[ "$STATUS" == "completed" && "$CONCLUSION" != "null" ]]; then
+              break
+            fi
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
           done
-          echo "PR build status: ${PR_BUILD_STATUS}"
-          if [[ "${PR_BUILD_STATUS}" != "SUCCESS" ]]; then
-             exit 1
+          if [[ "$CONCLUSION" != "success" ]]; then
+            echo "PR build failed or did not complete in time."
+            exit 1
           fi
+          echo "PR build succeeded."
+          echo "Build job URL: $BUILD_URL"
         env:
           GH_TOKEN: ${{ inputs.gha_token }}
           VERSION: ${{ inputs.version }}
