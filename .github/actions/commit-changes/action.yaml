@@ -1,0 +1,97 @@
+# Copyright 2025 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: "Commit changes"
+inputs:
+  version:
+    description: "Version to be released (e.g. 1.2.3)"
+    required: true
+  gha_token:
+    description: "GHA bot token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup git config
+      shell: bash
+      run: |
+        git config user.name  "${{ steps.app-token.outputs.app-slug }}[bot]"
+        git config user.email "${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+
+    - name: Commit
+      shell: bash
+      run: |
+        git add -u galaxy.yml roles/oneagent/vars/version.yml CHANGELOG.md
+        git commit -m "chore: Update the collection version to $VERSION"
+        git push origin HEAD:"$VERSION"
+      env:
+        VERSION: ${{ inputs.version }}
+
+    - name: Create Pull Request
+      shell: bash
+      run: |
+        gh pr create --title "Version update: $VERSION" --body "" --head "$VERSION" --base "master"
+        for i in {1..60}; do
+          PR_JSON=$(gh pr list --head "$VERSION" --state open --json number,url)
+          PR_URL=$(echo "$PR_JSON" | jq -r '.[0].url')
+          if [[ -n "$PR_URL" && "$PR_URL" != "null" ]]; then
+            echo "Pull request created: $PR_URL"
+            echo "PR_NUMBER=$(echo "$PR_JSON" | jq -r .[0].number)" >> "$GITHUB_ENV"
+            echo "PR_URL=$PR_URL" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          echo "Waiting for pull request to be created..."
+          sleep 10
+        done
+
+        echo "Pull request was not created within timeout."
+        exit 1
+      env:
+        GH_TOKEN: ${{ inputs.gha_token }}
+        VERSION: ${{ inputs.version }}
+
+    - name: Enable auto-merge
+      shell: bash
+      run: |
+        gh pr merge "$PR_URL" --squash --auto --delete-branch
+      env:
+        GH_TOKEN: ${{ inputs.gha_token }}
+
+    - name: Wait for PR to be merged
+      shell: bash
+      run: |
+        echo "Waiting for PR #${PR_NUMBER} to be merged..."
+        for i in {1..60}; do
+          STATE=$(gh pr view $PR_NUMBER --json state -q '.state')
+          if [ "$STATE" = "MERGED" ]; then
+            echo "PR merged!"
+            exit 0
+          fi
+          sleep 10
+        done
+        echo "PR #${PR_NUMBER} was not merged within timeout."
+        exit 1
+      env:
+        GH_TOKEN: ${{ inputs.gha_token }}
+
+    - name: Delete version branch
+      if: always()
+      shell: bash
+      run: |
+        git branch -D "$VERSION" || true
+        git push origin --delete "$VERSION" || true
+      env:
+        VERSION: ${{ inputs.version }}
+
