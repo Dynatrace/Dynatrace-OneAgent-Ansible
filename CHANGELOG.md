@@ -12,60 +12,50 @@
 
 <br>
 
-## [1.2.4] - 2025-04-30
+## **1.2.4**&emsp;<sub><sup>2025-04-30 (47a986a76f99ea3ffd5290c5d51585660050157f..2056802937c9096f48fe3a15ac31874bd7b97ffa)</sup></sub>
+
+### Features
+
 - Added parameter `oneagent_no_log` controlling Ansible no_log attribute
 
-## [1.2.3] - 2025-02-03
+<br>
+
+## **1.2.3**&emsp;<sub><sup>2025-02-03 (08bc7b499a6c74e1d5eca815eaa47e380de6ba57..08bc7b499a6c74e1d5eca815eaa47e380de6ba57)</sup></sub>
+
+### Bug Fixes
+
 - Fixed issue with skipping CA certificate transfer task
 
-## [1.2.2] - 2025-10-1
+<br>
+
+## **1.2.2**&emsp;<sub><sup>2025-10-1 (2effbf1975f46a4669c246722069a827ad0ffec3..1f71c5b165a870b0f11ccc51e06c5e1ddc2fe84f)</sup></sub>
+
+### Bug Fixes
+
 - Fixed linters issues
 
-## [1.2.1] - 2024-12-19
-- Fixed problem with installer signature verification on AIX
-- Added LICENSE file
+<br>
 
-## [1.2.0] - 2024-11-29
+## **1.2.1**&emsp;<sub><sup>2024-12-19 (a412454a7c1356a53b07c56d6f14b412684b1d79..df9f55f7ac08d58741eb87ae4b2ecba55bc23fad)</sup></sub>
+
+### Bug Fixes
+
+- Fixed problem with installer signature verification on AIX
+
+<br>
+
+## **1.2.0**&emsp;<sub><sup>2024-11-29 (6f16a253a8ec3630817a2facfb590fbb0b3a473f..7f3bc5f0cc799a88c48d078f23deb2adfd6f3fc9)</sup></sub>
+
+### Features
 
 - Added parameter `--restart-service` parameter, once OneAgent configuration is performed
-- Fixed problem with `Invalid version string` during collection install
 - Added parameter `oneagent_verify_signature` controlling signature verification step
 - Removed `oneagent_validate_certs` parameter
-- Fixed problem with `dt-root.cert.pem` not being copied to the target host
 - Added ability for downloading installer's certificate if the certificate is not embedded in the collection
 
-## [1.1.0] - 2021-10-06
+### Bug Fixes
 
-- Fixed malformation of `--restart-service` parameter, passed to `oneagentctl`.
-- Fixed problem with installation for higher versions of Ansible.
-- Improved `oneagentctl` configuration mechanism.
+- Fixed problem with `Invalid version string` during collection install
+- Fixed problem with `dt-root.cert.pem` not being copied to the target host
 
-## [1.0.0] - 2021-08-13
-
-- Added capability of creating download directory structure during deployment.
-- Added `oneagent_validate_certs` parameter.
-- Added capability of cleaning up downloaded artifacts in case of deployment's failure.
-
-## [0.4.0] - 2021-06-25
-
-- Removed `oneagent_remove_signature` parameter.
-- Added ability to configure installation using `oneagentctl`.
-- Removed the need to provide the required parameters in case of uninstallation.
-- Added node restart option.
-
-## [0.3.0] - 2021-02-12
-
-- Fixed role's idempotence.
-
-## [0.2.1] - 2020-12-28
-
-- Fixed minor problems with example playbooks and inventory files.
-
-## [0.2.0] - 2020-11-18
-
-- Added new parameter `oneagent_platform_install_args` allowing to specify platform-specific installer arguments.
-- Changed `oneagent_local_installer` parameter to pass only single path to local installer.
-
-## [0.1.0] - 2020-09-25
-
-- Initial [Preview](https://www.dynatrace.com/support/help/shortlink/preview-and-early-adopter-releases) release.
+<br>

@@ -1,4 +1,4 @@
-# Copyright 2024 Dynatrace LLC
+# Copyright 2025 Dynatrace LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,22 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Make GitHub release"
+name: "Update changelog"
 inputs:
   version:
     description: "Version to be released (e.g. 1.2.3)"
-    required: true
-  gha_token:
-    descrition: "GHA bot token"
     required: true
 
 runs:
   using: composite
   steps:
-    - name: Make release
+    - name: Install git-conventional-commits
       shell: bash
       run: |
-        python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py --file "CHANGELOG.md" --version "$VERSION" | gh release create "v$VERSION" --title="$VERSION" --notes-file -
+        npm i git-conventional-commits
+
+    - name: Generate changelog
+      id: generate_changelog
+      shell: bash
+      run: |
+        npx git-conventional-commits changelog --file CHANGELOG.md --release "$VERSION" --commit "v$VERSION"
       env:
-        GH_TOKEN: ${{ inputs.gha_token }}
         VERSION: ${{ inputs.version }}

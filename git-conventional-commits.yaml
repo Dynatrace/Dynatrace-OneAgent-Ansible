@@ -14,7 +14,7 @@ convention:
         - merge
         - revert
     commitScopes: []
-    releaseTagGlobPattern: '[0-9]*.[0-9]*.[0-9]*'
+    releaseTagGlobPattern: 'v[0-9]*.[0-9]*.[0-9]*'
 changelog:
     commitTypes:
         - feat
