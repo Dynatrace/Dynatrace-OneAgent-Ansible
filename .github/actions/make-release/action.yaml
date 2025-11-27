@@ -15,7 +15,7 @@
 name: "Make GitHub release"
 inputs:
   version:
-    description: "Version to be set"
+    description: "Version to be released (e.g. 1.2.3)"
     required: true
   gha_token:
     descrition: "GHA bot token"
@@ -24,22 +24,10 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install git-conventional-commits
-      shell: bash
-      run: |
-        npm i git-conventional-commits
-
-    - name: Generate changelog
-      shell: bash
-      run: |
-        npx git-conventional-commits changelog --file github-release-changelog.md --release "$VERSION"
-      env:
-        VERSION: ${{ inputs.version }}
-
     - name: Make release
       shell: bash
       run: |
-        gh release create "$VERSION" --notes-file github-release-changelog.md
+        python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py --file "CHANGELOG.md" --version "$VERSION" | gh release create "v$VERSION" --title="$VERSION" --notes-file -
       env:
         GH_TOKEN: ${{ inputs.gha_token }}
         VERSION: ${{ inputs.version }}
