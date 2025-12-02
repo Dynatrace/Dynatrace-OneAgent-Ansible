@@ -9,7 +9,7 @@
 - name: Check if OneAgent installer exists
   ansible.builtin.stat:
     path: "{{ oneagent_installer_path }}"
-  register: installer_stat
+  register: _oneagent_installer_stat
 
 - name: Download OneAgent installer
   ansible.builtin.get_url:
