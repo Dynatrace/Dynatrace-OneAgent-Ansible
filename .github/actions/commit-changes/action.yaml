@@ -86,6 +86,14 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.gha_token }}
 
+    - name: Add git tag
+      shell: bash
+      run: |
+        git fetch origin master
+        git checkout origin/master
+        git tag "v$VERSION"
+        git push origin "v$VERSION"
+
     - name: Delete version branch
       if: always()
       shell: bash
