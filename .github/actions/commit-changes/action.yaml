@@ -42,7 +42,7 @@ runs:
     - name: Create Pull Request
       shell: bash
       run: |
-        gh pr create --title "Version update: $VERSION" --body "" --head "$VERSION" --base "master"
+        gh pr create --title "Version update: $VERSION" --body "" --head "$VERSION" --base "$GITHUB_REF"
         for i in {1..60}; do
           PR_JSON=$(gh pr list --head "$VERSION" --state open --json number,url)
           PR_URL=$(echo "$PR_JSON" | jq -r '.[0].url')
@@ -65,7 +65,7 @@ runs:
     - name: Enable auto-merge
       shell: bash
       run: |
-        gh pr merge "$PR_URL" --squash --auto --delete-branch
+        gh pr merge "$PR_URL" --rebase --auto --delete-branch
       env:
         GH_TOKEN: ${{ inputs.gha_token }}
 
@@ -89,10 +89,14 @@ runs:
     - name: Add git tag
       shell: bash
       run: |
-        git fetch origin master
-        git checkout origin/master
+        MERGE_SHA=$(gh pr view $PR_NUMBER --json mergeCommit -q '.mergeCommit.oid')
+        git fetch origin "$MERGE_SHA"
+        git checkout "$MERGE_SHA"
         git tag "v$VERSION"
         git push origin "v$VERSION"
+      env:
+        GH_TOKEN: ${{ inputs.gha_token }}
+        VERSION: ${{ inputs.version }}
 
     - name: Delete version branch
       if: always()
