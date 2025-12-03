@@ -14,9 +14,6 @@
 
 name: "Make GitHub release"
 inputs:
-  version:
-    description: "Version to be released (e.g. 1.2.3)"
-    required: true
   gha_token:
     descrition: "GHA bot token"
     required: true
@@ -24,10 +21,28 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Make release
+    - name: Get the collection version
+      id: get_version
       shell: bash
       run: |
-        python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py --file "CHANGELOG.md" --version "$VERSION" | gh release create "v$VERSION" --title="$VERSION" --notes-file -
+        VERSION=$(python .github/actions/make-release/get_version.py galaxy.yml)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+    - name:  Create a notice file
+      shell: bash
+      run: |
+        python .github/actions/make-release/parse_changelog.py CHANGELOG.md release-notes.md "$VERSION"
       env:
         GH_TOKEN: ${{ inputs.gha_token }}
-        VERSION: ${{ inputs.version }}
+        VERSION: ${{ steps.get_version.outputs.version }}
+    - name: Make a release
+      shell: bash
+      run: |
+        gh release create "v$VERSION" --title="$VERSION" --notes-file release-notes.md
+      env:
+        GH_TOKEN: ${{ inputs.gha_token }}
+        VERSION: ${{ steps.get_version.outputs.version }}
+    - name: Remove the release notes file
+      if: always()
+      shell: bash
+      run: |
+        rm -f release-notes.md

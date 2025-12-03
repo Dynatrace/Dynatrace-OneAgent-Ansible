@@ -16,17 +16,6 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: Version to be released (e.g. 1.2.3)
-        required: true
-      update_version:
-        description: Update the version in galaxy.yml and roles/oneagent/vars/version.yml
-        default: true
-        type: boolean
-      update_changelog:
-        description: Update CHANGELOG.md
-        default: true
-        type: boolean
       ah_publish:
         description: Publish the collection on Automation Hub
         default: true
@@ -41,42 +30,9 @@ on:
         type: boolean
 
 jobs:
-  git-changes:
-    name: Update the collection version and the changelog
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Update version
-        if: ${{ inputs.update_version }}
-        uses: ./.github/actions/update-version
-        with:
-          version: ${{ inputs.version }}
-      - name: Update changelog
-        if: ${{ inputs.update_changelog }}
-        uses: ./.github/actions/update-changelog
-        with:
-          version: ${{ inputs.version }}
-      - name: Generate GitHub App token
-        if: ${{ inputs.update_version || inputs.update_changelog }}
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Commit changes
-        if: ${{ inputs.update_version || inputs.update_changelog }}
-        uses: ./.github/actions/commit-changes
-        with:
-          version: ${{ inputs.version }}
-          gha_token: ${{ steps.app-token.outputs.token }}
-
   release-on-github:
     name: Release on GitHub
     runs-on: ubuntu-latest
-    needs: git-changes
     if: ${{ inputs.github_publish }}
     steps:
       - name: checkout
@@ -86,13 +42,11 @@ jobs:
       - name: Make GitHub release
         uses: ./.github/actions/make-release
         with:
-          version: ${{ inputs.version }}
           gha_token: ${{ secrets.GITHUB_TOKEN }}
 
   release-on-ah:
     name: Release on Automation Hub
     uses: ansible/ansible-content-actions/.github/workflows/release_ah.yaml@main
-    needs: git-changes
     if: ${{ inputs.ah_publish }}
     with:
       environment: release
@@ -102,7 +56,6 @@ jobs:
   release-on-galaxy:
     name: Release on Galaxy
     uses: ansible/ansible-content-actions/.github/workflows/release_galaxy.yaml@main
-    needs: git-changes
     if: ${{ inputs.galaxy_publish }}
     with:
       environment: release
