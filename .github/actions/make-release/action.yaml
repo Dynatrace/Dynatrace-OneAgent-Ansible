@@ -25,12 +25,12 @@ runs:
       id: get_version
       shell: bash
       run: |
-        VERSION=$(python .github/actions/make-release/get_version.py galaxy.yml)
+        VERSION=$(python $GITHUB_WORKSPACE/.github/actions/make-release/get_current_version.py galaxy.yml)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
     - name:  Create a notice file
       shell: bash
       run: |
-        python .github/actions/make-release/parse_changelog.py CHANGELOG.md release-notes.md "$VERSION"
+        python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py CHANGELOG.md release-notes.md "$VERSION"
       env:
         GH_TOKEN: ${{ inputs.gha_token }}
         VERSION: ${{ steps.get_version.outputs.version }}
