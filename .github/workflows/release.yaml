@@ -1,40 +1,63 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 name: Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'New version'
-        required: true
+      ah_publish:
+        description: Publish the collection on Automation Hub
+        default: true
+        type: boolean
+      galaxy_publish:
+        default: true
+        description: Publish the collection on Galaxy
+        type: boolean
+      github_publish:
+        description: Publish GitHub Release
+        default: true
+        type: boolean
 
 jobs:
   release-on-github:
     name: Release on GitHub
     runs-on: ubuntu-latest
+    if: ${{ inputs.github_publish }}
     steps:
-      # Checkout the branch
       - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Update version
-        uses:  ./.github/actions/update-version
-        with:
-          version: ${{ github.event.inputs.version}}
-          gha_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Make GitHub release
-        uses:  ./.github/actions/make-release
+        uses: ./.github/actions/make-release
         with:
-          version: ${{ github.event.inputs.version }}
           gha_token: ${{ secrets.GITHUB_TOKEN }}
 
-  release-on-ah-and-galaxy:
-    name: Release on Automation Hub and Ansible Galaxy
-    uses: ansible/ansible-content-actions/.github/workflows/release.yaml@main
-    needs: release-on-github
+  release-on-ah:
+    name: Release on Automation Hub
+    uses: ansible/ansible-content-actions/.github/workflows/release_ah.yaml@main
+    if: ${{ inputs.ah_publish }}
     with:
       environment: release
     secrets:
       ah_token: ${{ secrets.AH_TOKEN }}
+
+  release-on-galaxy:
+    name: Release on Galaxy
+    uses: ansible/ansible-content-actions/.github/workflows/release_galaxy.yaml@main
+    if: ${{ inputs.galaxy_publish }}
+    with:
+      environment: release
+    secrets:
       ansible_galaxy_api_key: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
