@@ -8,30 +8,30 @@ from collections.abc import Generator
 import pytest
 import requests
 from pytest import FixtureRequest, Metafunc, Parser
-from tests.ansible.config import AnsibleConfigurator
-from tests.ansible.runner import AnsibleRunner
-from tests.command.platform_command_wrapper import PlatformCommandWrapper
-from tests.constants import (
+from ansible.config import AnsibleConfigurator
+from ansible.runner import AnsibleRunner
+from command.platform_command_wrapper import PlatformCommandWrapper
+from constants import (
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
 )
-from tests.deployment.deployment_operations import (
+from deployment.deployment_operations import (
     check_agent_state,
     perform_operation_on_platforms,
     prepare_test_dirs,
 )
-from tests.deployment.deployment_platform import (
+from deployment.deployment_platform import (
     DeploymentPlatform,
     DeploymentResult,
     PlatformCollection,
 )
-from tests.deployment.installer_fetching import (
+from deployment.installer_fetching import (
     download_installers,
     download_signature,
     generate_installers,
 )
-from tests.installer_server.server import run_server
+from installer_server.server import run_server
 
 # Command line options
 USER_KEY = "user"

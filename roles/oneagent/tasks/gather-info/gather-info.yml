@@ -4,7 +4,8 @@
 
 - name: Gather installer metainfo from tenant
   ansible.builtin.uri:
-    url: "{{ oneagent_environment_url }}/api/v1/deployment/installer/agent/{{ oneagent_system_family }}/default/latest/metainfo?arch={{ oneagent_download_arch }}"
+    url: >-
+      {{ oneagent_environment_url }}/api/v1/deployment/installer/agent/{{ oneagent_system_family }}/default/latest/metainfo?arch={{ oneagent_download_arch }}
     validate_certs: "{{ oneagent_validate_certs | default(true) }}"
     headers:
       Authorization: Api-Token {{ oneagent_paas_token }}

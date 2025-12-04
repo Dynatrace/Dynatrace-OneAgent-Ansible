@@ -19,7 +19,8 @@ tags:
 repository: https://github.com/Dynatrace/Dynatrace-OneAgent-Ansible
 documentation: https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/deployment-orchestration/ansible
 build_ignore:
-  - .github
-  - .pre-commit-config.yaml
-  - .gitignore
+  - .*
+  - CHANGELOG.md
+  - git-conventional-commits.yaml
+  - pyproject.toml
   - venv

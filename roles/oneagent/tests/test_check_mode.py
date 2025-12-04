@@ -1,8 +1,8 @@
 import logging
 
-from tests.ansible.config import AnsibleConfigurator
-from tests.ansible.runner import AnsibleRunner
-from tests.deployment.deployment_operations import (
+from ansible.config import AnsibleConfigurator
+from ansible.runner import AnsibleRunner
+from deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )

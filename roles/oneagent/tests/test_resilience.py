@@ -2,21 +2,21 @@ import logging
 import re
 
 import pytest
-from tests.ansible.config import AnsibleConfigurator
-from tests.ansible.runner import AnsibleRunner
-from tests.constants import (
+from ansible.config import AnsibleConfigurator
+from ansible.runner import AnsibleRunner
+from constants import (
     ERROR_MESSAGES_FILE_PATH,
     FAILED_DEPLOYMENT_EXIT_CODE,
     TEST_SIGNATURE_FILE,
     VARIABLE_PREFIX,
 )
-from tests.deployment.deployment_operations import (
+from deployment.deployment_operations import (
     enable_for_system_family,
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import DeploymentResult, PlatformCollection
-from tests.resources.file_operations import read_yaml_file
+from deployment.deployment_platform import DeploymentResult, PlatformCollection
+from resources.file_operations import read_yaml_file
 
 DOWNLOAD_DIR_CONTAINS_SPACES_KEY = "download_dir_contains_spaces"
 DOWNLOAD_FAILED_KEY = "failed_download"

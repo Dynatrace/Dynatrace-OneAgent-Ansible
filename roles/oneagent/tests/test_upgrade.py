@@ -1,10 +1,10 @@
 import logging
 import re
 
-from tests.ansible.config import AnsibleConfigurator
-from tests.ansible.runner import AnsibleRunner
-from tests.command.platform_command_wrapper import PlatformCommandWrapper
-from tests.deployment.deployment_operations import (
+from ansible.config import AnsibleConfigurator
+from ansible.runner import AnsibleRunner
+from command.platform_command_wrapper import PlatformCommandWrapper
+from deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
     get_installers,
@@ -13,9 +13,9 @@ from tests.deployment.deployment_operations import (
     run_deployment,
     set_installer_download_params,
 )
-from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from deployment.deployment_platform import DeploymentPlatform, PlatformCollection
 
-from tests.constants import UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH
+from constants import UNIX_DOWNLOAD_DIR_PATH, WINDOWS_DOWNLOAD_DIR_PATH
 
 
 def _get_versions_for_platforms(platforms: PlatformCollection, latest: bool) -> dict[DeploymentPlatform, str]:
