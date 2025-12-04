@@ -32,7 +32,6 @@ runs:
       run: |
         python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py CHANGELOG.md release-notes.md "$VERSION"
       env:
-        GH_TOKEN: ${{ inputs.gha_token }}
         VERSION: ${{ steps.get_version.outputs.version }}
     - name: Make a release
       shell: bash
