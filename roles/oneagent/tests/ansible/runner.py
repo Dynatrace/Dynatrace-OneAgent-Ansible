@@ -2,10 +2,10 @@ import logging
 import subprocess
 import os
 
-from tests.ansible.config import AnsibleConfigurator
-from tests.command.command_result import CommandResult
-from tests.constants import CREDENTIALS_FILE_NAME, HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME
-from tests.deployment.deployment_platform import DeploymentResult
+from ansible.config import AnsibleConfigurator
+from command.command_result import CommandResult
+from constants import CREDENTIALS_FILE_NAME, HOSTS_TEMPLATE_FILE_NAME, PLAYBOOK_TEMPLATE_FILE_NAME
+from deployment.deployment_platform import DeploymentResult
 
 
 class AnsibleRunner:

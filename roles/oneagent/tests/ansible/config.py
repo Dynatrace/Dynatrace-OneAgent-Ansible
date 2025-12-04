@@ -1,6 +1,6 @@
 from typing import Any
 
-from tests.constants import (
+from constants import (
     ANSIBLE_CONNECTION_KEY,
     ANSIBLE_PASS_KEY,
     ANSIBLE_RESOURCES_DIR_PATH,
@@ -9,8 +9,8 @@ from tests.constants import (
     HOSTS_TEMPLATE_FILE_NAME,
     PLAYBOOK_TEMPLATE_FILE_NAME
 )
-from tests.deployment.deployment_platform import DeploymentPlatform, PlatformCollection
-from tests.resources.file_operations import read_yaml_file, write_yaml_file
+from deployment.deployment_platform import DeploymentPlatform, PlatformCollection
+from resources.file_operations import read_yaml_file, write_yaml_file
 
 
 class AnsibleConfigurator:

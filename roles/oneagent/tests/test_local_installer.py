@@ -1,14 +1,14 @@
 import logging
 
-from tests.ansible.config import AnsibleConfigurator
-from tests.ansible.runner import AnsibleRunner
-from tests.command.platform_command_wrapper import PlatformCommandWrapper
-from tests.constants import (
+from ansible.config import AnsibleConfigurator
+from ansible.runner import AnsibleRunner
+from command.platform_command_wrapper import PlatformCommandWrapper
+from constants import (
     UNIX_DOWNLOAD_DIR_PATH,
     WINDOWS_DOWNLOAD_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
 )
-from tests.deployment.deployment_operations import (
+from deployment.deployment_operations import (
     check_agent_state,
     check_download_directory,
     get_installers,
@@ -16,7 +16,7 @@ from tests.deployment.deployment_operations import (
     run_deployment,
     set_ca_cert_download_params,
 )
-from tests.deployment.deployment_platform import PlatformCollection
+from deployment.deployment_platform import PlatformCollection
 
 
 def test_local_installer(

@@ -1,8 +1,8 @@
 import subprocess
 from pathlib import Path
 
-from tests.command.command_result import CommandResult
-from tests.command.command_wrapper import CommandWrapper
+from command.command_result import CommandResult
+from command.command_wrapper import CommandWrapper
 from typing_extensions import override
 
 
