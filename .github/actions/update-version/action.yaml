@@ -15,122 +15,15 @@
 name: "Update version in all needed files"
 inputs:
   version:
-    description: "Version to be set"
-    required: true
-  gha_token:
-    description: "GHA bot token"
+    description: "Version to be released (e.g. 1.2.3)"
     required: true
 
 runs:
   using: composite
   steps:
-      - name: Install git-conventional-commits
-        shell: bash
-        run: |
-          npm i git-conventional-commits
-
-      - name: Update version in files
-        shell: bash
-        run: |
-          python $GITHUB_WORKSPACE/.github/actions/update-version/update_version.py "$VERSION"
-        env:
-          VERSION: ${{ inputs.version }}
-
-      - name: Generate changelog
-        shell: bash
-        run: |
-          npx git-conventional-commits changelog --file CHANGELOG.md --release "$VERSION"
-        env:
-          VERSION: ${{ inputs.version }}
-
-      - name: setup git config
-        shell: bash
-        run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-
-      - name: commit
-        shell: bash
-        run: |
-          # Stage the file, commit and push
-          git add galaxy.yml roles/oneagent/vars/version.yml CHANGELOG.md
-          git commit -m "chore: Update version"
-          git push origin HEAD:"$VERSION"
-        env:
-          VERSION: ${{ inputs.version }}
-
-      - name: Create Pull Request
-        shell: bash
-        run: |
-          gh pr create --title "Version update: $VERSION" --body "" --head "$VERSION" --base "master"
-          TIMEOUT=600 # 10 minutes in seconds
-          INTERVAL=10 # polling interval in seconds
-          ELAPSED=0
-          PR_URL=""
-          while [ $ELAPSED -lt $TIMEOUT ]; do
-            PR_JSON=$(gh pr list --head "$VERSION" --json url -L 1)
-            PR_URL=$(echo "$PR_JSON" | jq -r '.[0].url')
-            if [[ -n "$PR_URL" && "$PR_URL" != "null" ]]; then
-              echo "Pull request created: $PR_URL"
-              break
-            fi
-            echo "Waiting for pull request to be created..."
-            sleep $INTERVAL
-            ELAPSED=$((ELAPSED + INTERVAL))
-          done
-          if [[ -z "$PR_URL" || "$PR_URL" == "null" ]]; then
-            echo "Pull request was not created within timeout."
-            exit 1
-          fi
-        env:
-          GH_TOKEN: ${{ inputs.gha_token }}
-          VERSION: ${{ inputs.version }}
-
-      - name: Trigger Pull Request build
-        shell: bash
-        run: |
-          gh workflow run build-and-test.yaml --ref "$VERSION"
-        env:
-          GH_TOKEN: ${{ inputs.gha_token }}
-          VERSION: ${{ inputs.version }}
-
-      - name: Wait for Pull Request build
-        shell: bash
-        run: |
-          TIMEOUT=600 # 10 minutes in seconds
-          INTERVAL=10 # polling interval in seconds
-          ELAPSED=0
-          BUILD_URL=""
-          while [ $ELAPSED -lt $TIMEOUT ]; do
-            RUNS_JSON=$(gh run list --branch "$VERSION" --workflow build-and-test.yaml --json databaseId,status,conclusion,url -L 1)
-            STATUS=$(echo "$RUNS_JSON" | jq -r '.[0].status')
-            CONCLUSION=$(echo "$RUNS_JSON" | jq -r '.[0].conclusion')
-            BUILD_URL=$(echo "$RUNS_JSON" | jq -r '.[0].url')
-            echo "PR build status: $STATUS, conclusion: $CONCLUSION. Waiting for completion..."
-            if [[ -n "$BUILD_URL" ]]; then
-              echo "Build job URL: $BUILD_URL"
-            fi
-            if [[ "$STATUS" == "completed" && "$CONCLUSION" != "null" ]]; then
-              break
-            fi
-            sleep $INTERVAL
-            ELAPSED=$((ELAPSED + INTERVAL))
-          done
-          if [[ "$CONCLUSION" != "success" ]]; then
-            echo "PR build failed or did not complete in time."
-            exit 1
-          fi
-          echo "PR build succeeded."
-          echo "Build job URL: $BUILD_URL"
-        env:
-          GH_TOKEN: ${{ inputs.gha_token }}
-          VERSION: ${{ inputs.version }}
-
-      - name: Merge Pull Request
-        shell: bash
-        run: |
-          gh pr merge "$VERSION" --rebase --delete-branch
-        env:
-          GH_TOKEN: ${{ inputs.gha_token }}
-          VERSION: ${{ inputs.version }}
+    - name: Update version in files
+      shell: bash
+      run: |
+        python $GITHUB_WORKSPACE/.github/actions/update-version/update_version.py "$VERSION"
+      env:
+        VERSION: ${{ inputs.version }}

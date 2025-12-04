@@ -14,9 +14,6 @@
 
 name: "Make GitHub release"
 inputs:
-  version:
-    description: "Version to be set"
-    required: true
   gha_token:
     descrition: "GHA bot token"
     required: true
@@ -24,22 +21,27 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install git-conventional-commits
+    - name: Get the collection version
+      id: get_version
       shell: bash
       run: |
-        npm i git-conventional-commits
-
-    - name: Generate changelog
+        VERSION=$(python $GITHUB_WORKSPACE/.github/actions/make-release/get_current_version.py galaxy.yml)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+    - name:  Create a notice file
       shell: bash
       run: |
-        npx git-conventional-commits changelog --file github-release-changelog.md --release "$VERSION"
+        python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py CHANGELOG.md release-notes.md "$VERSION"
       env:
-        VERSION: ${{ inputs.version }}
-
-    - name: Make release
+        VERSION: ${{ steps.get_version.outputs.version }}
+    - name: Make a release
       shell: bash
       run: |
-        gh release create "$VERSION" --notes-file github-release-changelog.md
+        gh release create "v$VERSION" --title="$VERSION" --notes-file release-notes.md
       env:
         GH_TOKEN: ${{ inputs.gha_token }}
-        VERSION: ${{ inputs.version }}
+        VERSION: ${{ steps.get_version.outputs.version }}
+    - name: Remove the release notes file
+      if: always()
+      shell: bash
+      run: |
+        rm -f release-notes.md

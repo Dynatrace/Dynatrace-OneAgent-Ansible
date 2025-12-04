@@ -1,4 +1,4 @@
-# Copyright 2024 Dynatrace LLC
+# Copyright 2025 Dynatrace LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,21 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Build, test and publish"
-on:
-  workflow_dispatch:
-  release:
-    types: [released]
+name: "Update changelog"
+inputs:
+  version:
+    description: "Version to be released (e.g. 1.2.3)"
+    required: true
 
-jobs:
-  build-and-test:
-    uses: ./.github/workflows/build-and-test.yaml
+runs:
+  using: composite
+  steps:
+    - name: Install git-conventional-commits
+      shell: bash
+      run: |
+        npm i git-conventional-commits
 
-  publish:
-    needs: build-and-test
-    uses: ansible/team-devtools/.github/workflows/release_collection.yml@main
-    with:
-      environment: release
-    secrets:
-        ah_token: ${{ secrets.AH_TOKEN }}
-        ansible_galaxy_api_key: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
+    - name: Generate changelog
+      id: generate_changelog
+      shell: bash
+      run: |
+        npx git-conventional-commits changelog --file CHANGELOG.md --release "$VERSION"
+      env:
+        VERSION: ${{ inputs.version }}
