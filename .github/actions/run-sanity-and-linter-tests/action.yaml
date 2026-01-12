@@ -28,4 +28,4 @@ runs:
 
     - name: "Run linter test"
       shell: bash
-      run: pushd ~/.ansible/collections/ansible_collections/dynatrace/oneagent && ansible-lint && popd
+      run: pushd ~/.ansible/collections/ansible_collections/dynatrace/oneagent && ansible-lint --project-dir . && popd
