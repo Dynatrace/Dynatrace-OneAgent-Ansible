@@ -46,7 +46,7 @@ def sign_installer(installer: list[str]) -> list[str]:
         check=False,
     )
     if proc.returncode != 0:
-        logging.error("Failed to sign installer: %s")
+        logging.error("Failed to sign installer: %s", proc.stdout)
         return []
 
     signed_installer = proc.stdout.splitlines()
