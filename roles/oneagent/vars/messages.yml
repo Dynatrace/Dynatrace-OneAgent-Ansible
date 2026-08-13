@@ -15,3 +15,7 @@ oneagent_signature_verification_failed: "Signature verification failed: %s"
 oneagent_uninstall_failed_unix: "Uninstall failed, exit code: %d, output: %s %s"
 oneagent_reboot_failed: Failed to reboot the host
 oneagent_fetch_metadata_failed: "Failed to fetch metadata from tenant: %s"
+oneagent_root_privileges_required: >-
+  This role requires root privileges on Linux and AIX. Enable privilege escalation
+  via 'become: true' at the play level or 'ansible_become: true' in your inventory.
+  Please see the role README for further information.

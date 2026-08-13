@@ -1,0 +1,29 @@
+---
+- name: Ensure download directory exists
+  ansible.builtin.file:
+    path: "{{ oneagent_download_path }}"
+    state: directory
+    mode: "0755"
+  when: not ansible_check_mode and not _oneagent_download_path_state.stat.exists
+
+- name: Create private scratch directory for installer
+  ansible.builtin.tempfile:
+    state: directory
+    path: "{{ oneagent_download_path }}"
+    prefix: "dynatrace-oneagent-"
+  register: _oneagent_installer_scratch
+  when: not ansible_check_mode
+
+- name: Lock scratch directory to root only
+  ansible.builtin.file:
+    path: "{{ _oneagent_installer_scratch.path }}"
+    state: directory
+    mode: "0700"
+    owner: root
+  when: not ansible_check_mode
+
+- name: Redirect installer and CA cert into scratch directory
+  ansible.builtin.set_fact:
+    oneagent_installer_path: "{{ _oneagent_installer_scratch.path }}/{{ oneagent_installer_path | basename }}"
+    oneagent_ca_cert_dest_path: "{{ _oneagent_installer_scratch.path }}/{{ oneagent_ca_cert_dest_path | basename }}"
+  when: not ansible_check_mode

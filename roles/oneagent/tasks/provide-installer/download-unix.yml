@@ -1,11 +1,4 @@
 ---
-- name: Ensure Download directory exists
-  ansible.builtin.file:
-    path: "{{ oneagent_download_path }}"
-    state: directory
-    mode: "0755"
-  when: not _oneagent_download_path_state.stat.exists
-
 - name: Check if OneAgent installer exists
   ansible.builtin.stat:
     path: "{{ oneagent_installer_path }}"
