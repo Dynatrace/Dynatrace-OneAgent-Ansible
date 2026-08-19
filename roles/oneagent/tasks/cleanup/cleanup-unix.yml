@@ -1,11 +1,7 @@
 ---
-- name: Remove leftover signature
+- name: Remove installer scratch directory
   ansible.builtin.file:
-    path: "{{ oneagent_ca_cert_dest_path }}"
+    path: "{{ _oneagent_installer_scratch.path }}"
     state: absent
-
-- name: Remove leftover installer
-  ansible.builtin.file:
-    path: "{{ oneagent_installer_path }}"
-    state: absent
+  when: _oneagent_installer_scratch.path is defined
   changed_when: false

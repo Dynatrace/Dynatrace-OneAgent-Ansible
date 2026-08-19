@@ -12,6 +12,7 @@ from ansible.config import AnsibleConfigurator
 from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
 from constants import (
+    UNIX_DOWNLOAD_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
@@ -157,6 +158,9 @@ def handle_test_environment(
     perform_operation_on_platforms(platforms, check_agent_state, wrapper, False)
 
     shutil.rmtree("/var/lib/dynatrace", ignore_errors=True)
+
+    for leftover in UNIX_DOWNLOAD_DIR_PATH.glob("dynatrace-oneagent-*"):
+        shutil.rmtree(leftover, ignore_errors=True)
 
 
 def pytest_addoption(parser: Parser) -> None:
