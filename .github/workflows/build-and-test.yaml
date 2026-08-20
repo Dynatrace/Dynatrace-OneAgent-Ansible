@@ -30,7 +30,7 @@ jobs:
         supported_ansible_versions: ${{ steps.v.outputs.supported_ansible_versions }}
         latest_ansible_version : ${{ steps.v.outputs.latest_ansible_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/get-ansible-versions
         id: v
 
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build with Ansible ${{ needs.fetch-ansible-versions.outputs.latest_ansible_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
@@ -59,7 +59,7 @@ jobs:
       matrix:
           ansible-version: ${{ fromJson(needs.fetch-ansible-versions.outputs.supported_ansible_versions) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set environment variables
         uses: ./.github/actions/set-environment-variables
       - name: Set up environment
