@@ -1,3 +1,14 @@
+## **1.3.0**&emsp;<sub><sup>2026-08-20 (cea983df0453dc5ea7e672542ffa0db3219828c2...d4352e4738187f7737f6b216ed3f40116ed2c428)</sup></sub>
+
+### Bug Fixes
+
+- Fix ansible\-linter error: variables names from within roles should use oneagent\_ as a prefix\. \(register: installer\_stat\) \(\#119\) (cea983df0453dc5ea7e672542ffa0db3219828c2)
+- Removed redundant files from the collection \(\#120\) (b42de0aabc22612e35029174770b4fdf735616f7)
+- Fix pylint error: logging\-too\-few\-args: Not enough arguments for… \(\#121\) (17c3e5d05a6af8639763f48fb5ddb3932f6ab499)
+- place installer in root\-owned private tmp directory\. The installer is now placed inside a randomly named root\-owned 0700 subdirectory, making the path unpredictable (f376165411ad71d98076d7c27012e4453e64fd76)
+
+<br>
+
 ## **1.2.5**&emsp;<sub><sup>2025-11-21 (f903c8f0f8156ebfeb82a7c1638e5d94d085e47b...ab81691af95dae02a1f7cfbf644404b40edcaac6)</sup></sub>
 
 ### Features
