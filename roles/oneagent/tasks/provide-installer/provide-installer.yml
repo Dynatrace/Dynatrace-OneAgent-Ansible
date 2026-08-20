@@ -1,4 +1,8 @@
 ---
+- name: Prepare private scratch directory for installer
+  ansible.builtin.include_tasks: provide-installer/scratch-dir-unix.yml
+  when: oneagent_system_is_unix
+
 - name: Check if installer should be downloaded
   ansible.builtin.set_fact:
     _oneagent_skip_installer_download: >-

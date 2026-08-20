@@ -165,6 +165,7 @@ def check_download_directory(
 ) -> None:
     logging.debug("Platform: %s, IP: %s", platform, address)
     download_path: Path = select_by_platform(platform, unix_path, windows_path)
-    installer_path = download_path / f"{INSTALLER_PARTIAL_NAME}*"
+    installer_glob = select_by_platform(platform, f"*/{INSTALLER_PARTIAL_NAME}*", f"{INSTALLER_PARTIAL_NAME}*")
+    installer_path = download_path / installer_glob
     assert wrapper.directory_exists(platform, address, download_path).returncode == 0
     assert wrapper.file_exists(platform, address, installer_path).returncode == (0 if exists else 1)

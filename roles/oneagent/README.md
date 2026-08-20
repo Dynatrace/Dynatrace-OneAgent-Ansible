@@ -6,6 +6,7 @@
 - Script access to the OneAgent installer file. You can either:
   - configure the script to download the installer directly from your Dynatrace environment,
   - download it yourself and upload it to the primary node.
+- **Privilege escalation (`become: true`) is required on Linux and AIX.** The role installs OneAgent as root and creates a root-owned temporary directory to store the installer securely. Without privilege escalation the installation will fail. Enable it either at the play level (`become: true` in your playbook) or per host group in your inventory (`ansible_become: true`). On Windows, `become` is not supported and not needed.
 
 ### Direct download from your environment
 
