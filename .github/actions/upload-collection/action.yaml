@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: "Upload collection"
-description: Uploads the collection to GitHub storage 
+description: Uploads the collection to GitHub storage
 
 runs:
   using: composite

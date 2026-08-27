@@ -106,4 +106,3 @@ runs:
         git push origin --delete "$VERSION" || true
       env:
         VERSION: ${{ inputs.version }}
-

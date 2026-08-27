@@ -23,12 +23,12 @@ on:
 
 
 jobs:
-  fetch-ansible-versions:  
+  fetch-ansible-versions:
     runs-on: ubuntu-latest
     name: "Fetch Ansible versions"
     outputs:
-        supported_ansible_versions: ${{ steps.v.outputs.supported_ansible_versions }}
-        latest_ansible_version : ${{ steps.v.outputs.latest_ansible_version }}
+      supported_ansible_versions: ${{ steps.v.outputs.supported_ansible_versions }}
+      latest_ansible_version: ${{ steps.v.outputs.latest_ansible_version }}
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/get-ansible-versions
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-          ansible-version: ${{ fromJson(needs.fetch-ansible-versions.outputs.supported_ansible_versions) }}
+        ansible-version: ${{ fromJson(needs.fetch-ansible-versions.outputs.supported_ansible_versions) }}
     steps:
       - uses: actions/checkout@v7
       - name: Set environment variables
