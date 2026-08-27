@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
-
 import argparse
+import sys
 from pathlib import Path
+
 
 def get_section(input_file: Path, version: str):
     result = []
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     if not section:
         print(f"Version {args.version} not found in {args.input_file}")
-        exit(1)
+        sys.exit(1)
 
     with open(args.output_file, "w") as file:
         file.write("".join(section).strip())
