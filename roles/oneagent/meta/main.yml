@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  author: Dynatrace LLC
+  description: Installs and configures Dynatrace OneAgent on Linux, Windows, and AIX
+  company: Dynatrace
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+
+dependencies: []
