@@ -15,7 +15,7 @@
 name: Check commits
 on:
   pull_request:
-  
+
 jobs:
   check-commits:
     runs-on: ubuntu-latest

@@ -1,0 +1,11 @@
+---
+profile: production
+exclude_paths:
+  - .github
+  - tests/integration
+  - tests/unit
+  - extensions/molecule
+  - changelogs
+  - docs
+  - .ansible
+  - roles/oneagent/tests

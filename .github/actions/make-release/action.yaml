@@ -27,7 +27,7 @@ runs:
       run: |
         VERSION=$(python $GITHUB_WORKSPACE/.github/actions/make-release/get_current_version.py galaxy.yml)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
-    - name:  Create a notice file
+    - name: Create a notice file
       shell: bash
       run: |
         python $GITHUB_WORKSPACE/.github/actions/make-release/parse_changelog.py CHANGELOG.md release-notes.md "$VERSION"
