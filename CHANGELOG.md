@@ -1,3 +1,14 @@
+## **1.3.1**&emsp;<sub><sup>2026-08-27 (1f2060587b7f6035d9447424ea012f68078a1c97...1163bf588b608682030453a805baccdb63f43091)</sup></sub>
+
+### Bug Fixes
+
+- Fix collection certification (1f2060587b7f6035d9447424ea012f68078a1c97)
+- Fix Ansible linter fail (75baf6d4b72c0ddca67d10daa7f65702647cad67)
+- Fix Python linter fail (be67c1c4d94cc4d251318c46ca688667e8cf68fd)
+- Fix collection certification (1163bf588b608682030453a805baccdb63f43091)
+
+<br>
+
 ## **1.3.0**&emsp;<sub><sup>2026-08-20 (cea983df0453dc5ea7e672542ffa0db3219828c2...d4352e4738187f7737f6b216ed3f40116ed2c428)</sup></sub>
 
 ### Bug Fixes
