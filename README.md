@@ -1,3 +1,5 @@
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Dynatrace/Dynatrace-OneAgent-Ansible/badge)](https://scorecard.dev/viewer/?uri=github.com/Dynatrace/Dynatrace-OneAgent-Ansible)
+
 # Dynatrace OneAgent Ansible collection
 
 Ansible collection for deploying Dynatrace OneAgent.
