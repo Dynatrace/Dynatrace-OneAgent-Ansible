@@ -60,6 +60,8 @@ See [OneAgent role tests README](roles/oneagent/tests/README.md) for more detail
 
 You can submit a support request [here](https://www.dynatrace.com/support/contact-support).
 
+This collection is also certified and distributed through [Red Hat Ansible Automation Hub](https://console.redhat.com/ansible/automation-hub). For Red Hat-related issues, you can open a support case directly from the collection's page there using the **Create issue** button in the top right corner.
+
 ## Release Notes and Roadmap
 
 For release notes see [CHANGELOG](CHANGELOG.md).
