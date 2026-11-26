@@ -1,21 +1,25 @@
+import base64
 import logging
 import re
+from pathlib import Path
 
 import pytest
 from ansible.config import AnsibleConfigurator
 from ansible.runner import AnsibleRunner
+from command.platform_command_wrapper import PlatformCommandWrapper
 from constants import (
     ERROR_MESSAGES_FILE_PATH,
     FAILED_DEPLOYMENT_EXIT_CODE,
     TEST_SIGNATURE_FILE,
     VARIABLE_PREFIX,
+    WORK_DIR_PATH,
 )
 from deployment.deployment_operations import (
     enable_for_system_family,
     run_deployment,
     set_installer_download_params,
 )
-from deployment.deployment_platform import DeploymentResult, PlatformCollection
+from deployment.deployment_platform import DeploymentPlatform, DeploymentResult, PlatformCollection
 from resources.file_operations import read_yaml_file
 
 DOWNLOAD_DIR_CONTAINS_SPACES_KEY = "download_dir_contains_spaces"
@@ -198,4 +202,53 @@ def test_failed_signature_verification(
 
     _check_deployment_failure(
         run_deployment(runner, configurator, True), _error_messages[SIGNATURE_VERIFICATION_FAILED_KEY], FAILED_DEPLOYMENT_EXIT_CODE
+    )
+
+
+@enable_for_system_family(family="windows")
+def test_failed_signature_verification_windows(
+    _error_messages: dict[str, str],
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,  # pylint: disable=unused-argument  # required by enable_for_system_family
+):
+    unsigned_installer: Path = WORK_DIR_PATH / "Dynatrace-OneAgent-Windows-unsigned.exe"
+    _unused = unsigned_installer.write_bytes(b"MZ unsigned installer that must never be executed")
+    configurator.set_common_parameter(configurator.LOCAL_INSTALLER_KEY, str(unsigned_installer))
+
+    _check_deployment_failure(
+        run_deployment(runner, configurator, True),
+        _error_messages[SIGNATURE_VERIFICATION_FAILED_KEY],
+        FAILED_DEPLOYMENT_EXIT_CODE,
+    )
+
+
+@enable_for_system_family(family="windows")
+def test_failed_signature_verification_windows_lookalike_certificate(
+    _error_messages: dict[str, str],
+    runner: AnsibleRunner,
+    configurator: AnsibleConfigurator,
+    platforms: PlatformCollection,
+    wrapper: PlatformCommandWrapper,
+):
+    # The signer's name matches the genuine one, so only the chain of trust can reject the installer: its issuer
+    # mimics the Dynatrace root CA but is self-generated and thus not trusted by the host
+    fake_root_subject = (
+        "CN=Dynatrace Root Certificate Authority L3, OU=Technology, O=Dynatrace LLC, L=Waltham, S=Massachusetts, C=US"
+    )
+    signer_subject = "CN=Dynatrace LLC, O=Dynatrace LLC"
+    address = platforms[DeploymentPlatform.WINDOWS_X86][0]
+
+    result = wrapper.windows_command_wrapper.create_lookalike_signed_executable(
+        address, fake_root_subject, signer_subject
+    )
+    assert result.returncode == 0, result.stderr
+    lookalike_installer: Path = WORK_DIR_PATH / "Dynatrace-OneAgent-Windows-lookalike.exe"
+    _unused = lookalike_installer.write_bytes(base64.b64decode("".join(result.stdout.split())))
+    configurator.set_common_parameter(configurator.LOCAL_INSTALLER_KEY, str(lookalike_installer))
+
+    _check_deployment_failure(
+        run_deployment(runner, configurator, True),
+        _error_messages[SIGNATURE_VERIFICATION_FAILED_KEY],
+        FAILED_DEPLOYMENT_EXIT_CODE,
     )

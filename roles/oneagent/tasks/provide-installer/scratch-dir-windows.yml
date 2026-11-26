@@ -1,0 +1,62 @@
+---
+- name: Ensure download directory exists
+  ansible.windows.win_file:
+    path: "{{ oneagent_download_path }}"
+    state: directory
+  when: not ansible_check_mode and not _oneagent_download_path_state.stat.exists
+
+# The directory is created with a protected DACL (no inheritance) granting access to SYSTEM and Administrators only.
+# Creating it with the DACL in a single call means it is never reachable through permissions inherited from
+# a shared parent such as C:\Windows\Temp, where standard users are allowed to create files.
+- name: Create private scratch directory for installer
+  ansible.windows.win_powershell:
+    parameters:
+      Parent: "{{ oneagent_download_path }}"
+    script: |
+      param([string]$Parent)
+      $ErrorActionPreference = 'Stop'
+
+      $allowedSids = @('S-1-5-18', 'S-1-5-32-544')  # NT AUTHORITY\SYSTEM, BUILTIN\Administrators
+      $security = New-Object -TypeName System.Security.AccessControl.DirectorySecurity
+      $security.SetAccessRuleProtection($true, $false)
+      foreach ($sid in $allowedSids) {
+          $rule = New-Object -TypeName System.Security.AccessControl.FileSystemAccessRule -ArgumentList @(
+              (New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList $sid),
+              [System.Security.AccessControl.FileSystemRights]::FullControl,
+              [System.Security.AccessControl.InheritanceFlags]'ContainerInherit, ObjectInherit',
+              [System.Security.AccessControl.PropagationFlags]::None,
+              [System.Security.AccessControl.AccessControlType]::Allow)
+          $security.AddAccessRule($rule)
+      }
+
+      $path = Join-Path -Path $Parent -ChildPath ('dynatrace-oneagent-' + [System.Guid]::NewGuid().ToString('N'))
+      if (Test-Path -LiteralPath $path) {
+          throw "Scratch directory '$path' already exists"
+      }
+      $directory = [System.IO.Directory]::CreateDirectory($path, $security)
+
+      # CreateDirectory silently returns a directory that already exists, so verify the result explicitly
+      $acl = Get-Acl -LiteralPath $directory.FullName
+      $foreignRules = @($acl.Access | Where-Object {
+          $allowedSids -notcontains $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
+      })
+      # The owner can always rewrite the DACL, so it must be trusted as well. Depending on the
+      # "Default owner for objects created by members of the Administrators group" policy, an
+      # administrator's objects are owned either by BUILTIN\Administrators or by the account itself.
+      $trustedOwners = $allowedSids + [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+      $owner = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
+      $entries = @(Get-ChildItem -LiteralPath $directory.FullName -Force)
+      if (-not $acl.AreAccessRulesProtected -or $foreignRules.Count -gt 0 -or $entries.Count -gt 0 -or
+          $trustedOwners -notcontains $owner) {
+          throw "Scratch directory '$($directory.FullName)' is not restricted to SYSTEM and Administrators"
+      }
+
+      $Ansible.Result = $directory.FullName
+      $Ansible.Changed = $true
+  register: _oneagent_installer_scratch
+  when: not ansible_check_mode
+
+- name: Redirect installer into scratch directory
+  ansible.builtin.set_fact:
+    oneagent_installer_path: "{{ _oneagent_installer_scratch.result }}\\{{ oneagent_installer_path | win_basename }}"
+  when: not ansible_check_mode

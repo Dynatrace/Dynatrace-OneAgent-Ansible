@@ -19,3 +19,6 @@ oneagent_root_privileges_required: >-
   This role requires root privileges on Linux and AIX. Enable privilege escalation
   via 'become: true' at the play level or 'ansible_become: true' in your inventory.
   Please see the role README for further information.
+oneagent_administrator_privileges_required: >-
+  This role requires administrator privileges on Windows. Connect as a member of the
+  local Administrators group or as SYSTEM. Please see the role README for further information.

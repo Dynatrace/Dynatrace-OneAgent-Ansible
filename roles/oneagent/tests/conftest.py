@@ -13,6 +13,7 @@ from ansible.runner import AnsibleRunner
 from command.platform_command_wrapper import PlatformCommandWrapper
 from constants import (
     UNIX_DOWNLOAD_DIR_PATH,
+    WINDOWS_DOWNLOAD_DIR_PATH,
     WORK_DIR_PATH,
     WORK_INSTALLERS_DIR_PATH,
     WORK_SERVER_DIR_PATH,
@@ -161,6 +162,11 @@ def handle_test_environment(
 
     for leftover in UNIX_DOWNLOAD_DIR_PATH.glob("dynatrace-oneagent-*"):
         shutil.rmtree(leftover, ignore_errors=True)
+
+    for address in platforms.get(DeploymentPlatform.WINDOWS_X86, []):
+        _unused = wrapper.windows_command_wrapper.remove_items(
+            address, WINDOWS_DOWNLOAD_DIR_PATH / "dynatrace-oneagent-*"
+        )
 
 
 def pytest_addoption(parser: Parser) -> None:

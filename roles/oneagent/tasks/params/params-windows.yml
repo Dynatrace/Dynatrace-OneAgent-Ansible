@@ -1,4 +1,19 @@
 ---
+- name: Determine privileges of the connecting user
+  ansible.windows.win_whoami:
+  check_mode: false
+  register: _oneagent_whoami
+
+# A UAC-filtered token lists BUILTIN\Administrators as "Use for deny only" rather than "Enabled".
+# The SYSTEM token contains an enabled BUILTIN\Administrators group as well.
+- name: Validate that the role runs with administrator privileges
+  ansible.builtin.assert:
+    that: >-
+      _oneagent_whoami.groups | selectattr('sid', 'equalto', 'S-1-5-32-544')
+      | selectattr('attributes', 'contains', 'Enabled') | list | length > 0
+    fail_msg: "{{ oneagent_administrator_privileges_required }}"
+    quiet: true
+
 - name: Validate if download directory is available
   ansible.windows.win_stat:
     path: "{{ oneagent_download_path }}"
