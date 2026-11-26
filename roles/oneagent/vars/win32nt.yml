@@ -13,6 +13,7 @@ oneagent_install_path: >-
 oneagent_ctl_bin_path: "{{ oneagent_install_path }}\\agent\\tools\\oneagentctl.exe"
 oneagent_download_path: "{{ oneagent_download_dir | default(oneagent_default_download_dir, true) }}"
 oneagent_installer_path: "{{ oneagent_download_path }}\\Dynatrace-OneAgent-Windows-{{ oneagent_version }}.exe"
+oneagent_installer_signer_name: Dynatrace LLC
 oneagent_log_dir: "{{ ansible_env['ProgramData'] }}\\dynatrace\\oneagent\\log\\installer"
 oneagent_uninstall_log_file_name: uninstall-{{ ansible_date_time.date | replace('-', '') }}-{{ ansible_date_time.time | replace(':', '') }}.log
 oneagent_uninstall_log_path: "{{ oneagent_log_dir }}\\{{ oneagent_uninstall_log_file_name }}"

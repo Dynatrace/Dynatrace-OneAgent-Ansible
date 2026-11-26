@@ -1,5 +1,7 @@
 ---
-- name: Remove leftover installer
+- name: Remove installer scratch directory
   ansible.windows.win_file:
-    path: "{{ oneagent_installer_path }}"
+    path: "{{ _oneagent_installer_scratch.result }}"
     state: absent
+  when: _oneagent_installer_scratch.result is defined
+  changed_when: false
